@@ -1,0 +1,22 @@
+#ifndef plot_cf_time_series_VERSION
+#define plot_cf_time_series_VERSION
+            
+#define plot_cf_time_series_major "VN_MAJOR"
+#define plot_cf_time_series_minor "VN_MINOR"
+#define plot_cf_time_series_revision "VN_REVISION"
+#define plot_cf_time_series_build "VN_BUILD_NUMBER"
+            
+#define plot_cf_time_series_company "Deltares"
+#define plot_cf_time_series_company_url  = "http://www.deltares.nl"
+#define plot_cf_time_series_program "PlotCFTS"
+
+/*=================================================== DO NOT MAKE CHANGES BELOW THIS LINE ===================================================================== */
+
+extern "C" {
+    extern char * getcompanystring_plot_cf_time_series(void);
+    extern char * getfullversionstring_plot_cf_time_series(void);
+    extern char * getprogramstring_plot_cf_time_series(void);
+    extern char * getversionstring_plot_cf_time_series(void);
+}
+
+#endif 
