@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>310</x>
+      <y>50</y>
+      <w>100</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>PL-sets
+halign=left
+--
+parameters
+locations
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>170</x>
+      <y>90</y>
+      <w>160</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;140.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>40</x>
+      <y>640</y>
+      <w>100</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>Figure
+halign=left
+--
+Plot</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>200</x>
+      <y>640</y>
+      <w>100</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>Graph
+halign=left
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>130</x>
+      <y>680</y>
+      <w>90</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+1...N</panel_attributes>
+    <additional_attributes>10.0;20.0;70.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>290</x>
+      <y>680</y>
+      <w>90</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+1...N</panel_attributes>
+    <additional_attributes>10.0;20.0;70.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>360</x>
+      <y>640</y>
+      <w>100</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>Curve
+halign=left
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>160</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>UGRID
+--
+filename QString
+time-series QDateTime
+--
+read_convention()
+read_version()
+read_metadata()
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
