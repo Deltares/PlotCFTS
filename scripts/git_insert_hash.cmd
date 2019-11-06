@@ -1,4 +1,4 @@
-@ECHO off
+ECHO off
 
 REM This script is used for adding the GIT (short) hash to the properties of
 REM a *version.h and a *version.rc file
@@ -28,7 +28,6 @@ FOR /f "tokens=1,* delims=¶" %%A IN ( '"type %INTEXTFILE%"') DO (
     SET modified=!string:%SEARCHTEXT%=%GIT_HASH%!
     ECHO !modified! >> %TEMPTEXTFILE%
 )
-
 
 rem update the version numbers major, minor and revision, these values are taken from the file version_number.ini
 
