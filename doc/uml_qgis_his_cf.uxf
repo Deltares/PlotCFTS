@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>11</zoom_level>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>1012</x>
+      <y>319</y>
+      <w>154</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>Observation Area
+--
+Name
+Location (x,y-polygon)
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>1012</x>
+      <y>187</y>
+      <w>154</w>
+      <h>99</h>
+    </coordinates>
+    <panel_attributes>Observation Point
+--
+Name
+Location (x,y-point)
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>99</x>
+      <y>429</y>
+      <w>154</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>HIS CF
+--
+Time Series
+Mapping
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>385</x>
+      <y>572</y>
+      <w>275</w>
+      <h>242</h>
+    </coordinates>
+    <panel_attributes>Mapping
+--
+char * name;
+long epsg;
+char * grid_mapping_name;
+double longitude_of_prime_meridian;
+double semi_major_axis;
+double semi_minor_axis;
+double inverse_flattening;
+char * epsg_code;
+char * value;
+char * projection_name;
+char * wkt;
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>374</x>
+      <y>330</y>
+      <w>154</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>TIme Series
+--
+Observation Points
+Observation Areas
+Cross Sections
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>242</x>
+      <y>374</y>
+      <w>154</w>
+      <h>121</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;90.0;120.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>242</x>
+      <y>484</y>
+      <w>165</w>
+      <h>242</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;130.0;200.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>1012</x>
+      <y>506</y>
+      <w>154</w>
+      <h>77</h>
+    </coordinates>
+    <panel_attributes>Cross Section
+--
+Name
+Location (x,y polyline)
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>517</x>
+      <y>231</y>
+      <w>517</w>
+      <h>154</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;120.0;450.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>517</x>
+      <y>374</y>
+      <w>517</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;450.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>517</x>
+      <y>385</y>
+      <w>517</w>
+      <h>187</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;450.0;150.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>1122</x>
+      <y>1210</y>
+      <w>154</w>
+      <h>77</h>
+    </coordinates>
+    <panel_attributes>EmptyPackage
+--
+79-xdh-7
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
