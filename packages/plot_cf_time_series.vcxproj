@@ -14,6 +14,7 @@
     <ProjectGuid>{E416BD51-4B40-316F-9703-D9547497EF04}</ProjectGuid>
     <RootNamespace>interaction-example</RootNamespace>
     <Keyword>Qt4VSv1.0</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -44,12 +45,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">bin\$(platform)\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">release\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">plot_cf_time_series</TargetName>
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</IgnoreImportLibrary>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">bin\$(platform)\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">plot_cf_time_series</TargetName>
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IgnoreImportLibrary>
@@ -97,8 +98,8 @@
       <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;WIN64;QT_NO_DEBUG;QT_PRINTSUPPORT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>call .\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.h
-call .\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Command>
+      <Command>call ..\scripts\git_insert_hash.cmd .\packages\include plot_cf_time_series_version.h
+call ..\scripts\git_insert_hash.cmd .\packages\include plot_cf_time_series_version.rc</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -141,8 +142,8 @@ call .\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Com
       <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;WIN64;QT_PRINTSUPPORT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>call .\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.h
-call .\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Command>
+      <Command>call ..\scripts\git_insert_hash.cmd .\packages\include plot_cf_time_series_version.h
+call ..\scripts\git_insert_hash.cmd .\packages\include plot_cf_time_series_version.rc</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
