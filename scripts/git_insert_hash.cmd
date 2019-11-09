@@ -1,4 +1,4 @@
-@ECHO off
+rem @ECHO off
 
 REM This script is used for adding the GIT (short) hash to the properties of
 REM a *version.h and a *version.rc file
@@ -9,7 +9,8 @@ SET SEARCHTEXT=VN_BUILD_HASH
 SET ORG_DIR=%CD%
 SET INTEXTFILE=%CD%\%1\%2.cvs
 SET OUTTEXTFILE=%CD%\%1\%2
-SET TEMPTEXTFILE= %OUTTEXTFILE%.temp
+SET TEMPTEXTFILE=%OUTTEXTFILE%.temp
+
 
 CD /D %CD%\%1
 
@@ -18,7 +19,7 @@ FOR /f %%i in ('git rev-parse --short HEAD') do set GIT_HASH=%%i
 
 REM REMOVE PREVIOUS FILE
 IF EXIST %TEMPTEXTFILE% (
-    DEL %TEMPTEXTFILE%
+    DEL %TEMPTEXTFILE% 
 )
 
 REM SUBSTITUTE THE GIT SHORT HASH IN TEMPLATE

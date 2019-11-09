@@ -45,13 +45,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">bin\$(platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">release\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)bin\$(platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Configuration)\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">plot_cf_time_series</TargetName>
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</IgnoreImportLibrary>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">bin\$(platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">debug\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)bin\$(platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Configuration)\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">plot_cf_time_series</TargetName>
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IgnoreImportLibrary>
   </PropertyGroup>
@@ -78,7 +78,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(QT5DIR64)\lib\qtmain.lib;shell32.lib;$(QT5DIR64)\lib\Qt5PrintSupport.lib;$(QT5DIR64)\lib\Qt5Widgets.lib;$(QT5DIR64)\lib\Qt5Gui.lib;$(QT5DIR64)\lib\Qt5Core.lib;netcdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(QT5DIR64)\lib;.\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(QT5DIR64)\lib;..\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -98,8 +98,8 @@
       <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;WIN64;QT_NO_DEBUG;QT_PRINTSUPPORT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>call ..\scripts\git_insert_hash.cmd .\packages\include plot_cf_time_series_version.h
-call ..\scripts\git_insert_hash.cmd .\packages\include plot_cf_time_series_version.rc</Command>
+      <Command>call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.h
+call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -123,7 +123,7 @@ call ..\scripts\git_insert_hash.cmd .\packages\include plot_cf_time_series_versi
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(QT5DIR64)\lib\qtmaind.lib;shell32.lib;$(QT5DIR64)\lib\Qt5PrintSupportd.lib;$(QT5DIR64)\lib\Qt5Widgetsd.lib;$(QT5DIR64)\lib\Qt5Guid.lib;$(QT5DIR64)\lib\Qt5Cored.lib;netcdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(QT5DIR64)\lib;.\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(QT5DIR64)\lib;..\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -142,8 +142,8 @@ call ..\scripts\git_insert_hash.cmd .\packages\include plot_cf_time_series_versi
       <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;WIN64;QT_PRINTSUPPORT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>call ..\scripts\git_insert_hash.cmd .\packages\include plot_cf_time_series_version.h
-call ..\scripts\git_insert_hash.cmd .\packages\include plot_cf_time_series_version.rc</Command>
+      <Command>call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.h
+call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
