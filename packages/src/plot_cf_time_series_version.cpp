@@ -62,3 +62,7 @@ char * getprogramstring_plot_cf_time_series(void)
 {
     return strdup(plot_cf_time_series_program_name);
 };
+char * getsourceurlstring_plot_cf_time_series(void)
+{
+    return strdup(plot_cf_time_series_source_url);
+};

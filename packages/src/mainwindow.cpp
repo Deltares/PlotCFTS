@@ -701,14 +701,20 @@ void MainWindow::closeFile()
 void MainWindow::about()
 {
    char * text;
+   char * source_url;
    QString * qtext;
+   QString * qsource_url;
    QString * msg_text;
    text = getversionstring_plot_cf_time_series();
    qtext = new QString(text);
+   source_url = getsourceurlstring_plot_cf_time_series();
+   qsource_url = new QString(source_url);
 
    msg_text = new QString("Deltares\n");
    msg_text->append("Plot Climate and Forecast compliant Time Series\n");
    msg_text->append(qtext);
+   msg_text->append("\nSource: ");
+   msg_text->append(qsource_url);
    QMessageBox::about(this, tr("About"), *msg_text);
 
 }
