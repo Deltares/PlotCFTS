@@ -32,7 +32,7 @@
 
 #if defined(WIN32)
 static char plot_cf_time_series_version[] = {plot_cf_time_series_major "." plot_cf_time_series_minor "." plot_cf_time_series_revision "." plot_cf_time_series_build" (Win32)"};
-static char plot_cf_time_series_version_id[] = {"@(#)Deltares, "plot_cf_time_series_program" Version "plot_cf_time_series_major "." plot_cf_time_series_minor "." plot_cf_time_series_revision "." plot_cf_time_series_build" (Win32), "__DATE__", "__TIME__""};
+static char plot_cf_time_series_version_id[] = { "@(#)Deltares, " plot_cf_time_series_program " Version " plot_cf_time_series_major "." plot_cf_time_series_minor "." plot_cf_time_series_revision "." plot_cf_time_series_build " (Win32), " __DATE__ ", " __TIME__ "" };
 #elif defined(WIN64)
 static char plot_cf_time_series_version[] = { plot_cf_time_series_major "." plot_cf_time_series_minor "." plot_cf_time_series_revision "." plot_cf_time_series_build " (Win64)" };
 static char plot_cf_time_series_version_id[] = {"@(#)Deltares, " plot_cf_time_series_program " Version " plot_cf_time_series_major "." plot_cf_time_series_minor "." plot_cf_time_series_revision "." plot_cf_time_series_build " (Win64), " __DATE__ ", " __TIME__ "" };
