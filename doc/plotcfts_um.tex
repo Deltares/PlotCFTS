@@ -12,6 +12,7 @@
 \newcommand\B{\rule[-1.2ex]{0pt}{0pt}} % Bottom T
 \begin{document}
 \memoTo{To whom it may concern}
+\memoConfidentialUntil{}
 \memoDate{\today}
 \memoVersion{001}
 \memoFrom{Jan Mooiman}
@@ -22,14 +23,14 @@
 
 \deltarestitle
 
-{{\footnotesize
-	{\textbf{Version control information}}
-	
-	\begin{tabular}{@{}p{12,5mm}@{}p{0mm}p{\textwidth-27mm-24pt}}
-		\textbf{Location} & \textbf{:} & \url{\svnkw{HeadURL}} \\
-		\textbf{Revision} & \textbf{:} & \svnrev 
-	\end{tabular}
-}}
+%{{\footnotesize
+%	{\textbf{Version control information}}
+%	
+%	\begin{tabular}{@{}p{12,5mm}@{}p{0mm}p{\textwidth-27mm-24pt}}
+%		\textbf{Location} & \textbf{:} & \url{\svnkw{HeadURL}} \\
+%		\textbf{Revision} & \textbf{:} & \svnrev 
+%	\end{tabular}
+%}}
 
 
 \tableofcontents
@@ -37,26 +38,38 @@
 %--------------------------------------------------------------------------------
 \section{Release Notes}
 
-\begin{longtable}{p{15mm}p{\textwidth-15mm-24pt}}
-    \hline
-    \T \textbf{Release} & \textbf{Description} \B \\
-    \hline
-    \T 2.07.00  & - Show main window before loading the file given via the command line arguments. \B \\
-                & - Time unit, now assigned once, so independent on the length of the time-series (a performance issue). \B \\
-    \T 2.06.00  & - Disable reading a file with no time variable. \B \\
-    \T 2.05.00  & - Export of \file{$\ast$.csv} file is now to start up directory. \B \\    
-    \T 2.04.00  & - Location of selected graph added to the top of the context menu. \\
-                & - Double click on a selected graph shows the location, time and value of the point where the cursor is when the double click is performed. \B \\
-    \T 2.03.00  & - Plot window is approximately a quarter of the main screen. \\
-                & - Main window size computed as percentage of the main screen. \\
-                & - Update spinners and tooltips if no files are in the file listbox. \B \\
-    \T 2.02.02  & - Close option added to file menu, close will close the files and exit will exiting the program.
-    \B \\
-    \T 2.02.01  & - Set the tooltip to the filename which is selected in the file listbox. \B \\
-    \T 2.02.00  & - Upgrade to QT 5.12.1. \B \\
-    \T 2.01.??  & - No information available. \B \\
-    \hline
- \end{longtable}
+%
+%--- begin light blue table ---
+\begin{longtable}{p{16mm-12pt}|p{\textwidth-16mm-12pt}} 
+%\caption{Light blue theme of table} \\% 
+\rowcolor{dblue1} 
+\textbf{Release} 
+& \textbf{Description} 
+\\ 
+\topline 
+\endfirsthead 
+\endhead 
+\endfoot 
+\bottomline 
+\endlastfoot 
+2.08.00  &  - Export to CSV, commas (,) in names replaced by semi-coumn (;).  \\
+         &  - Fusion style theme used, advised by QT application. \\
+2.07.00  &  - Show main window before loading the file given via the command line arguments.  \\
+         &  - Time unit, now assigned once, so independent on the length of the time-series (a performance issue).  \\
+2.06.00  &  - Disable reading a file with no time variable.  \\
+2.05.00  &  - Export of \file{$\ast$.csv} file is now to start up directory.  \\    
+2.04.00  &  - Location of selected graph added to the top of the context menu. \\
+         &  - Double click on a selected graph shows the location, time and value of the point where the cursor is when the double click is performed.  \\
+2.03.00  &  - Plot window is approximately a quarter of the main screen. \\
+         &  - Main window size computed as percentage of the main screen. \\
+         &  - Update spinners and tooltips if no files are in the file listbox.  \\
+2.02.02  &  - Close option added to file menu, close will close the files and exit will exiting the program.  \\
+2.02.01  &  - Set the tooltip to the filename which is selected in the file listbox.  \\
+2.02.00  &  - Upgrade to QT 5.12.1.  \\
+2.01.??  &  - No information available.  \\
+\end{longtable} 
+%--- end light blue table ---
+%
 %--------------------------------------------------------------------------------
 \section{Main window}
 \begin{figure}[H]

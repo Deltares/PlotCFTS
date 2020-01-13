@@ -371,9 +371,9 @@ void MainWindow::ExportToCSV()
     fpo.open(csv_filename);
     int i_rec = 1;
     QString name1(getfullversionstring_plot_cf_time_series() + 4);
-    fpo << i_rec << " Created by: ," <<  name1.trimmed().replace(",", " ").toStdString() << endl;  // Skip the @(#) string in the result of getfullversionstring_plot_cf_time_series()
+    fpo << i_rec << " Created by:, " <<  name1.trimmed().replace(",", ";").toStdString() << endl;  // Skip the @(#) string in the result of getfullversionstring_plot_cf_time_series()
     i_rec++;
-    fpo << i_rec << " Results taken from file: ," << strdup(tsfile->fname.absoluteFilePath().toUtf8()) << endl;
+    fpo << i_rec << " Results taken from file:, " << strdup(tsfile->fname.absoluteFilePath().toUtf8()) << endl;
 
     // List the meta-data
     global_attributes = tsfile->get_global_attributes();
@@ -382,7 +382,7 @@ void MainWindow::ExportToCSV()
         i_rec++;
         QString name1(global_attributes->attribute[i]->name);
         QString name2(global_attributes->attribute[i]->cvalue);
-        fpo << i_rec << " " << name1.trimmed().replace(",", " ").toStdString() << " ," << name2.trimmed().replace(",", " ").toStdString() << endl;
+        fpo << i_rec << " " << name1.trimmed().replace(",", ";").toStdString() << ", " << name2.trimmed().replace(",", ";").toStdString() << endl;
     }
 
     i_rec++;
@@ -393,24 +393,25 @@ void MainWindow::ExportToCSV()
     {
         for (int i = 0; i < nr_locs; i++)
         {
+            QString q_name(parameter[pars[j]].name);
             if (nr_layers != 0)
             {
-                fpo << " ," << parameter[pars[j]].name << " [" << parameter[pars[j]].unit << "], " << "layer: " << i_layer + 1;
+                fpo << ", " << strdup(q_name.toUtf8().trimmed().replace(",", ";")) << " [" << parameter[pars[j]].unit << "], " << "layer: " << i_layer + 1;
             }
             else {
-                fpo << " ," << parameter[pars[j]].name << " [" << parameter[pars[j]].unit << "]";
+                fpo << ", " << strdup(q_name.toUtf8().trimmed().replace(",", ";")) << " [" << parameter[pars[j]].unit << "]";
             }
         }
     }
     fpo << endl;
 
     i_rec++;
-    fpo << i_rec << " Locations: " << nr_locs;  // No endl, list of stations is given
+    fpo << i_rec << " Locations : " << nr_locs;  // No endl, list of stations is given
     for (int j = 0; j < nr_pars; j++)
     {
         for (int i = 0; i < nr_locs; i++)
         {
-            fpo << " ," << strdup(location_name[locs[i]]->toUtf8().trimmed().replace(",", " "));
+            fpo << ", " << strdup(location_name[locs[i]]->toUtf8().trimmed().replace(",", ";"));
         }
     }
     fpo << endl;
@@ -421,9 +422,10 @@ void MainWindow::ExportToCSV()
     fpo << "DateTime";
     for (int j = 0; j < nr_pars; j++)
     {
+        QString q_name(parameter[pars[j]].name);
         for (int i = 0; i < nr_locs; i++)
         {
-            fpo << " ," << parameter[pars[j]].name << " " << strdup(location_name[locs[i]]->toUtf8().trimmed().replace(","," "));  // In a csv file, the names do not allow commas
+            fpo << ", " << strdup(q_name.toUtf8().trimmed().replace(",", ";")) << " --- " << strdup(location_name[locs[i]]->toUtf8().trimmed().replace(",",";"));  // In a csv file, the names do not allow commas
         }
     }
     fpo << endl;

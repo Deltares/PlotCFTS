@@ -117,11 +117,11 @@ void set_theme(QApplication * app, QDir exec_dir)
     {
     case 1:
         {
+            app->setStyle(QStyleFactory::create("Fusion"));
             QFile styleFile(exec_dir.absolutePath() + "/style.qss" );
             bool succes = styleFile.open(QFile::ReadOnly);
             if (succes)
             {
-                app->setStyle(QStyleFactory::create("Fusion"));
                 QString style(styleFile.readAll());
                 app->setStyleSheet(style);
             }
