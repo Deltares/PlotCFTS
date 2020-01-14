@@ -364,6 +364,23 @@ void TSFILE::read_parameters()
         par_dim_ids = (long *)malloc(sizeof(long *)*ndims);
         status = nc_inq_vardimid(this->ncid, i_var, (int*)par_dim_ids);
 
+        // check on the time dimension
+        bool is_time_series = false;
+        for (int i = 0; i < ndims; i++)
+        {
+            status = nc_inq_dim(this->ncid, par_dim_ids[i], dim_name, &par_dim[i]);
+            if (!strcmp(this->time_var_name, dim_name))
+            {
+                is_time_series = true;
+                break;
+            }
+        }
+        if (!is_time_series)
+        {
+            //there is no time-dimension, so this variable is not a time series
+            continue;
+        }
+
         status = nc_inq_attlen(this->ncid, i_var, "coordinates", &length);
         if (status == NC_NOERR)
         {

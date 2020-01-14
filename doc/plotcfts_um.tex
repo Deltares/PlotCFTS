@@ -37,7 +37,7 @@
 
 %--------------------------------------------------------------------------------
 \section{Release Notes}
-
+\phantom{m}\vspace{-\baselineskip}
 %
 %--- begin light blue table ---
 \begin{longtable}{p{16mm-12pt}|p{\textwidth-16mm-12pt}} 
@@ -52,6 +52,7 @@
 \endfoot 
 \bottomline 
 \endlastfoot 
+2.09.00  &  - Some parameters where listed without having the time-dimension. Now a parameter need the time-dimension to be present in Parameter listbox.  \\
 2.08.00  &  - Export to CSV, commas (,) in names replaced by semi-coumn (;).  \\
          &  - Fusion style theme used, advised by QT application. \\
 2.07.00  &  - Show main window before loading the file given via the command line arguments.  \\
@@ -71,20 +72,28 @@
 %--- end light blue table ---
 %
 %--------------------------------------------------------------------------------
+\newpage
 \section{Main window}
+\phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
     \centering    
         \includegraphics[width=0.9\textwidth]{pictures/main.png}
     \caption{Openings window of the program PlotCFTS (\textbf{Plot} \textbf{C}limate and \textbf{F}orecast \textbf{T}ime \textbf{S}eries)}
 \end{figure}
+
 %--------------------------------------------------------------------------------
 \section{Menu bar}
+
+%------------------------------------------------------------------------------
 \subsection{File}
+\phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
     \centering    
-    \includegraphics[width=0.25\textwidth]{pictures/menu_file.png}
+    \includegraphics[width=0.20\textwidth]{pictures/menu_file.png}
     \caption{Menu \menuarrow File}
 \end{figure}
+
+%------------------------------------------------------------------------------
 \subsubsection{Open file}
 Open a file, all \netcdf files are shown, even if they do not met the \cfstandard.
 If the file does met the Climate and Forecast standard 1.7 the file will be read and the main window will updated with the current information. 
@@ -102,18 +111,24 @@ If the file does not met the \cfstandard or cannot be read due to unsupported ch
     \caption{Message window when a file does not met the \cfstandard or the path contains unsupported characters.\label{fig:notcffile}}
 \end{figure}
 
+%------------------------------------------------------------------------------
 \subsubsection{Close}
 Close all plot windows and opened files.
 
+%------------------------------------------------------------------------------
 \subsubsection{Exit}
 To exit the application \plotcfts.
+
 %--------------------------------------------------------------------------------
 \subsection{Export}
+\phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
     \centering    
-    \includegraphics[width=0.25\textwidth]{pictures/menu_export.png}
+    \includegraphics[width=0.20\textwidth]{pictures/menu_export.png}
     \caption{Menu \menuarrow Export}
 \end{figure}
+
+%------------------------------------------------------------------------------
 \subsubsection{Export to CSV}
 Export the data selected in the main program window to a comma separated value file. 
 The default file name has as basename the current date/time combination  (ex.\ \file{2018-08-08\_230049}) and as extension \ext{csv}.
@@ -123,13 +138,16 @@ The default file name has as basename the current date/time combination  (ex.\ \
     \caption{Export window to export the data as indicated in the main window of the program \plotcfts.}
 \end{figure}
 
-
+%--------------------------------------------------------------------------------
 \subsection{Help}
+\phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
     \centering    
     \includegraphics[width=0.2\textwidth]{pictures/menu_help.png}
     \caption{Menu \menuarrow Help}
 \end{figure}
+
+%--------------------------------------------------------------------------------
 \subsubsection{User Manual}
 Shows the user manual
 \begin{figure}[H]
@@ -137,6 +155,8 @@ Shows the user manual
 	\includegraphics[width=0.9\textwidth]{pictures/menu_help_user_manual.png}
 	\caption{PlotCFTS user manual}
 \end{figure}
+
+%--------------------------------------------------------------------------------
 \subsubsection{About}
 Shows the about box.
 \begin{figure}[H]
@@ -144,19 +164,25 @@ Shows the about box.
     \includegraphics[width=0.4\textwidth]{pictures/menu_help_about.png}
     \caption{About box}
 \end{figure}
+
 %--------------------------------------------------------------------------------
 \section{Filename}
+\phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
     \centering    
     \includegraphics[width=0.9\textwidth]{pictures/group_filenames.png}
     \caption{List box for filenames.}
-\end{figure}%--------------------------------------------------------------------------------
+\end{figure}
+
+%--------------------------------------------------------------------------------
 \section{Select time series}
+\phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
 \centering    
 \includegraphics[width=0.9\textwidth]{pictures/group_select_time_series.png}
 \caption{Combobox within group \menuarrow{Selected Time Series}}
 \end{figure}
+
 %--------------------------------------------------------------------------------
 \section{Parameter, Location, Time series selection}
 The groups \menu{Parameter, Location}  and \menu{Time series} are shown in \autoref{fig:groupplotting}:
@@ -167,6 +193,7 @@ The groups \menu{Parameter, Location}  and \menu{Time series} are shown in \auto
 \end{figure}
 With this group you are able to select a parameter(s) and a location(s) and the desired part of the time series. 
 If no part of the time-series is selected thew whole time series will be used for plotting the graph.
+
 %--------------------------------------------------------------------------------
 \section{Plotting}
 The group \menu{Plotting} is shown in \autoref{fig:groupplotting}:
@@ -175,7 +202,10 @@ The group \menu{Plotting} is shown in \autoref{fig:groupplotting}:
     \includegraphics[width=0.9\textwidth]{pictures/group_plotting.png}
     \caption{Group Plotting. \label{fig:groupplotting}}
 \end{figure}
-%--------------------------------------------------------------------------------\subsection{Button \button{New Plot}}
+
+%--------------------------------------------------------------------------------
+\subsection{Button \button{New Plot}}
+\phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
     \centering    
     \includegraphics[width=0.9\textwidth]{pictures/plot.png}
@@ -185,8 +215,10 @@ See \autoref{sec:howtohandleplot} for an explanation of available options to sca
 \subsection{Combobox next to button \button{Add}}
 With this combobox you are able to select a plot by its number in which an additional graph can be plotted.
 
+%--------------------------------------------------------------------------------
 \subsection{Button \button{Add}}
 When pressing this button the graph of the selected Parameter--Location will be added to the selected plot,idicated by the plot number.
+
 %--------------------------------------------------------------------------------
 \section{Global Attributes}
 Showing the main global attributes as defined in the Climate and Forecast compliant Time Series file file (\netcdf format, see \autoref{fig:globalattributes}).
@@ -204,10 +236,11 @@ The status bar present the compilation date and time, the version number of the 
     \includegraphics[width=0.9\textwidth]{pictures/status_bar.png}
     \caption{Status bar\label{fig:statusbar}}
 \end{figure}
+
 %------------------------------------------------------------------------------
 \section{Plot area\label{sec:howtohandleplot}}
 \subsection{Zooming}
-\begin{figure}[H]
+\phantom{m}\vspace{-\baselineskip}\begin{figure}[H]
     \centering
     \begin{subfigure}{0.3\textwidth}
     \includegraphics[width=\textwidth]{pictures/plot_zoom_point_multiplication.png}
@@ -225,19 +258,26 @@ The status bar present the compilation date and time, the version number of the 
 \end{subfigure}
 \caption{Several types of zooming: point multiplication, $x$-axis and $y$-axis. The zooming factor is scaled by the scroll wheel}
 \end{figure}
+
 %------------------------------------------------------------------------------
 \subsection{Select a graph}
+\phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
     \centering    
     \includegraphics[width=0.9\textwidth]{pictures/plot_selected_graph.png}
     \caption{Graph selected and edit window for graph name\label{fig:selected graph}}
 \end{figure}
+
+%------------------------------------------------------------------------------
 \subsection{Select a graph}
+\phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
     \centering    
     \includegraphics[width=0.9\textwidth]{pictures/plot_context_menu.png}
     \caption{Selected graph with context menu indicating the location in legend\label{fig:selected graph_with_context_menu}}
 \end{figure}
+
+%------------------------------------------------------------------------------
 \subparagraph*{Context menu}
 The context menu may have four items:
 \begin{enumerate}
@@ -252,6 +292,8 @@ The context menu may have four items:
     \item \textbf{Print to PDF}\newline
     Selecting this item the plot will be saved to a pdf-file.
 \end{enumerate}
+
+%------------------------------------------------------------------------------
 \subparagraph*{Double click on a selected graph}
 When a double click is given on een selected graph a message window will shown the location, time and value of the point on the graph where the double click is performed.
 \begin{figure}[H]
@@ -259,8 +301,10 @@ When a double click is given on een selected graph a message window will shown t
     \includegraphics[width=0.9\textwidth]{pictures/plot_double_click_selected_graph.png}
     \caption{Selected graph with information window containing the location, time and value of the cursor location\label{fig:double_click_selected_graph}}
 \end{figure}
+
 %------------------------------------------------------------------------------
 \subsection{Editing labels}
+
 %------------------------------------------------------------------------------
 \subsection{Multiple y-axis}
 When multiple axis are needed each y-axis label gets a prefix, this label will also be visible as prefix in the legend.
@@ -269,6 +313,7 @@ When multiple axis are needed each y-axis label gets a prefix, this label will a
     \includegraphics[width=0.9\textwidth]{pictures/multiple_yaxis.png}
     \caption{Multiple y-axis, legend and y-axis labels has a prefix. \label{fig:multiple y-axis}}
 \end{figure}
+
 %------------------------------------------------------------------------------
 \subsection{Support ISO 10646 charaters set (UTF-8)}
 The plot program support the ISO 10646 character set as seen in \autoref{fig:ChineseStation}, the location list box contains Norwegian and Chinese characters.
