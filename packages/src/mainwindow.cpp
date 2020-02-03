@@ -476,7 +476,7 @@ void MainWindow::ExportToCSV()
         {
             for (int i = 0; i < nr_locs; i++)
             {
-                fpo << std::scientific << std::setprecision(std::numeric_limits<long double>::digits10 + 1) << ", " << y_values[j][i][k];  // maximal precision
+                fpo << std::scientific << std::setprecision(std::numeric_limits<long double>::digits10 + 1) << ", " << y_values[j][i][tims[k]];  // maximal precision
             }
         }
         fpo << endl;
