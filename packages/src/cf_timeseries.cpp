@@ -903,10 +903,8 @@ void TSFILE::read_global_attributes()
     nc_type att_type;
     size_t att_length;
 
-    char * att_name = (char *)malloc(sizeof(char) * (NC_MAX_NAME + 1));
-    att_name[0] = '\0';
-    char * att_value = (char *)malloc(sizeof(char) * (NC_MAX_NAME + 1));
-    att_name[0] = '\0';
+    char * att_name_c = (char *)malloc(sizeof(char) * (NC_MAX_NAME + 1));
+    att_name_c[0] = '\0';
 
     status = nc_inq(this->ncid, &ndims, &nvars, &natts, &nunlimited);
 
@@ -920,9 +918,9 @@ void TSFILE::read_global_attributes()
 
     for (long i = 0; i < natts; i++)
     {
-        status = nc_inq_attname(this->ncid, NC_GLOBAL, i, att_name);
-        status = nc_inq_att(this->ncid, NC_GLOBAL, att_name, &att_type, &att_length);
-        this->global_attributes->attribute[i]->name = strdup(att_name);
+        status = nc_inq_attname(this->ncid, NC_GLOBAL, i, att_name_c);
+        status = nc_inq_att(this->ncid, NC_GLOBAL, att_name_c, &att_type, &att_length);
+        this->global_attributes->attribute[i]->name = strdup(att_name_c);
         this->global_attributes->attribute[i]->type = NC_CHAR;
         this->global_attributes->attribute[i]->length = att_length;
         this->global_attributes->attribute[i]->cvalue = NULL;
@@ -932,9 +930,13 @@ void TSFILE::read_global_attributes()
         this->global_attributes->attribute[i]->dvalue = NULL;
         if (att_type == NC_CHAR)
         {
-            status = nc_get_att_text(this->ncid, NC_GLOBAL, att_name, att_value);
-            att_value[att_length] = '\0';
-            this->global_attributes->attribute[i]->cvalue = strdup(att_value);
+            char * att_value_c = (char *)malloc(sizeof(char) * (att_length + 1));
+            att_value_c[0] = '\0';
+            status = nc_get_att_text(this->ncid, NC_GLOBAL, att_name_c, att_value_c);
+            att_value_c[att_length] = '\0';
+            this->global_attributes->attribute[i]->cvalue = strdup(att_value_c);
+            free(att_value_c);
+            att_value_c = nullptr;
         }
     }
 }
