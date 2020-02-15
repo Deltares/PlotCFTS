@@ -275,17 +275,20 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
                         }
                         else if (datetime_units.contains("min"))  // minutes, minute, min
                         {
-                            qdt_times.append(this->RefDate->addSecs(times[j] * 60.0));
+                            times[j] = times[j] * 60.0;
+                            qdt_times.append(this->RefDate->addSecs(times[j]));
                         }
                         else if (datetime_units.contains("h"))  // hours, hour, hrs, hr, h
                         {
-                            qdt_times.append(this->RefDate->addSecs(times[j] * 3600.0));
+                            times[j] = times[j] * 3600.0;
+                            qdt_times.append(this->RefDate->addSecs(times[j]));
                         }
                         else if (datetime_units.contains("d"))  // days, day, d
                         {
-                            qdt_times.append(this->RefDate->addSecs(times[j] * 24.0 * 3600.0));
+                            times[j] = times[j] * 24.0 * 3600.0;
+                            qdt_times.append(this->RefDate->addSecs(times[j]));
                         }
-
+                        // time[j] is now defined in seconds
 #if defined (DEBUG)
                         if (dt < 1.0)
                             QString janm = qdt_times[j].toString("yyyy-MM-dd hh:mm:ss.zzz");
@@ -387,7 +390,37 @@ void TSFILE::read_parameters()
             coord = (char *)malloc(sizeof(char) * (length + 1));
             status = nc_get_att(this->ncid, i_var, "coordinates", coord);
             coord[length] = '\0';
+        }
 
+        if (status != NC_NOERR)
+        {
+            // Look for variables with (time, location) dimension, 
+            // the location is determined by the cf_role="timeseries_id"
+            int var_found = 0;
+            for (int i = 0; i < ndims; i++)
+            {
+                status = nc_inq_dim(this->ncid, par_dim_ids[i], dim_name, &par_dim[i]);
+                if (!strcmp(dim_name, this->time_var_name))
+                {
+                    var_found += 1;
+                }
+                for (int j = 0; j < nr_par_loc; j++)
+                {
+                    if (!strcmp(dim_name, this->par_loc[j]->location_dim_name))
+                    {
+                        coord = strdup(this->par_loc[j]->location_var_name);
+                        var_found += 1;
+                    }
+                }
+                status = -1;
+                if (var_found == 2)
+                { 
+                    status = NC_NOERR;
+                }
+            }
+        }
+        if (status == NC_NOERR)
+        {
             for (int i = 0; i < nr_par_loc; i++)
             {
                 char * crd = strdup(this->par_loc[i]->location_var_name);
@@ -815,6 +848,7 @@ void TSFILE::read_locations()
                         ensure_capacity_par_loc(nr_par_loc);
                         this->par_loc[i_par_loc]->location_var_name = strdup("model_wide");
                         this->par_loc[i_par_loc]->location_long_name = strdup("Model wide");
+                        this->par_loc[i_par_loc]->location_dim_name = strdup("");
                         this->par_loc[i_par_loc]->nr_locations = 1;
                         this->par_loc[i_par_loc]->location = new QString *[1];
                         this->par_loc[i_par_loc]->location[0] = new QString ("Model wide");
