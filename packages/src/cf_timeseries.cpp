@@ -458,9 +458,12 @@ void TSFILE::read_parameters()
             status = nc_inq_attlen(this->ncid, i_var, "long_name", &length);
             if (status == NC_NOERR)
             {
-                parameter_name = (char *)malloc(sizeof(char) * (length + 1));
-                status = nc_get_att(this->ncid, i_var, "long_name", parameter_name);
-                parameter_name[length] = '\0';
+                char * parameter_name_c = (char *)malloc(sizeof(char) * (length + 1));
+                status = nc_get_att(this->ncid, i_var, "long_name", parameter_name_c);
+                parameter_name_c[length] = '\0';
+                parameter_name = strdup(StripWhiteSpaces(parameter_name_c));
+                free(parameter_name_c);
+                parameter_name_c = nullptr;
             }
             else
             {
@@ -524,9 +527,12 @@ void TSFILE::read_parameters()
                 status = nc_inq_attlen(this->ncid, i_var, "long_name", &length);
                 if (status == NC_NOERR)
                 {
-                    parameter_name = (char *)malloc(sizeof(char) * (length + 1));
-                    status = nc_get_att(this->ncid, i_var, "long_name", parameter_name);
-                    parameter_name[length] = '\0';
+                    char * parameter_name_c = (char *)malloc(sizeof(char) * (length + 1));
+                    status = nc_get_att(this->ncid, i_var, "long_name", parameter_name_c);
+                    parameter_name_c[length] = '\0';
+                    parameter_name = strdup(StripWhiteSpaces(parameter_name_c));
+                    free(parameter_name_c);
+                    parameter_name_c = nullptr;
                 }
                 else
                 {
@@ -542,7 +548,7 @@ void TSFILE::read_parameters()
                     status = nc_get_att(this->ncid, i_var, "units", unit);
                     unit[length] = '\0';
                     this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup(unit);
-                    free(unit); unit = NULL;
+                    free(unit); unit = nullptr;
                 }
                 else
                 {
@@ -603,9 +609,12 @@ void TSFILE::read_parameters()
                     status = nc_inq_attlen(this->ncid, i_var, "long_name", &length);
                     if (status == NC_NOERR)
                     {
-                        parameter_name = (char *)malloc(sizeof(char) * (length + 1));
-                        status = nc_get_att(this->ncid, i_var, "long_name", parameter_name);
-                        parameter_name[length] = '\0';
+                        char * parameter_name_c = (char *)malloc(sizeof(char) * (length + 1));
+                        status = nc_get_att(this->ncid, i_var, "long_name", parameter_name_c);
+                        parameter_name_c[length] = '\0';
+                        parameter_name = StripWhiteSpaces(parameter_name_c);
+                        free(parameter_name_c);
+                        parameter_name_c = nullptr;
                     }
                     else
                     {
@@ -1010,6 +1019,7 @@ double * TSFILE::get_time_series(long cb_index, char * parameter, long loc_id, l
             tmp_name = (char *)malloc(sizeof(char) * (length + 1));
             tmp_name[length] = '\0';
             status = nc_get_att(this->ncid, i, "long_name", tmp_name);
+            tmp_name = StripWhiteSpaces(tmp_name);
             if (!strcmp(parameter, tmp_name))
             {
                 par_id = i;
@@ -1110,3 +1120,22 @@ void TSFILE::ensure_capacity_parameters(long i_par_loc, long ndims)
     this->par_loc[i_par_loc]->parameter[i_param]->dim_val = (long *)malloc(sizeof(long *) * ndims);
     this->par_loc[i_par_loc]->parameter[i_param]->dim_name = (char **)malloc(sizeof(char *) * ndims);
 }
+/* @@
+ *
+ * Remove leading and trailing blanks from a string ended with \0
+ */
+char * TSFILE::StripWhiteSpaces(char * string)
+{
+    char * s;
+    /*
+     * Remove first trailing whitespaces and than leading
+     */
+    for (s = string + strlen(string) - 1;
+        (*s == ' ' || *s == '\t' || *s == '\n');
+        s--);
+    *(s + 1) = '\0';
+    for (s = string; *s == ' ' || *s == '\t'; s++);
+    strcpy(string, s);
+    return string;
+}
+

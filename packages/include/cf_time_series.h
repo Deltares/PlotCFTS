@@ -28,7 +28,16 @@ struct _parameter {
     char ** dim_name;
     char * name;
     char * unit;
-}; 
+    int pre_selected;  // tri-state: 0: not pre-selected (show all); only when saved to json file (also in memory will this action be performed to generate a new set of preselected parameters)
+                       //            1: pre-selected (show all); increase by 1 show then show only (2) (Should know what was previously selected)
+};
+
+struct _location {
+    QString name;
+    int pre_selected;  // tri-state: 0: not pre-selected (show all); only when saved to json file (also in memory will this action be performed to generate a new set of preselected parameters)
+                       //            1: pre-selected (show all); increase by 1 show then show only (2)
+                       //            2: show pre-selected; decrease by 1, show all (0 and 1) (Should know what was previously selected)
+};
 
 struct _par_loc {
     char * location_var_name;  // to check the coordinate attribute
@@ -38,6 +47,7 @@ struct _par_loc {
     long nr_parameters;
     long nr_locations;
     struct _parameter ** parameter;
+    struct _location ** locations;
     QString ** location;
 };
 
@@ -67,7 +77,7 @@ public:
     quint64 ReferenceDatemSecsSinceEpoch();
     void ensure_capacity_par_loc(long);
     void ensure_capacity_parameters(long, long);
-    
+
     QFileInfo fname;
     FILE_TYPE type;
     struct _meta * meta;
@@ -87,6 +97,8 @@ public:
 #endif
 
 private:
+    char * StripWhiteSpaces(char *);
+
     char * tsfilefilename;
     struct _par_loc ** par_loc;  // array of parameters, locations and time-series
     QStringList date_time;
