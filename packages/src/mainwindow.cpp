@@ -112,13 +112,13 @@ void MainWindow::createActions()
 
     openPreSelect = new QAction(tr("&Open Pre Selection"), this);
     //preSelect->setShortcut(tr("Ctrl+C"));
-    openPreSelect->setStatusTip(tr("Open file with preselected paramaters and locations"));
+    openPreSelect->setStatusTip(tr("Open file with preselected parameters and locations"));
     openPreSelect->setEnabled(false);
     connect(openPreSelect, SIGNAL(triggered()), this, SLOT(OpenPreSelection()));
 
     savePreSelect = new QAction(tr("&Save Pre Selection"), this);
     //preSelect->setShortcut(tr("Ctrl+C"));
-    savePreSelect->setStatusTip(tr("Save preselected paramaters and locations"));
+    savePreSelect->setStatusTip(tr("Save preselected parameters and locations"));
     savePreSelect->setEnabled(true);
     connect(savePreSelect, SIGNAL(triggered()), this, SLOT(SavePreSelection()));
 
