@@ -55,6 +55,12 @@
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">plot_cf_time_series</TargetName>
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IgnoreImportLibrary>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\boost\boost_1_72_0;</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\boost\boost_1_72_0;</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>.;.\include;$(QTDIR)\include;$(QTDIR)\include\QtPrintSupport;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtCore;release;.;$(QTDIR)\mkspecs\win32-msvc2013;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -157,6 +163,7 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
     <ClCompile Include="src\qcustomplot.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(QT5DIR64)\include;$(QT5DIR64)\include\QtPrintSupport;$(QT5DIR64)\include\QtWidgets;$(QT5DIR64)\include\QtGui;$(QT5DIR64)\include\QtANGLE;$(QT5DIR64)\include\QtCore;release;.;$(QT5DIR64)\mkspecs\win32-msvc2013;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="src\read_json.cpp" />
     <ClCompile Include="src\time_series_plot.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +200,7 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
   <ItemGroup>
     <ClInclude Include="include\cf_time_series.h" />
     <ClInclude Include="include\program_arguments.h" />
+    <ClInclude Include="include\read_json.h" />
     <CustomBuild Include="include\time_series_plot.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QT5DIR64)/bin/moc.exe   %(FullPath)    -o generated\moc_%(Filename).cpp</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QT5DIR64)/bin/moc.exe   %(FullPath)    -o generated\moc_%(Filename).cpp</Command>

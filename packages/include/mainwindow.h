@@ -22,6 +22,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <boost/lexical_cast.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
 #include <QtCore/QString>
 #include <QtCore/QFile>
 #include <QtCore/QProcess>
@@ -65,6 +69,7 @@
 #include "cf_time_series.h"
 #include "qcustomplot.h"
 #include "time_series_plot.h"
+#include "read_json.h"
 
 #define    WAIT_MODE 1
 #define NO_WAIT_MODE 0
@@ -81,12 +86,15 @@ protected:
     void dropEvent(QDropEvent *);
 
 public slots:
-    void openFile(QFileInfo ncfile, FILE_TYPE type);
+    void openFile(QFileInfo, FILE_TYPE);
 
 private slots:
     void openFile();
     void closeFile();
     void ExportToCSV();
+    void OpenPreSelection();
+    void OpenPreSelection(TSFILE *, QFileInfo);
+    void SavePreSelection();
     void about();
     void ShowUserManual();
     void close();
@@ -137,6 +145,7 @@ private:
 
     int nr_plot;
     int fil_index;
+    bool m_pre_selection;
 
     TSPlot ** cplot;
     QCustomPlot * customPlot;
@@ -160,6 +169,8 @@ private:
     QMenu * fileMenu;
     QAction * openAct;
     QAction * closeAct;
+    QAction * openPreSelect;
+    QAction * savePreSelect;
     QAction * exitAct;
 
     QMenu * exportMenu;

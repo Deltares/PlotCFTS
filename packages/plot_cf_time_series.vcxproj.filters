@@ -28,12 +28,18 @@
     <ClCompile Include="generated\moc_time_series_plot.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\read_json.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\cf_time_series.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\program_arguments.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\read_json.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

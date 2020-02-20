@@ -174,18 +174,17 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
     double * x_values = tsfile->get_times();
     int i_tsfile_par = -1;
     int i_tsfile_loc = -1;
-    int nr_loc;
     QListWidgetItem * sel_item;
 
     // i_par and i_loc taken from sorted listboxes
     struct _parameter * param = tsfile->get_parameters(cb_index);
     int nr_parameters = tsfile->get_count_parameters(cb_index);
-    QString ** location_name = tsfile->get_location_names(cb_index);
+    struct _location * location = tsfile->get_locations(cb_index);
+    int nr_locations = tsfile->get_count_locations(cb_index);
 
     sel_item = lb_parameters->item(i_par);
 #if defined (DEBUG)
     QString janm = sel_item->text();
-    char * janm2 = strdup(janm.toUtf8());
 #endif
     for (long i = 0; i < nr_parameters; i++)
     {
@@ -199,12 +198,12 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
     sel_item = lb_locations->item(i_loc);
 #if defined (DEBUG)
     QString janm3 = sel_item->text();
-    char * janm4 = strdup(janm3.toUtf8());
 #endif
-    nr_loc = lb_locations->count();
-    for (long i = 0; i < nr_loc; i++)
+    for (long i = 0; i < nr_locations; i++)
     {
-        if (!location_name[i]->compare(sel_item->text().toUtf8()))
+        QString q_loc(*location[i].name); 
+        QString s_name = sel_item->text();
+        if (!q_loc.compare(s_name))
         {
             i_tsfile_loc = i;
             break;
@@ -264,7 +263,7 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
     _nr_graphs = customPlot->graphCount();
     if (this->_nr_y_axis_labels == 1)
     {
-        QString name = QString("%1").arg(*location_name[i_tsfile_loc]).trimmed();
+        QString name = QString("%1").arg(*location[i_tsfile_loc].name).trimmed();
         customPlot->graph()->setName(name);
     }
     else
@@ -305,7 +304,7 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
                 }
             }
         }
-        customPlot->graph()->setName(y_label_counter + QString("%1").arg(*location_name[i_tsfile_loc]).trimmed());
+        customPlot->graph()->setName(y_label_counter + QString("%1").arg(*location[i_tsfile_loc].name).trimmed());
     }
     QPen graphPen;
     // set colors

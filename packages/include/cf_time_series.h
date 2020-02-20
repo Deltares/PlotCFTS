@@ -33,7 +33,7 @@ struct _parameter {
 };
 
 struct _location {
-    QString name;
+    QString * name;
     int pre_selected;  // tri-state: 0: not pre-selected (show all); only when saved to json file (also in memory will this action be performed to generate a new set of preselected parameters)
                        //            1: pre-selected (show all); increase by 1 show then show only (2)
                        //            2: show pre-selected; decrease by 1, show all (0 and 1) (Should know what was previously selected)
@@ -47,8 +47,8 @@ struct _par_loc {
     long nr_parameters;
     long nr_locations;
     struct _parameter ** parameter;
-    struct _location ** locations;
-    QString ** location;
+    struct _location ** location;
+    QString ** q_location;
 };
 
 
@@ -70,13 +70,17 @@ public:
     char * get_par_loc_long_name(long);
     struct _parameter * get_parameters(long);
     long get_count_locations(long);
-    QString ** get_location_names(long);
+    struct _location * get_locations(long);
+    long put_location(long, long, struct _location *);
+    long put_parameter(long, long, struct _parameter *);
+
     long get_count_times();
     double * get_times();
     QList<QDateTime> get_qdt_times();
     quint64 ReferenceDatemSecsSinceEpoch();
     void ensure_capacity_par_loc(long);
     void ensure_capacity_parameters(long, long);
+    void ensure_capacity_locations(long, long);
 
     QFileInfo fname;
     FILE_TYPE type;

@@ -94,10 +94,10 @@ TSFILE::~TSFILE()
         // delete locations
         for (int j = 0; j < par_loc[i]->nr_locations; j++)
         {
-            delete par_loc[i]->location[j];
-            par_loc[i]->location[j] = NULL;
+            delete par_loc[i]->q_location[j];
+            par_loc[i]->q_location[j] = NULL;
         }
-        delete par_loc[i]->location;
+        delete par_loc[i]->q_location;
         par_loc[i]->nr_locations = 0;
         // delete times (it is a list)
         for (auto iter = qdt_times.begin(); iter != qdt_times.end(); ++iter)
@@ -221,11 +221,8 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
                     this->RefDate = new QDateTime(date, time);
 #if defined(DEBUG)
                     QString janm = date.toString("yyyy-MM-dd");
-                    char * janm1 = strdup(janm.toUtf8());
                     janm = time.toString();
-                    char * janm2 = strdup(janm.toUtf8());
                     janm = this->RefDate->toString("yyyy-MM-dd hh:mm:ss.zzz");
-                    char * janm3 = strdup(janm.toUtf8());
 #endif
                     times = (double *)malloc(sizeof(double)*datetime_ntimes);
                     status = nc_get_var_double(this->ncid, i_var, times);
@@ -294,7 +291,6 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
                             QString janm = qdt_times[j].toString("yyyy-MM-dd hh:mm:ss.zzz");
                         else
                             QString janm = qdt_times[j].toString("yyyy-MM-dd hh:mm:ss");
-                        char * janm3 = strdup(janm.toUtf8());
 #endif
                     }
                     break;
@@ -671,8 +667,27 @@ struct _parameter * TSFILE::get_parameters(long i_par_loc)
             param[i].dim_val[j] = this->par_loc[i_par_loc]->parameter[i]->dim_val[j];
             param[i].dim_name[j] = strdup(this->par_loc[i_par_loc]->parameter[i]->dim_name[j]);
         }
+        param[i].pre_selected = this->par_loc[i_par_loc]->parameter[i]->pre_selected;
     }
     return param;
+}
+
+long TSFILE::put_parameter(long i_par_loc, long i, struct _parameter * param)
+{
+    long status = 0;
+
+    this->par_loc[i_par_loc]->parameter[i]->name = strdup(param[i].name);
+    this->par_loc[i_par_loc]->parameter[i]->unit = strdup(param[i].unit);
+    this->par_loc[i_par_loc]->parameter[i]->ndim = param[i].ndim;
+    for (long j = 0; j < param[i].ndim; j++)
+    {
+        this->par_loc[i_par_loc]->parameter[i]->dim_id[j] = param[i].dim_id[j];
+        this->par_loc[i_par_loc]->parameter[i]->dim_val[j] = param[i].dim_val[j];
+        this->par_loc[i_par_loc]->parameter[i]->dim_name[j] = strdup(param[i].dim_name[j]);
+    }
+    this->par_loc[i_par_loc]->parameter[i]->pre_selected = param[i].pre_selected;
+
+    return status;
 }
 
 void TSFILE::read_locations()
@@ -786,7 +801,8 @@ void TSFILE::read_locations()
                     }
                     mem_length = mem_length * length;
                 }
-                this->par_loc[i_par_loc]->location = new QString *[nr_locations];
+                ensure_capacity_locations(i_par_loc, nr_locations);
+                this->par_loc[i_par_loc]->q_location = new QString *[nr_locations];
                 // reading 64 strings for each location, length of string??
                 if (nc_type == NC_STRING)
                 {
@@ -802,7 +818,8 @@ void TSFILE::read_locations()
                             QString str = codec2->toUnicode(*(location_strings + k * name_len + k2));
                             janm = janm + str;
                         }
-                        this->par_loc[i_par_loc]->location[k] = new QString(janm);
+                        this->par_loc[i_par_loc]->q_location[k] = new QString(janm);
+                        this->par_loc[i_par_loc]->location[k]->name = new QString(janm);
                     }
                     free(location_strings);
                 }
@@ -815,10 +832,13 @@ void TSFILE::read_locations()
                     for (int k = 0; k < nr_locations; k++)
                     {
                         strncpy(janm, location_chars + k * name_len, name_len);
-                        this->par_loc[i_par_loc]->location[k] = new QString(janm);
+                        this->par_loc[i_par_loc]->q_location[k] = new QString(janm);
+                        this->par_loc[i_par_loc]->location[k]->name = new QString(janm);
                     }
                     free(janm);
+                    janm = nullptr;
                     free(location_chars);
+                    location_chars = nullptr;
                 }
                 else
                 {
@@ -859,8 +879,10 @@ void TSFILE::read_locations()
                         this->par_loc[i_par_loc]->location_long_name = strdup("Model wide");
                         this->par_loc[i_par_loc]->location_dim_name = strdup("");
                         this->par_loc[i_par_loc]->nr_locations = 1;
-                        this->par_loc[i_par_loc]->location = new QString *[1];
-                        this->par_loc[i_par_loc]->location[0] = new QString ("Model wide");
+                        this->par_loc[i_par_loc]->q_location = new QString *[1];
+                        this->par_loc[i_par_loc]->q_location[0] = new QString ("Model wide");
+                        ensure_capacity_locations(i_par_loc, 1);
+                        this->par_loc[i_par_loc]->location[0]->name = new QString("Model wide");
                     }
                 }
                 free(sn_dims);
@@ -900,7 +922,8 @@ void TSFILE::read_locations()
                         this->par_loc[i_par_loc]->location_var_name = strdup("model_wide");
                         this->par_loc[i_par_loc]->location_long_name = strdup("Model wide");
                         this->par_loc[i_par_loc]->nr_locations = 1;
-                        this->par_loc[i_par_loc]->location[0] = new QString("Model wide");
+                        this->par_loc[i_par_loc]->q_location[0] = new QString("Model wide");
+                        this->par_loc[i_par_loc]->location[0]->name = new QString("Model wide");
                     }
                 }
                 free(sn_dims);
@@ -925,19 +948,28 @@ long TSFILE::get_count_locations(long i_par_loc)
     return this->par_loc[i_par_loc]->nr_locations;
 }
 
-QString ** TSFILE::get_location_names(long i_par_loc)
+struct _location *  TSFILE::get_locations(long i_par_loc)
 {
+    struct _location * location;
     long nr_loc = this->par_loc[i_par_loc]->nr_locations;
-    QString ** locations;
-    locations = new QString *[nr_loc];
+    location = (struct _location *) malloc(sizeof(struct _location) * nr_loc);
     for (long i = 0; i < nr_loc; i++)
     {
-        locations[i] = this->par_loc[i_par_loc]->location[i];
+        location[i].name = this->par_loc[i_par_loc]->location[i]->name;
+        location[i].pre_selected = this->par_loc[i_par_loc]->location[i]->pre_selected;
     }
 
-    return locations;
+    return location;
 }
 
+long TSFILE::put_location(long i_par_loc, long i, struct _location * location)
+{
+    long status = 0;
+    this->par_loc[i_par_loc]->location[i]->name = location[i].name;
+    this->par_loc[i_par_loc]->location[i]->pre_selected = location[i].pre_selected;
+
+    return status;
+}
 
 void TSFILE::read_global_attributes()
 {
@@ -1114,11 +1146,22 @@ void TSFILE::ensure_capacity_parameters(long i_par_loc, long ndims)
     {
         this->par_loc[i_par_loc]->parameter = (struct _parameter **) realloc(this->par_loc[i_par_loc]->parameter, sizeof(struct _parameter *) * this->nr_parameters);
     }
-    i_param = this->par_loc[i_par_loc]->nr_parameters-1;
+    i_param = this->par_loc[i_par_loc]->nr_parameters - 1;
     this->par_loc[i_par_loc]->parameter[i_param] = (struct _parameter *) malloc(sizeof(struct _parameter) * 1);
     this->par_loc[i_par_loc]->parameter[i_param]->dim_id = (long *)malloc(sizeof(long *) * ndims);
     this->par_loc[i_par_loc]->parameter[i_param]->dim_val = (long *)malloc(sizeof(long *) * ndims);
     this->par_loc[i_par_loc]->parameter[i_param]->dim_name = (char **)malloc(sizeof(char *) * ndims);
+    this->par_loc[i_par_loc]->parameter[i_param]->pre_selected = 0;
+}
+void TSFILE::ensure_capacity_locations(long i_par_loc, long nr_locations)
+{
+    this->par_loc[i_par_loc]->location = (struct _location **) malloc(sizeof(struct _location *) * nr_locations);
+    for (int i = 0; i < nr_locations; i++)
+    {
+        this->par_loc[i_par_loc]->location[i] = (struct _location *) malloc(sizeof(struct _location) * 1);
+        this->par_loc[i_par_loc]->location[i]->name  = new QString("");
+        this->par_loc[i_par_loc]->location[i]->pre_selected = 0;
+    }
 }
 /* @@
  *
