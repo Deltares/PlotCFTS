@@ -6,7 +6,7 @@ The executable plot_cf_time_series.exe will placed in folder bin/x64/debug or bi
 The batch file dispatch_plotcfts.bat is used to dispatch and rename the executable to plotcfts.exe
 
 ## Development environment
-At this moment the environment environemnt is based on Visual Studio 2015
+At this moment the environment is based on Visual Studio 2017
 
 ## Environment variables
 Environment variables (example)
