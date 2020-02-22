@@ -93,12 +93,6 @@ TSFILE::~TSFILE()
         par_loc[i]->nr_parameters = 0;
 
         // delete locations
-        for (int j = 0; j < par_loc[i]->nr_locations; j++)
-        {
-            delete par_loc[i]->q_location[j];
-            par_loc[i]->q_location[j] = NULL;
-        }
-        delete par_loc[i]->q_location;
         par_loc[i]->nr_locations = 0;
         // delete times (it is a list)
         for (auto iter = qdt_times.begin(); iter != qdt_times.end(); ++iter)
@@ -803,7 +797,6 @@ void TSFILE::read_locations()
                     mem_length = mem_length * length;
                 }
                 ensure_capacity_locations(i_par_loc, nr_locations);
-                this->par_loc[i_par_loc]->q_location = new QString *[nr_locations];
                 // reading 64 strings for each location, length of string??
                 if (nc_type == NC_STRING)
                 {
@@ -819,7 +812,6 @@ void TSFILE::read_locations()
                             QString str = codec2->toUnicode(*(location_strings + k * name_len + k2));
                             janm = janm + str;
                         }
-                        this->par_loc[i_par_loc]->q_location[k] = new QString(janm);
                         this->par_loc[i_par_loc]->location[k]->name = new QString(janm);
                     }
                     free(location_strings);
@@ -833,7 +825,6 @@ void TSFILE::read_locations()
                     for (int k = 0; k < nr_locations; k++)
                     {
                         strncpy(janm, location_chars + k * name_len, name_len);
-                        this->par_loc[i_par_loc]->q_location[k] = new QString(janm);
                         this->par_loc[i_par_loc]->location[k]->name = new QString(janm);
                     }
                     free(janm);
@@ -880,8 +871,6 @@ void TSFILE::read_locations()
                         this->par_loc[i_par_loc]->location_long_name = strdup("Model wide");
                         this->par_loc[i_par_loc]->location_dim_name = strdup("");
                         this->par_loc[i_par_loc]->nr_locations = 1;
-                        this->par_loc[i_par_loc]->q_location = new QString *[1];
-                        this->par_loc[i_par_loc]->q_location[0] = new QString ("Model wide");
                         ensure_capacity_locations(i_par_loc, 1);
                         this->par_loc[i_par_loc]->location[0]->name = new QString("Model wide");
                     }
@@ -923,7 +912,6 @@ void TSFILE::read_locations()
                         this->par_loc[i_par_loc]->location_var_name = strdup("model_wide");
                         this->par_loc[i_par_loc]->location_long_name = strdup("Model wide");
                         this->par_loc[i_par_loc]->nr_locations = 1;
-                        this->par_loc[i_par_loc]->q_location[0] = new QString("Model wide");
                         this->par_loc[i_par_loc]->location[0]->name = new QString("Model wide");
                     }
                 }

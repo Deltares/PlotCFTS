@@ -211,13 +211,16 @@ void MainWindow::openFile()
     QStringList * list = new QStringList();
 
     str->clear();
-    str->append("TSFILE netCDF");
-    str->append(" (*.nc)");
+    str->append("TSFILE netCDF (*.nc)");
+    list->append(*str);
+    str->clear();
+    str->append("All files (*.*)");
     list->append(*str);
 
     fd->setWindowTitle("Open Time Series file");
     fd->setNameFilters(*list);
     fd->selectNameFilter(list->at(0));
+    fd->setFileMode(QFileDialog::ExistingFiles);
 
     canceled = fd->exec() != QDialog::Accepted;
     if (!canceled)
@@ -228,7 +231,10 @@ void MainWindow::openFile()
             fname = *it;
         }
         ftype = HISTORY;
-        openFile(fname, ftype);
+        for (QStringList::Iterator it = QFilenames->begin(); it != QFilenames->end(); ++it) {
+            fname = *it;
+            openFile(fname, ftype);
+        }
     }
     delete fd;
     delete str;
@@ -270,7 +276,14 @@ void MainWindow::openFile(QFileInfo ncfile, FILE_TYPE type)
     TSFILE * tsfile = new TSFILE(ncfile, type);
     this->openedUgridFile[m_fil_index] = tsfile;
     long ierr = tsfile->read(this->pgBar);
-    updateFileListBox(tsfile);
+    if (ierr == 0)
+    {
+        updateFileListBox(tsfile);
+    }
+    else
+    {
+        QMessageBox::information(this, QObject::tr("Information"), QObject::tr("File is not opened:\n%1").arg(ncfile.absoluteFilePath()));
+    }
 }
 
 
@@ -531,11 +544,15 @@ void MainWindow::OpenPreSelection()
     str->append("Pre-selection");
     str->append(" (*_presel.json)");
     list->append(*str);
+    str->clear();
+    str->append("All files (*.*)");
+    list->append(*str);
 
-    fd->setWindowTitle("Open file with pre-selections for parameters and locations");
+    fd->setWindowTitle("Open file with pre-selections of parameters and locations");
     fd->setNameFilters(*list);
     fd->selectNameFilter(list->at(0));
     fd->setFileMode(QFileDialog::ExistingFiles);
+
     canceled = fd->exec() != QDialog::Accepted;
     if (!canceled)
     {
@@ -868,7 +885,6 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     }
     cb_indx = max(0, cb_indx);
     this->cb_par_loc->setCurrentIndex(cb_indx);
-    tsfile->put_cb_parloc_index(cb_indx);
 
     // List the parameters
     if (tsfile == NULL)
@@ -877,6 +893,7 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     }
     else
     {
+        tsfile->put_cb_parloc_index(cb_indx);
         nr_parameters = tsfile->get_count_parameters(cb_indx);
         param = tsfile->get_parameters(cb_indx);
     }

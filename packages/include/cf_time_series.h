@@ -49,7 +49,6 @@ struct _par_loc {
     bool pre_selection;  // one of the parameters and locaions is pre-selected
     struct _parameter ** parameter;
     struct _location ** location;
-    QString ** q_location;
 };
 
 
