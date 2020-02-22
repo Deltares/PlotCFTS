@@ -1,11 +1,9 @@
 \documentclass{deltares_memo}
-\svnid{$Id: plotcfts_um.tex 2031 2019-07-20 21:54:28Z mooiman $}
-\svnid{$URL: file:///D:/SVNrepository/examples/plot_time_series_ugrid/trunk/doc/plotcfts_um.tex $}
-
+\usepackage{CJKutf8}
 \newcommand{\menuarrow}{$\rightarrow$}
 \newcommand{\plotcfts}{PlotCFTS\xspace}
 \newcommand{\qcustomplot}{QCustomPlot\xspace}
-\newcommand{\netcdf}{NetCDF\xspace}
+\newcommand{\netcdf}{netCDF\xspace}
 \newcommand{\cfstandard}{Climate and Forecast 1.7 standard\xspace}
 
 \newcommand\T{\rule{0pt}{2.6ex}}       % Top T
@@ -52,17 +50,19 @@
 \endfoot 
 \bottomline 
 \endlastfoot 
+3.00.00  &  - Pre-selection of parameters and locations implemented.  \\
+         &  - Multi select of input files allowed.\\
 2.12.00  &  - Support netCDF (CF-1.5, Deltares 0.1) file of the NHI (Nederlands Hydrologisch Instrumentarium).  \\
          &  - Strip leading and trailing spaces from parameter name. \\
 2.11.00  &  - Memory bug repaired with respect to a reading global attribute which has a value longer then 256 characters.  \\
-2.10.00  &  - If a part of the time series is selected the, CSV export is now correct. The time and value did not correspond.  \\
+2.10.00  &  - If a part of the time series is selected, the CSV export is now correct. The time and value did not correspond.  \\
 2.09.00  &  - Some parameters where listed without having the time-dimension. Now a parameter need the time-dimension,  to be present in Parameter listbox.  \\
-2.08.00  &  - Export to CSV, commas (,) in names replaced by semi-coumn (;).  \\
+2.08.00  &  - Export to CSV file, commas (,) in names replaced by semi-coumn (;).  \\
          &  - Fusion style theme used, advised by QT application. \\
 2.07.00  &  - Show main window before loading the file given via the command line arguments.  \\
          &  - Time unit, now assigned once, so independent on the length of the time-series (a performance issue).  \\
 2.06.00  &  - Disable reading a file with no time variable.  \\
-2.05.00  &  - Export of \file{$\ast$.csv} file is now to start up directory.  \\    
+2.05.00  &  - Export of \file{$\ast$.csv} file is now to start-up directory.  \\    
 2.04.00  &  - Location of selected graph added to the top of the context menu. \\
          &  - Double click on a selected graph shows the location, time and value of the point where the cursor is when the double click is performed.  \\
 2.03.00  &  - Plot window is approximately a quarter of the main screen. \\
@@ -93,22 +93,23 @@
 \phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
     \centering    
-    \includegraphics[width=0.20\textwidth]{pictures/menu_file.png}
+    \includegraphics[width=0.35\textwidth]{pictures/menu_file.png}
     \caption{Menu \menuarrow File}
 \end{figure}
 
 %------------------------------------------------------------------------------
 \subsubsection{Open file}
-Open a file, all \netcdf files are shown, even if they do not met the \cfstandard.
-If the file does met the Climate and Forecast standard 1.7 the file will be read and the main window will updated with the current information. 
+An open file selection window will be shown where all \netcdf files with extension \ext{.ext} are listed, even if they do not meet the \cfstandard.
+If the selected file(s) does meet the Climate and Forecast standard 1.7 the file will be read and the main window will updated with the current information. 
+And if there exist (on the same directory) a file with the filename in the form \file{\emph{basename}\_presel.json} then this file will be also read to show the pre-selected of parameters and locations.
 %
 \begin{figure}[H]
     \centering    
     \includegraphics[width=0.9\textwidth]{pictures/menu_file_open.png}
-    \caption{Open window, to open a \cfstandard compliant Time Series file (TSFILE)}
+    \caption{Open window, to open several files which fulfil to the \cfstandard compliant Time Series file format}
 \end{figure}
 
-If the file does not met the \cfstandard or cannot be read due to unsupported characters a message will presented (see \autoref{fig:notcffile})
+If the file does not meet the \cfstandard or cannot be read due to unsupported characters a message will presented (see \autoref{fig:notcffile})
 \begin{figure}[H]
     \centering    
     \includegraphics[width=0.6\textwidth]{pictures/message_not_cf_file.png}
@@ -120,6 +121,19 @@ If the file does not met the \cfstandard or cannot be read due to unsupported ch
 Close all plot windows and opened files.
 
 %------------------------------------------------------------------------------
+\subsubsection{Open Pre-selection}
+Open file(s) with pre-defined selections as saved by the menu option \menu{File} \menuarrow \menu{Save Pre-selection\ldots\ }.
+Selecting several files at once is possible, as saving was done per choice from the combobox in the group \menu{Select time series} 
+
+%------------------------------------------------------------------------------
+\subsubsection{Save Pre-selection}
+Save the selected parameters and locations in the main program window to an external file (JSON-format). 
+This file can be read by a next session of the program \plotcfts.
+If there is a need for more pre-selections of other choices  in the combobox, see group \menu{Select time series}, they need to be saved separately. 
+Concatination of files is not supported, but can be done manually.
+Reading of multi files is supported by the \menu{File} \menuarrow \menu{Open Pre-selection\ldots} option.
+
+%------------------------------------------------------------------------------
 \subsubsection{Exit}
 To exit the application \plotcfts.
 
@@ -128,7 +142,7 @@ To exit the application \plotcfts.
 \phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
     \centering    
-    \includegraphics[width=0.20\textwidth]{pictures/menu_export.png}
+    \includegraphics[width=0.30\textwidth]{pictures/menu_export.png}
     \caption{Menu \menuarrow Export}
 \end{figure}
 
@@ -170,13 +184,32 @@ Shows the about box.
 \end{figure}
 
 %--------------------------------------------------------------------------------
-\section{Filename}
-\phantom{m}\vspace{-\baselineskip}
+\section{Filename group}
+%--------------------------------------------------------------------------------
+\subsection{Tooltip}
+When the cursor is on the filename the tooltip will show the full path of the file, see \autoref{fig:filename_tooltip}
 \begin{figure}[H]
     \centering    
-    \includegraphics[width=0.9\textwidth]{pictures/group_filenames.png}
-    \caption{List box for filenames.}
+    \includegraphics[width=0.9\textwidth]{pictures/group_filenames_tooltip.png}
+    \caption{List box for filenames, with tooltip.\label{fig:filename_tooltip}}
 \end{figure}
+%--------------------------------------------------------------------------------
+\subsection{Contex menu}
+When the cursor is on the filename the context menu (when pressing right mouse button) contains two options, see \autoref{fig:filename_context_menu}.
+%
+\begin{figure}[H]
+    \centering    
+    \includegraphics[width=0.9\textwidth]{pictures/group_filenames_context_menu.png}
+    \caption{List box for filenames, with context menu.\label{fig:filename_context_menu}}
+\end{figure}
+%
+The two options are 
+\begin{enumerate}
+    \item \menu{Toggle pre-selectionof parameter(s) and location(s)}\newline
+    Toggle betweee howing the pre-seolction or not. Sometimes the list boxes could be empty, this will occure if there are no pre-selections are made.
+    \item \menu{Close and Delete file from list}\newline
+    Close and delete the file from the listbox. 
+\end{enumerate}
 
 %--------------------------------------------------------------------------------
 \section{Select time series}
@@ -196,7 +229,7 @@ The groups \menu{Parameter, Location}  and \menu{Time series} are shown in \auto
     \caption{List boxes for the Parameter, Location and Time Series.}
 \end{figure}
 With this group you are able to select a parameter(s) and a location(s) and the desired part of the time series. 
-If no part of the time-series is selected thew whole time series will be used for plotting the graph.
+If no part of the time-series is selected the whole time series will be used for plotting the graph.
 
 %--------------------------------------------------------------------------------
 \section{Plotting}
@@ -264,14 +297,25 @@ The status bar present the compilation date and time, the version number of the 
 \end{figure}
 
 %------------------------------------------------------------------------------
-\subsection{Select a graph}
-\phantom{m}\vspace{-\baselineskip}
+\subsection{Legend area}
+%------------------------------------------------------------------------------
+\subsubsection{Renaming a graph name}
+When double clicking on the legend item, the name of the graph can be changed, see \autoref{fig:selected graph}.
 \begin{figure}[H]
     \centering    
     \includegraphics[width=0.9\textwidth]{pictures/plot_selected_graph.png}
     \caption{Graph selected and edit window for graph name\label{fig:selected graph}}
 \end{figure}
-
+%------------------------------------------------------------------------------
+\subsubsection{Using the context menu}
+When pressing the right mouse button in the legend area, the legend area can be moved to five pre-selected locations, these locations are:
+\begin{enumerate}
+    \item Move to top left
+    \item Move to top center
+    \item Move to top right 
+    \item Move to bottom right
+    \item Move to bottom left
+\end{enumerate}
 %------------------------------------------------------------------------------
 \subsection{Select a graph}
 \phantom{m}\vspace{-\baselineskip}
@@ -285,10 +329,10 @@ The status bar present the compilation date and time, the version number of the 
 \subparagraph*{Context menu}
 The context menu may have four items:
 \begin{enumerate}
-    \item \textbf{Legend item $\ast$:}\newline
+    \item \textbf{Legend item: $\ast$}\newline
     This item cannot be selected. 
     If a graph is selected the name of the location as presented in the legend is shown. 
-    This context menu entry is useful when the plot area contains a lot of graphs and the legend area is too short.
+    This context menu entry is useful when the plot area contains a lot of graphs and the number of legend entries is large then the legend area.
     \item \textbf{Rescale axes}\newline
     Selecting this item the axes will be rescaled to the bounding box of the graphs.
     \item \textbf{Remove selected graph}\newline
@@ -320,7 +364,9 @@ When multiple axis are needed each y-axis label gets a prefix, this label will a
 
 %------------------------------------------------------------------------------
 \subsection{Support ISO 10646 charaters set (UTF-8)}
-The plot program support the ISO 10646 character set as seen in \autoref{fig:ChineseStation}, the location list box contains Norwegian and Chinese characters.
+The plot program support the ISO 10646 character set as seen in \autoref{fig:ChineseStation}, the location list box contains Norwegian %(Ørsvågvær)
+and Chinese %(??)
+characters.
 \begin{figure}[H]
     \centering    
     \includegraphics[width=0.9\textwidth]{pictures/plotcfts_with_chinese_karakters2.png}
@@ -331,7 +377,7 @@ The plot program support the ISO 10646 character set as seen in \autoref{fig:Chi
 \section{Commandline argument}
 The program can be started with the desired file with a command line argument:
 \begin{symbollist}
-    \item[{-{}-ncfile}] Behind this argument the name of the NetCDF file need to be specified, including the file extension \ext{.nc}.
+    \item[{-{}-ncfile}] Behind this argument the name of the \netcdf file need to be specified, including the file extension \ext{.nc}.
 \end{symbollist}
 \textbf{Example:}
 \begin{Verbatim}

@@ -97,7 +97,7 @@ MainWindow::MainWindow(QDir exec_dir_in, QDir startup_dir_in)
 void MainWindow::createActions()
 {
 // File menu
-    openAct = new QAction(QIcon(":/images/new.png"), tr("&Open"), this);
+    openAct = new QAction(QIcon(":/images/new.png"), tr("&Open ..."), this);
     openAct->setShortcut(tr("Ctrl+O"));
     openAct->setStatusTip(tr("Open Climate and Forecast compliant Time Series file"));
     openAct->setEnabled(true);
@@ -109,13 +109,13 @@ void MainWindow::createActions()
     closeAct->setEnabled(true);
     connect(closeAct, SIGNAL(triggered()), this, SLOT(close()));
 
-    openPreSelect = new QAction(tr("&Open Pre-selection"), this);
+    openPreSelect = new QAction(tr("&Open Pre-selection ..."), this);
     //preSelect->setShortcut(tr("Ctrl+C"));
     openPreSelect->setStatusTip(tr("Open file with pre-selected parameters and locations"));
     openPreSelect->setEnabled(false);
     connect(openPreSelect, SIGNAL(triggered()), this, SLOT(OpenPreSelection()));
 
-    savePreSelect = new QAction(tr("&Save Pre-selection"), this);
+    savePreSelect = new QAction(tr("&Save Pre-selection ..."), this);
     //preSelect->setShortcut(tr("Ctrl+C"));
     savePreSelect->setStatusTip(tr("Save pre-selected parameters and locations"));
     savePreSelect->setEnabled(true);
@@ -128,19 +128,19 @@ void MainWindow::createActions()
     connect(exitAct, SIGNAL(triggered()), this, SLOT(exit()));
 
     // Export menu
-    ecsvAct = new QAction(tr("&Export to CSV"), this);
+    ecsvAct = new QAction(tr("&Export to CSV ..."), this);
     ecsvAct->setShortcut(tr("Ctrl+E"));
     ecsvAct->setStatusTip(tr("Export selection to Comma Separated Value file"));
     ecsvAct->setEnabled(false);
     connect(ecsvAct, SIGNAL(triggered()), this, SLOT(ExportToCSV()));
 
     // About menu
-    showUserManualAct = new QAction(tr("&User Manual"), this);
+    showUserManualAct = new QAction(tr("&User Manual ..."), this);
     showUserManualAct->setStatusTip(tr("Opens the User Manual (pdf-format)"));
     showUserManualAct->setEnabled(true);
     connect(showUserManualAct, SIGNAL(triggered()), this, SLOT(ShowUserManual()));
     
-    aboutAct = new QAction(tr("&About"), this);
+    aboutAct = new QAction(tr("&About ..."), this);
     aboutAct->setStatusTip(tr("Show the application's About box"));
     aboutAct->setEnabled(true);
     connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
