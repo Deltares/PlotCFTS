@@ -46,6 +46,7 @@ struct _par_loc {
     long ndim;
     long nr_parameters;
     long nr_locations;
+    bool pre_selection;  // one of the parameters and locaions is pre-selected
     struct _parameter ** parameter;
     struct _location ** location;
     QString ** q_location;
@@ -78,6 +79,11 @@ public:
     double * get_times();
     QList<QDateTime> get_qdt_times();
     quint64 ReferenceDatemSecsSinceEpoch();
+    bool get_pre_selection();
+    void put_pre_selection(bool);
+    int get_cb_parloc_index();
+    void put_cb_parloc_index(int);
+
     void ensure_capacity_par_loc(long);
     void ensure_capacity_parameters(long, long);
     void ensure_capacity_locations(long, long);
@@ -112,10 +118,12 @@ private:
     QString xaxis_unit;
     QString yaxis_label;
     QString yaxis_unit;
-    long nr_locations;
     size_t name_len;
-    long nr_parameters;
     long nr_par_loc;
+    long nr_parameters;
+    long nr_locations;
+    bool m_pre_selection;
+    int m_cb_parloc_index;
     int ncid;
     double * y_values;
 };

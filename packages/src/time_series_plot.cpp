@@ -64,7 +64,7 @@ void TSPlot::add_to_plot(TSFILE * qtsfile, QListWidget * qlb_parameters, QListWi
 }
 void TSPlot::add_data_to_plot()
 {
-    int cb_index = cb_parloc->currentIndex();
+    int cb_index = tsfile->get_cb_parloc_index();
     int i_layer = sb_layer->value() - 1;
 
     _nr_max_ylabel = _ylabel_dic.size();
@@ -96,7 +96,7 @@ void TSPlot::draw_plot(int nr_plot, QString txt, QString fname)
     QCPTextElement *title = new QCPTextElement(customPlot, "File: " + fname, QFont("sans", 9, QFont::Bold));
     customPlot->plotLayout()->addElement(0, 0, title);
 
-    int cb_index = cb_parloc->currentIndex();
+    int cb_index = tsfile->get_cb_parloc_index();
     int i_layer = sb_layer->value() - 1;
 
     _nr_max_ylabel = 0;

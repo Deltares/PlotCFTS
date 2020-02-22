@@ -48,8 +48,7 @@ MainWindow::MainWindow(QDir exec_dir_in, QDir startup_dir_in)
     dim_model_wide = -1;
     dim_at_location = -1;
     nr_plot = -1;
-    fil_index = -1;
-    m_pre_selection = false;  // default no pre selection of parameters and locations
+    m_fil_index = -1;
 
     QDesktopWidget *d = QApplication::desktop();
     int scridx = d->primaryScreen();
@@ -110,15 +109,15 @@ void MainWindow::createActions()
     closeAct->setEnabled(true);
     connect(closeAct, SIGNAL(triggered()), this, SLOT(close()));
 
-    openPreSelect = new QAction(tr("&Open Pre Selection"), this);
+    openPreSelect = new QAction(tr("&Open Pre-selection"), this);
     //preSelect->setShortcut(tr("Ctrl+C"));
-    openPreSelect->setStatusTip(tr("Open file with preselected parameters and locations"));
+    openPreSelect->setStatusTip(tr("Open file with pre-selected parameters and locations"));
     openPreSelect->setEnabled(false);
     connect(openPreSelect, SIGNAL(triggered()), this, SLOT(OpenPreSelection()));
 
-    savePreSelect = new QAction(tr("&Save Pre Selection"), this);
+    savePreSelect = new QAction(tr("&Save Pre-selection"), this);
     //preSelect->setShortcut(tr("Ctrl+C"));
-    savePreSelect->setStatusTip(tr("Save preselected parameters and locations"));
+    savePreSelect->setStatusTip(tr("Save pre-selected parameters and locations"));
     savePreSelect->setEnabled(true);
     connect(savePreSelect, SIGNAL(triggered()), this, SLOT(SavePreSelection()));
 
@@ -259,18 +258,18 @@ void MainWindow::openFile(QFileInfo ncfile, FILE_TYPE type)
             }
         }
     }
-    fil_index += 1;
-    if (fil_index == 0)
+    m_fil_index += 1;
+    if (m_fil_index == 0)
     {
-        this->openedUgridFile = (TSFILE **)malloc(sizeof(TSFILE *) * (fil_index + 1));
+        this->openedUgridFile = (TSFILE **)malloc(sizeof(TSFILE *) * (m_fil_index + 1));
     }
     else
     {
-        this->openedUgridFile = (TSFILE **)realloc(this->openedUgridFile, sizeof(TSFILE *) * (fil_index + 1));
+        this->openedUgridFile = (TSFILE **)realloc(this->openedUgridFile, sizeof(TSFILE *) * (m_fil_index + 1));
     }
     TSFILE * tsfile = new TSFILE(ncfile, type);
-    this->openedUgridFile[fil_index] = tsfile;
-
+    this->openedUgridFile[m_fil_index] = tsfile;
+    long ierr = tsfile->read(this->pgBar);
     updateFileListBox(tsfile);
 }
 
@@ -278,18 +277,6 @@ void MainWindow::openFile(QFileInfo ncfile, FILE_TYPE type)
 void MainWindow::ExportToCSV()
 {
     int i_tsfile_par = -1;
-
-    int fil_index = this->lb_filenames->currentRow();
-    TSFILE * tsfile = this->openedUgridFile[fil_index];
-
-    int cb_index = this->cb_par_loc->currentIndex();
-    struct _parameter * parameter = tsfile->get_parameters(cb_index);
-    struct _location * location = tsfile->get_locations(cb_index);
-
-    int nr_layers = this->sb_layer->maximum();
-    int i_layer = this->sb_layer->value() - 1;  // used as array index (ie zero based)
-
-    double *** y_values;
 
     // select first a filename, no actions need to be performed when cancel is pressed
 
@@ -313,7 +300,22 @@ void MainWindow::ExportToCSV()
     }
     delete fd;
 
+    // suitable to write csv-file
     char * csv_filename = strdup(filename.toUtf8());
+
+    int fil_index = this->lb_filenames->currentRow();
+    TSFILE * tsfile = this->openedUgridFile[fil_index];
+
+    int cb_index = tsfile->get_cb_parloc_index();
+    struct _parameter * parameter = tsfile->get_parameters(cb_index);
+    long nr_parameters = tsfile->get_count_parameters(cb_index);
+    struct _location * location = tsfile->get_locations(cb_index);
+    long nr_locations = tsfile->get_count_locations(cb_index);
+
+    int nr_layers = this->sb_layer->maximum();
+    int i_layer = this->sb_layer->value() - 1;  // used as array index (ie zero based)
+
+    double *** y_values;
 
     // get selected parameter
     long nr_pars = 0;
@@ -325,7 +327,7 @@ void MainWindow::ExportToCSV()
         if (item->isSelected())
         {
             pars = (long *)realloc(pars, sizeof(long *) * (nr_pars + 1));
-            for (long j = 0; j < lb_parameters->count(); j++)
+            for (long j = 0; j < nr_parameters; j++)
             {
                 QString *tmp_name = new QString(parameter[j].name);
                 if (!tmp_name->compare(this->lb_parameters->item(i)->text().toUtf8()))
@@ -348,7 +350,7 @@ void MainWindow::ExportToCSV()
         if (item->isSelected())
         {
             locs = (long *)realloc(locs, sizeof(long *) * (nr_locs + 1));
-            for (long j = 0; j < lb_locations->count(); j++)
+            for (long j = 0; j < nr_locations; j++)
             {
                 if (!location[j].name->compare(this->lb_locations->item(i)->text().toUtf8()))
                 {
@@ -429,7 +431,7 @@ void MainWindow::ExportToCSV()
     {
         for (int i = 0; i < nr_locs; i++)
         {
-            QString q_loc(*location[i].name);
+            QString q_loc(*location[locs[i]].name);
             fpo << ", " << strdup(q_loc.toUtf8().trimmed().replace(",", ";"));
         }
     }
@@ -533,17 +535,62 @@ void MainWindow::OpenPreSelection()
     fd->setWindowTitle("Open file with pre-selections for parameters and locations");
     fd->setNameFilters(*list);
     fd->selectNameFilter(list->at(0));
-
+    fd->setFileMode(QFileDialog::ExistingFiles);
     canceled = fd->exec() != QDialog::Accepted;
     if (!canceled)
     {
         QStringList * QFilenames = new QStringList();
         QFilenames->append(fd->selectedFiles());
+        int fil_index = this->lb_filenames->currentRow();
+        TSFILE * tsfile = this->openedUgridFile[fil_index];
         for (QStringList::Iterator it = QFilenames->begin(); it != QFilenames->end(); ++it) {
             fname = *it;
+            OpenPreSelection(tsfile, fname);
         }
-        TSFILE * tsfile = this->openedUgridFile[fil_index];
-        OpenPreSelection(tsfile, fname);
+
+        // if a parameter-location group is not 
+        int cnt = tsfile->get_count_par_loc();
+        bool pre_selection;
+        for (int cb_index = 0; cb_index < cnt; cb_index++)
+        {
+            pre_selection = false;
+            struct _parameter * parameter = tsfile->get_parameters(cb_index);
+            long nr_parameters = tsfile->get_count_parameters(cb_index);
+            struct _location *  location = tsfile->get_locations(cb_index);
+            long nr_locations = tsfile->get_count_locations(cb_index);
+            for (long i = 0; i < nr_parameters; i++)
+            {
+                if (parameter[i].pre_selected != 0)
+                {
+                    pre_selection = true;
+                }
+            }
+            for (long i = 0; i < nr_locations; i++)
+            {
+                if (location[i].pre_selected != 0)
+                {
+                    pre_selection = true;
+                }
+            }
+            if (!pre_selection)
+            {
+                struct _parameter * parameter = tsfile->get_parameters(cb_index);
+                long nr_parameters = tsfile->get_count_parameters(cb_index);
+                struct _location *  location = tsfile->get_locations(cb_index);
+                long nr_locations = tsfile->get_count_locations(cb_index);
+                for (long i = 0; i < nr_parameters; i++)
+                {
+                    parameter[i].pre_selected = 1;
+                    tsfile->put_parameter(cb_index, i, parameter);
+                }
+                for (long i = 0; i < nr_locations; i++)
+                {
+                    location[i].pre_selected = 1;
+                    tsfile->put_location(cb_index, i, location);
+                }
+            }
+        }
+        updateListBoxes(tsfile);
     }
     delete fd;
     delete str;
@@ -561,21 +608,22 @@ void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
         status = pt_pre_selection->find(name);
         if (status == 1)  // name is not in the json file
         {
-            struct _parameter * parameter = tsfile->get_parameters(cb_index);
-            long nr_parameters = tsfile->get_count_parameters(cb_index);
-            struct _location *  location = tsfile->get_locations(cb_index);
-            long nr_locations = tsfile->get_count_locations(cb_index);
-            for (long i = 0; i < nr_parameters; i++)
-            {
-                parameter[i].pre_selected = 1;
-                tsfile->put_parameter(cb_index, i, parameter);
-            }
-            for (long i = 0; i < nr_locations; i++)
-            {
-                location[i].pre_selected = 1;
-                tsfile->put_location(cb_index, i, location);
-            }
             continue;
+        }
+        // initialize pre-selected on: not selected
+        struct _parameter * parameter = tsfile->get_parameters(cb_index);
+        long nr_parameters = tsfile->get_count_parameters(cb_index);
+        struct _location *  location = tsfile->get_locations(cb_index);
+        long nr_locations = tsfile->get_count_locations(cb_index);
+        for (long i = 0; i < nr_parameters; i++)
+        {
+            parameter[i].pre_selected = 0;
+            tsfile->put_parameter(cb_index, i, parameter);
+        }
+        for (long i = 0; i < nr_locations; i++)
+        {
+            location[i].pre_selected = 0;
+            tsfile->put_location(cb_index, i, location);
         }
 
         string values = name + ".location.name";
@@ -584,7 +632,6 @@ void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
         if (pre_locations.size() != 0)
         {
             // set pre-selection for locations
-            struct _location * location = tsfile->get_locations(cb_index);
             for (int j = 0; j < tsfile->get_count_locations(cb_index); j++)
             {
                 for (int k = 0; k < pre_locations.size(); k++)
@@ -594,7 +641,7 @@ void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
                     {
                         location[j].pre_selected = 1;
                         tsfile->put_location(cb_index, j, location);
-                        m_pre_selection = true;
+                        tsfile->put_pre_selection(true);
                     }
                 }
             }
@@ -606,7 +653,6 @@ void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
         if (pre_parameters.size() != 0)
         {
             // set pre-selection for parameters
-            struct _parameter * parameter = tsfile->get_parameters(cb_index);
             for (int j = 0; j < tsfile->get_count_parameters(cb_index); j++)
             {
                 for (int k = 0; k < pre_parameters.size(); k++)
@@ -616,7 +662,7 @@ void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
                     {
                         parameter[j].pre_selected = 1;
                         tsfile->put_parameter(cb_index, j, parameter);
-                        m_pre_selection = true;
+                        tsfile->put_pre_selection(true);
                     }
                 }
             }
@@ -633,7 +679,7 @@ void MainWindow::SavePreSelection()
     QString bname = tsfile->fname.baseName();
     QString filename = bname.append("_presel.json");
     QFileDialog * fd = new QFileDialog();
-    fd->setWindowTitle("Save pre selection to file");
+    fd->setWindowTitle("Save pre-selection to file");
     fd->setNameFilter("pre-selection (*.json)");
     fd->setDirectory(_startup_dir);
     fd->selectFile(filename);
@@ -656,7 +702,7 @@ void MainWindow::SavePreSelection()
     boost::property_tree::ptree pt_root, pt_param, pt_location;
     //for (int cb_index = 0; cb_index < nr_par_loc; cb_index++)
     {
-        int cb_index = this->cb_par_loc->currentIndex();
+        int cb_index = tsfile->get_cb_parloc_index();
         struct _parameter * parameter = tsfile->get_parameters(cb_index);
         long nr_parameters = tsfile->get_count_parameters(cb_index);
         struct _location *  location = tsfile->get_locations(cb_index);
@@ -765,7 +811,7 @@ void MainWindow::updateFileListBox(TSFILE * tsfile)
         cb_add_to_plot->setEnabled(false);
         pb_add_to_plot->setEnabled(false);
         openPreSelect->setEnabled(false);
-        this->fil_index = -1;
+        this->m_fil_index = -1;
     }
     else
     {
@@ -822,6 +868,7 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     }
     cb_indx = max(0, cb_indx);
     this->cb_par_loc->setCurrentIndex(cb_indx);
+    tsfile->put_cb_parloc_index(cb_indx);
 
     // List the parameters
     if (tsfile == NULL)
@@ -843,7 +890,7 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     lb_parameters->clear();
     for (int i = 0; i < nr_parameters; i++)
     {
-        if (!m_pre_selection || param[i].pre_selected == 1)
+        if (!tsfile->get_pre_selection() || param[i].pre_selected == 1)
         {
             lb_parameters->addItem(QString(param[i].name));
         }
@@ -872,7 +919,7 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     lb_locations->clear();
     for (int i = 0; i < nr_locations; i++)
     {
-        if (!m_pre_selection || location[i].pre_selected == 1)
+        if (!tsfile->get_pre_selection() || location[i].pre_selected == 1)
         {
             lb_locations->addItem(*location[i].name);
         }
@@ -1145,7 +1192,7 @@ void MainWindow::lb_filenames_selection_changed()
     }
     TSFILE * tsfile = this->openedUgridFile[fil_curr];
 	lb_filenames->setToolTip(tsfile->fname.canonicalFilePath());
-	long ierr = tsfile->read(this->pgBar);
+    long ierr = 0;  //  tsfile->read(this->pgBar);
     // Preselection file
     QString bname = tsfile->fname.baseName();
     QFileInfo filename = bname.append("_presel.json");
@@ -1156,19 +1203,21 @@ void MainWindow::lb_filenames_selection_changed()
     }
     if (ierr == 0)
     {
+        int cb_indx = tsfile->get_cb_parloc_index();
+        this->cb_par_loc->setCurrentIndex(cb_indx);
         updateListBoxes(tsfile);
     }
     else
     {
         lb_filenames->blockSignals(true);
-        delete this->openedUgridFile[fil_index];
-        this->openedUgridFile[fil_index] = NULL;
-        lb_filenames->takeItem(fil_index);
+        delete this->openedUgridFile[m_fil_index];
+        this->openedUgridFile[m_fil_index] = NULL;
+        lb_filenames->takeItem(m_fil_index);
         lb_filenames->setToolTip("");
         updateFileListBox(NULL);
         lb_filenames->blockSignals(false);
 
-        fil_index--;
+        m_fil_index--;
     }
     pgBar->setValue(1000);
     this->pgBar->hide();
@@ -1267,11 +1316,12 @@ void MainWindow::lb_parameter_selection_changed()
     TSFILE * tsfile = this->openedUgridFile[fil_index];
     int cb_index = this->cb_par_loc->currentIndex();
     struct _parameter * param = tsfile->get_parameters(cb_index);
+    int nr_parameters = tsfile->get_count_parameters(cb_index);
 
     QModelIndex index = lb_parameters->currentIndex();
     char * name = strdup(index.data(Qt::DisplayRole).toString().toUtf8());
     int par_index = lb_parameters->currentRow();
-    for (int i = 0; i < lb_parameters->count(); i++)
+    for (int i = 0; i < nr_parameters; i++)
     {
         if (!strcmp(name, param[i].name))
         {
@@ -1437,13 +1487,14 @@ void MainWindow::createComboBox()
     gb_combobox->setLayout(cb_layout);
     showComboBoxLayout->addWidget(gb_combobox);
 
-    connect(cb_par_loc, SIGNAL(activated(int)), this, SLOT(cb_clicked()));
+    connect(cb_par_loc, SIGNAL(activated(int)), this, SLOT(cb_clicked(int)));
 }
 
-void MainWindow::cb_clicked()
+void MainWindow::cb_clicked(int cb_index)
 {
     int fil_index = lb_filenames->currentRow();
     TSFILE * tsfile = this->openedUgridFile[fil_index];
+    tsfile->put_cb_parloc_index(cb_index);
     updateListBoxes(tsfile);
 }
 
@@ -1588,7 +1639,7 @@ void MainWindow::contextMenuFileListBox(const QPoint &pos)
     QAction* rightClickItem = submenu.exec(item);
     if (rightClickItem && rightClickItem->text().contains("pre-selection"))
     {
-        m_pre_selection = !m_pre_selection;
+        tsfile->put_pre_selection(!tsfile->get_pre_selection());
         updateListBoxes(tsfile);
     }
     if (rightClickItem && rightClickItem->text().contains("Delete"))
@@ -1599,7 +1650,7 @@ void MainWindow::contextMenuFileListBox(const QPoint &pos)
         }
         this->openedUgridFile[nr_files] = NULL;
         nr_files -= 1;
-        fil_index -= 1;
+        m_fil_index -= 1;
         lb_filenames->blockSignals(true);
         lb_filenames->takeItem(i_file);
         lb_filenames->blockSignals(false);

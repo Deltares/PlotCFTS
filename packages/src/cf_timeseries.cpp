@@ -47,6 +47,7 @@ TSFILE::TSFILE(QFileInfo filename, FILE_TYPE ftype)
     nr_par_loc = 0;
     time_var_name = NULL;
     datetime_ntimes = 0;
+    m_pre_selection = false;
 }
 TSFILE::~TSFILE()
 {
@@ -1113,6 +1114,25 @@ double * TSFILE::get_time_series(long cb_index, char * parameter, long loc_id, l
     }
     return this->y_values;
 }
+
+bool TSFILE::get_pre_selection()
+{
+    return this->m_pre_selection;
+}
+void TSFILE::put_pre_selection(bool selection)
+{
+    this->m_pre_selection = selection;
+}
+
+int TSFILE::get_cb_parloc_index()
+{
+    return this->m_cb_parloc_index;
+}
+void TSFILE::put_cb_parloc_index(int selection)
+{
+    this->m_cb_parloc_index = selection;
+}
+
 void TSFILE::ensure_capacity_par_loc(long nr_par_loc)
 {
     long i_par_loc = nr_par_loc-1;
@@ -1134,6 +1154,7 @@ void TSFILE::ensure_capacity_par_loc(long nr_par_loc)
     this->par_loc[i_par_loc]->ndim = 0;
     this->par_loc[i_par_loc]->nr_parameters = 0;
     this->par_loc[i_par_loc]->nr_locations = 0;
+    this->par_loc[i_par_loc]->pre_selection = false;
 }
 void TSFILE::ensure_capacity_parameters(long i_par_loc, long ndims)
 {

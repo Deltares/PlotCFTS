@@ -10,7 +10,7 @@ At this moment the environment is based on Visual Studio 2017
 
 ## Environment variables
 Environment variables (example)
-QT5DIR64=c:\Qt\Qt5.12.1\5.12.1\msvc2015_64\
+QT5DIR64=c:\Qt\Qt5.12.6\5.12.6\msvc2017_64\
 
 ## Link Libraries
 netCDF library:

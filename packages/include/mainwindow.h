@@ -115,7 +115,7 @@ private slots:
 
     void plot_button_clicked();
     void plot_button_add_clicked();
-    void cb_clicked();
+    void cb_clicked(int);
 
     void destroyed();
 
@@ -144,7 +144,7 @@ private:
     struct _program_arguments * prg_arg;
 
     int nr_plot;
-    int fil_index;
+    int m_fil_index;
     bool m_pre_selection;
 
     TSPlot ** cplot;
