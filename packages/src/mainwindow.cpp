@@ -1665,7 +1665,7 @@ void MainWindow::contextMenuFileListBox(const QPoint &pos)
         {
             this->openedUgridFile[j] = this->openedUgridFile[j+1];
         }
-        this->openedUgridFile[nr_files] = NULL;
+        this->openedUgridFile[nr_files-1] = nullptr;
         nr_files -= 1;
         m_fil_index -= 1;
         lb_filenames->blockSignals(true);
@@ -1673,20 +1673,19 @@ void MainWindow::contextMenuFileListBox(const QPoint &pos)
         lb_filenames->blockSignals(false);
         if (nr_files > 0)
         {
-            lb_filenames->setCurrentRow(i_file);
-            tsfile = this->openedUgridFile[i_file];
-            long ierr = tsfile->read(this->pgBar);
-            if (ierr == 0)
-            {
-                char count[11];
-                QString * text1 = new QString("Filenames (count ");
-                sprintf(count, "%d", lb_filenames->count());
-                text1->append(count);
-                text1->append(")");
-                gb_filenames->setTitle(*text1);
+            char count[11];
+            QString * text1 = new QString("Filenames (count ");
+            sprintf(count, "%d", lb_filenames->count());
+            text1->append(count);
+            text1->append(")");
+            gb_filenames->setTitle(*text1);
 
-                updateListBoxes(tsfile);
-            }
+            i_file = min(i_file, nr_files - 1);
+            lb_filenames->setCurrentRow(i_file);
+
+            tsfile = this->openedUgridFile[i_file];
+            updateListBoxes(tsfile);
+
             pgBar->setValue(1000);
             this->pgBar->hide();
         }

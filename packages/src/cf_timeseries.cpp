@@ -1160,7 +1160,7 @@ void TSFILE::ensure_capacity_parameters(long i_par_loc, long ndims)
     this->par_loc[i_par_loc]->parameter[i_param]->dim_id = (long *)malloc(sizeof(long *) * ndims);
     this->par_loc[i_par_loc]->parameter[i_param]->dim_val = (long *)malloc(sizeof(long *) * ndims);
     this->par_loc[i_par_loc]->parameter[i_param]->dim_name = (char **)malloc(sizeof(char *) * ndims);
-    this->par_loc[i_par_loc]->parameter[i_param]->pre_selected = 0;
+    //this->par_loc[i_par_loc]->parameter[i_param]->pre_selected = 0;
 }
 void TSFILE::ensure_capacity_locations(long i_par_loc, long nr_locations)
 {
@@ -1169,7 +1169,7 @@ void TSFILE::ensure_capacity_locations(long i_par_loc, long nr_locations)
     {
         this->par_loc[i_par_loc]->location[i] = (struct _location *) malloc(sizeof(struct _location) * 1);
         this->par_loc[i_par_loc]->location[i]->name  = new QString("");
-        this->par_loc[i_par_loc]->location[i]->pre_selected = 0;
+        //this->par_loc[i_par_loc]->location[i]->pre_selected = 0;
     }
 }
 /* @@
