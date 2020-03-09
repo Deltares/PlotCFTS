@@ -1348,7 +1348,6 @@ void MainWindow::lb_parameter_selection_changed()
     bool setVisible = param[par_index].ndim == 3;  // Third dimension is the layer
     if (setVisible)
     {
-
         int maxVal = param[par_index].dim_val[2];
         this->layerLabelPrefix->setText(tr("Layer"));
         this->layerLabelSuffix->setText(tr("[1, %1]").arg(maxVal));
