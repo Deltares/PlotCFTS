@@ -695,23 +695,22 @@ void MainWindow::SavePreSelection()
     // select first a filename, no actions need to be performed when cancel is pressed
     QString bname = tsfile->fname.baseName();
     QString filename = bname.append("_presel.json");
-    QFileDialog * fd = new QFileDialog();
-    fd->setWindowTitle("Save pre-selection to file");
-    fd->setNameFilter("pre-selection (*.json)");
-    fd->setDirectory(_startup_dir);
-    fd->selectFile(filename);
-    fd->setConfirmOverwrite(true);
-    fd->setAcceptMode(QFileDialog::AcceptSave);
-    if (fd->exec() != QDialog::Accepted)
+    QFileDialog fd;
+    fd.setWindowTitle("Save pre-selection to file");
+    fd.setNameFilter("pre-selection (*.json)");
+    fd.setDirectory(_startup_dir);
+    fd.selectFile(filename);
+    fd.setConfirmOverwrite(true);
+    fd.setAcceptMode(QFileDialog::AcceptSave);
+    if (fd.exec() != QDialog::Accepted)
     {
         return;
     }
     QStringList * QFilenames = new QStringList();
-    QFilenames->append(fd->selectedFiles());
+    QFilenames->append(fd.selectedFiles());
     for (QStringList::Iterator it = QFilenames->begin(); it != QFilenames->end(); ++it) {
         filename = *it;
     }
-    delete fd;
 
     char * json_preselect_filename = strdup(filename.toUtf8());
 
@@ -725,9 +724,7 @@ void MainWindow::SavePreSelection()
         struct _location *  location = tsfile->get_locations(cb_index);
         long nr_locations = tsfile->get_count_locations(cb_index);
         // get selected parameter
-        long nr_pars = 0;
-        long * pars = (long *)malloc(sizeof(long) * 1);
-        pars[0] = -1;
+        vector<long> pars{};
         for (long i = 0; i < nr_parameters; i++)
         {
             parameter[i].pre_selected = 0;
@@ -735,29 +732,24 @@ void MainWindow::SavePreSelection()
         }
         for (long i = 0; i < lb_parameters->count(); i++)
         {
-            QListWidgetItem * item = lb_parameters->item(i);
-            if (item->isSelected())
+            if (lb_parameters->item(i)->isSelected())
             {
-                pars = (long *)realloc(pars, sizeof(long *) * (nr_pars + 1));
                 for (long j = 0; j < nr_parameters; j++)
                 {
-                    QString *q_name = new QString(parameter[j].name);
+                    QString q_name = QString(parameter[j].name);
                     QString s_name = this->lb_parameters->item(i)->text();
-                    if (!q_name->compare(s_name))
+                    if (!q_name.compare(s_name))
                     {
                         parameter[j].pre_selected = 1;
                         tsfile->put_parameter(cb_index, j, parameter);
-                        pars[nr_pars] = j;
-                        nr_pars = nr_pars + 1;
+                        pars.push_back(j);
                         break;
                     }
                 }
             }
         }
         // get selected locations
-        long nr_locs = 0;
-        long * locs = (long *)malloc(sizeof(long) * 1);
-        locs[0] = -1;
+        vector<long> locs{};
         for (long i = 0; i < nr_locations; i++)
         {
             location[i].pre_selected = 0;
@@ -765,10 +757,8 @@ void MainWindow::SavePreSelection()
         }
         for (long i = 0; i < lb_locations->count(); i++)
         {
-            QListWidgetItem * item = lb_locations->item(i);
-            if (item->isSelected())
+            if (lb_locations->item(i)->isSelected())
             {
-                locs = (long *)realloc(locs, sizeof(long *) * (nr_locs + 1));
                 for (long j = 0; j < nr_locations; j++)
                 {
                     QString q_name(*location[j].name);
@@ -777,8 +767,7 @@ void MainWindow::SavePreSelection()
                     {
                         location[j].pre_selected = 1;
                         tsfile->put_location(cb_index, j, location);
-                        locs[nr_locs] = j;
-                        nr_locs = nr_locs + 1;
+                        locs.push_back(j);
                         break;
                     }
                 }
@@ -788,7 +777,7 @@ void MainWindow::SavePreSelection()
         QString cb_name = this->cb_par_loc->currentText();
         QString tmp;
 
-        for (int j = 0; j < nr_pars; j++)
+        for (int j = 0; j < pars.size(); j++)
         {
             QString q_name(parameter[pars[j]].name);
             boost::property_tree::ptree elem;
@@ -798,7 +787,7 @@ void MainWindow::SavePreSelection()
         tmp = cb_name + ".parameter";
         pt_root.put_child(tmp.toStdString(), pt_param);
     
-        for (int j = 0; j < nr_locs; j++)
+        for (int j = 0; j < locs.size(); j++)
         {
             QString q_name(*location[locs[j]].name);
             boost::property_tree::ptree elem;
@@ -814,7 +803,7 @@ void MainWindow::SavePreSelection()
 void MainWindow::updateFileListBox(TSFILE * tsfile)
 {
     int cnt;
-    QString * text1;
+    QString text1;
     char count[11];
 
     if (tsfile != NULL)
@@ -835,11 +824,11 @@ void MainWindow::updateFileListBox(TSFILE * tsfile)
         openPreSelect->setEnabled(true);
     }
 
-    text1 = new QString("Filenames (count ");
+    text1 = QString("Filenames (count ");
     sprintf(count, "%d", lb_filenames->count());
-    text1->append(count);
-    text1->append(")");
-    gb_filenames->setTitle(*text1);
+    text1.append(count);
+    text1.append(")");
+    gb_filenames->setTitle(text1);
 
     lb_filenames->setCurrentRow(cnt - 1);  // select the last read file
 }
@@ -852,7 +841,7 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     struct _parameter * param;
     struct _location * location;
     char count[11];
-    QString * text1;
+    QString text1;
     QList<QDateTime> qdt_times;
     int cb_indx;
     int cnt;
@@ -915,11 +904,11 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     lb_parameters->blockSignals(false);
     lb_parameters->setCurrentRow(0);
 
-    text1 = new QString("Parameter (count ");
+    text1 = QString("Parameter (count ");
     sprintf(count, "%d", lb_parameters->count());
-    text1->append(count);
-    text1->append(")");
-    gb_parameters->setTitle(*text1);
+    text1.append(count);
+    text1.append(")");
+    gb_parameters->setTitle(text1);
 
     // List the locations
     if (tsfile == NULL)
@@ -944,11 +933,11 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     lb_locations->blockSignals(false);
     lb_locations->setCurrentRow(0);
 
-    text1 = new QString("Location (count ");
+    text1 = QString("Location (count ");
     sprintf(count, "%d", lb_locations->count());
-    text1->append(count);
-    text1->append(")");
-    gb_locations->setTitle(*text1);
+    text1.append(count);
+    text1.append(")");
+    gb_locations->setTitle(text1);
 
     // List the times
     if (tsfile == NULL)
@@ -980,11 +969,11 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     }
     lb_times->blockSignals(false);
 
-    text1 = new QString("Time series (count ");
+    text1 = QString("Time series (count ");
     sprintf(count, "%d", lb_times->count());
-    text1->append(count);
-    text1->append(")");
-    gb_times->setTitle(*text1);
+    text1.append(count);
+    text1.append(")");
+    gb_times->setTitle(text1);
 
     // List the meta-data
     if (tsfile != NULL)
