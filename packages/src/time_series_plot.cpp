@@ -33,12 +33,12 @@ TSPlot::TSPlot(QWidget * qparent, QIcon qicon, int qnr_plot)
         plot_height = int(0.5 * double(plot_width));
     }
 
-    QVBoxLayout * vl_main = new QVBoxLayout;
-    vl_main->setSpacing(0);
-    vl_main->setMargin(0);
-    vl_main->addWidget(customPlot);
+    QVBoxLayout vl_main;
+    vl_main.setSpacing(0);
+    vl_main.setMargin(0);
+    vl_main.addWidget(customPlot);
 
-    parent->setLayout(vl_main);
+    parent->setLayout(&vl_main);
     parent->resize(plot_width, plot_height);
     parent->show();
 
@@ -70,13 +70,11 @@ void TSPlot::add_data_to_plot()
     _nr_max_ylabel = _ylabel_dic.size();
     for (int i_par = 0; i_par < lb_parameters->count(); i_par++)
     {
-        QListWidgetItem * item_par = lb_parameters->item(i_par);
-        if (item_par->isSelected())
+        if (lb_parameters->item(i_par)->isSelected())
         {
             for (int i_loc = 0; i_loc < lb_locations->count(); i_loc++)
             {
-                QListWidgetItem * item_loc = lb_locations->item(i_loc);
-                if (item_loc->isSelected())
+                if (lb_locations->item(i_loc)->isSelected())
                 {
                     TimeSeriesGraph(cb_index, i_par, i_loc, i_layer);
                 }
@@ -102,13 +100,11 @@ void TSPlot::draw_plot(int nr_plot, QString txt, QString fname)
     _nr_max_ylabel = 0;
     for (int i_par = 0; i_par < lb_parameters->count(); i_par++)
     {
-        QListWidgetItem * item_par = lb_parameters->item(i_par);
-        if (item_par->isSelected())
+        if (lb_parameters->item(i_par)->isSelected())
         {
             for (int i_loc = 0; i_loc < lb_locations->count(); i_loc++)
             {
-                QListWidgetItem * item_loc = lb_locations->item(i_loc);
-                if (item_loc->isSelected())
+                if (lb_locations->item(i_loc)->isSelected())
                 {
                     TimeSeriesGraph(cb_index, i_par, i_loc, i_layer);
                 }
