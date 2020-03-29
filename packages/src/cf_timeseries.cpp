@@ -1,8 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-using namespace std;
-
 
 #include <QtCore/QDateTime>
 #include <QtCore/QDate>
@@ -36,6 +34,8 @@ using namespace std;
 
 #include "cf_time_series.h"
 #include "netcdf.h"
+
+using namespace std;
 
 TSFILE::TSFILE(QFileInfo filename, FILE_TYPE ftype)
 {
@@ -221,6 +221,7 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
 #endif
                     times_c = (double *)malloc(sizeof(double)*datetime_ntimes);
                     status = nc_get_var_double(this->ncid, i_var, times_c);
+                    times.clear();
                     for (int i = 0; i < datetime_ntimes; i++)
                     {
                         times.push_back(times_c[i]);
@@ -626,7 +627,7 @@ void TSFILE::read_parameters()
                         status = nc_get_att(this->ncid, i_var, "units", unit);
                         unit[length] = '\0';
                         this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup(unit);
-                        free(unit); unit = NULL;
+                        free(unit); unit = nullptr;
                     }
                     else
                     {

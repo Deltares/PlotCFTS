@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-using namespace std;
 
 #if defined(WIN32) || defined(WIN64)
 #  define strdup _strdup
@@ -13,6 +12,8 @@ using namespace std;
 #include "program_arguments.h"
 #include "time_series_plot.h"
 #include "netcdf.h"
+
+using namespace std;
 
 QString selectedFilter;
 QVBoxLayout * showFilenameLayout;
@@ -150,6 +151,7 @@ void MainWindow::createMenus()
 {
     createActions();
 
+    fileMenu = new QMenu();
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(openAct);
     fileMenu->addAction(closeAct);
@@ -161,9 +163,11 @@ void MainWindow::createMenus()
     fileMenu->addSeparator();
     fileMenu->addAction(exitAct);
 
+    exportMenu = new QMenu();
     exportMenu = menuBar()->addMenu(tr("&Export"));
     exportMenu->addAction(ecsvAct);
-    
+
+    helpMenu = new QMenu();
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(showUserManualAct);
     helpMenu->addSeparator();
@@ -183,11 +187,8 @@ void MainWindow::createStatusBar()
     label->setFrameShadow(QFrame::Sunken);
     statusBar()->addWidget(label);
 
-    //char * text1 = getfullversionstring_qcustomplot();
     char * text1 = strdup("QCustomPlot version 2.0.1 (25 juni 2018)");
-    text[0] = '\0';
-    strcat(text, text1);
-    label = new QLabel(QString(text), this);
+    label = new QLabel(QString(text1), this);
     label->setFrameShape(QFrame::Panel);
     label->setFrameShadow(QFrame::Sunken);
     statusBar()->addWidget(label);
@@ -198,7 +199,9 @@ void MainWindow::createStatusBar()
     pgBar->setValue(0);
     pgBar->setMaximumWidth(150);
     statusBar()->addPermanentWidget(pgBar, 150);
-    free(text);
+
+    free(text); text = nullptr;
+    free(text1); text1 = nullptr;
 }
 
 void MainWindow::openFile()
@@ -246,6 +249,8 @@ void MainWindow::openFile(QFileInfo ncfile, FILE_TYPE type)
     char * fname = strdup(ncfile.absoluteFilePath().toUtf8());
     int status = nc_open(fname, NC_NOWRITE, &ncid);
     (void)nc_close(ncid);
+    free(fname); fname = nullptr;
+
     if (status != NC_NOERR)
     {
         QMessageBox::warning(this, QObject::tr("Warning"), QObject::tr("Cannot open netCDF file:\n%1\nThis filename is not supported by this Climate and Forecast time series plot program.").arg(ncfile.absoluteFilePath()));
@@ -498,8 +503,8 @@ void MainWindow::ExportToCSV()
 
     fpo.close();
 
-    free(csv_filename); csv_filename = NULL;
-    free(datumtijd);
+    free(csv_filename); csv_filename = nullptr;
+    free(datumtijd); datumtijd = nullptr;
 }
 
 void MainWindow::OpenPreSelection()
@@ -585,7 +590,7 @@ void MainWindow::OpenPreSelection()
 void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
 {
     int status = -1;
-    char * fname = strdup(json_file.absoluteFilePath().toUtf8());
+    string fname = json_file.absoluteFilePath().toUtf8().toStdString();
     READ_JSON * pt_pre_selection = new READ_JSON(fname);
     int cnt = tsfile->get_count_par_loc();
     for (int cb_index = 0; cb_index < cnt; cb_index++)

@@ -6,7 +6,7 @@ using namespace std;
 
 TSPlot::TSPlot(QWidget * qparent, QIcon qicon, int qnr_plot)
 {
-
+    tsfile = nullptr;
     customPlot = new QCustomPlot(qparent);
     customPlot->setAttribute(Qt::WA_DeleteOnClose, true);
     icon = qicon;
@@ -125,29 +125,29 @@ void TSPlot::draw_plot(int nr_plot, QString txt, QString fname)
     customPlot->legend->setSelectableParts(QCPLegend::spItems); // legend box shall not be selectable, only legend items
 
     // connect slot that ties some axis selections together (especially opposite axes):
-    connect(customPlot, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
+    connect(customPlot, &QCustomPlot::selectionChangedByUser, this, &TSPlot::selectionChanged);
     // connect slots that takes care that when an axis is selected, only that direction can be dragged and zoomed:
-    connect(customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress()));
-    connect(customPlot, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
+    connect(customPlot, &QCustomPlot::mousePress, this, &TSPlot::mousePress);
+    connect(customPlot, &QCustomPlot::mouseWheel, this, &TSPlot::mouseWheel);
 
     // make bottom and left axes transfer their ranges to top and right axes:
     connect(customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), customPlot->xAxis2, SLOT(setRange(QCPRange)));
     connect(customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), customPlot->yAxis2, SLOT(setRange(QCPRange)));
 
     // connect some interaction slots:
-    connect(customPlot, SIGNAL(axisDoubleClick(QCPAxis*, QCPAxis::SelectablePart, QMouseEvent*)), this, SLOT(axisLabelDoubleClick(QCPAxis*, QCPAxis::SelectablePart)));
-    connect(customPlot, SIGNAL(legendDoubleClick(QCPLegend*, QCPAbstractLegendItem*, QMouseEvent*)), this, SLOT(legendDoubleClick(QCPLegend*, QCPAbstractLegendItem*)));
-    connect(title, SIGNAL(doubleClicked(QMouseEvent*)), this, SLOT(titleDoubleClick(QMouseEvent*)));
+    connect(customPlot, &QCustomPlot::axisDoubleClick, this, &TSPlot::axisLabelDoubleClick);
+    connect(customPlot, &QCustomPlot::legendDoubleClick, this, &TSPlot::legendDoubleClick);
+    connect(title, &QCPTextElement::doubleClicked, this, &TSPlot::titleDoubleClick);
 
     // connect slot that shows a message in the status bar when a graph is clicked:
-    connect(customPlot, SIGNAL(plottableClick(QCPAbstractPlottable*, int, QMouseEvent*)), this, SLOT(graphClicked(QCPAbstractPlottable*, int)));
-    connect(customPlot, SIGNAL(plottableDoubleClick(QCPAbstractPlottable*, int, QMouseEvent*)), this, SLOT(graphDoubleClicked(QCPAbstractPlottable*, int)));
+    connect(customPlot, &QCustomPlot::plottableClick, this, &TSPlot::graphClicked);
+    connect(customPlot, &QCustomPlot::plottableDoubleClick, this, &TSPlot::graphDoubleClicked);
 
     // setup policy and connect slot for context menu popup:
     customPlot->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(customPlot, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
+    connect(customPlot, &QCustomPlot::customContextMenuRequested, this, &TSPlot::contextMenuRequest);
 
-    connect(customPlot, SIGNAL(mouseMove(QMouseEvent *)), this, SLOT(onMouseMove(QMouseEvent *)));
+    connect(customPlot, &QCustomPlot::mouseMove, this, &TSPlot::onMouseMove);
     // connect(customPlot, SIGNAL(destroyed()), this, SLOT(destroyed()));
 }
 QWidget * TSPlot::get_parent()
@@ -561,7 +561,6 @@ void TSPlot::graphDoubleClicked(QCPAbstractPlottable *plottable, int dataIndex)
     QList<QDateTime> qdt_times = tsfile->get_qdt_times();
     QString qdt = qdt_times[dataIndex].toString("yyyy-MM-dd hh:mm:ss.zzz");
     QString message = QString("Location: %1\nTime: %2\nValue: %3").arg(plottable->name()).arg(qdt).arg(dataValue);
-    //QString message = QString("Location: %1").arg(plottable->name());
     QMessageBox::information(parent, NULL, message);
 }
 
