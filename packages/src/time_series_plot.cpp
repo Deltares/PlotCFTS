@@ -33,12 +33,13 @@ TSPlot::TSPlot(QWidget * qparent, QIcon qicon, int qnr_plot)
         plot_height = int(0.5 * double(plot_width));
     }
 
-    QVBoxLayout vl_main;
-    vl_main.setSpacing(0);
-    vl_main.setMargin(0);
-    vl_main.addWidget(customPlot);
+    QVBoxLayout * vl_main = new QVBoxLayout;
+    vl_main->setSpacing(0);
+    vl_main->setMargin(0);
+    vl_main->addWidget(customPlot);
 
-    parent->setLayout(&vl_main);
+    parent->setLayout(vl_main);
+
     parent->resize(plot_width, plot_height);
     parent->show();
 
