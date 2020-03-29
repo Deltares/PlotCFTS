@@ -219,8 +219,14 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
                     janm = time.toString();
                     janm = this->RefDate->toString("yyyy-MM-dd hh:mm:ss.zzz");
 #endif
-                    times = (double *)malloc(sizeof(double)*datetime_ntimes);
-                    status = nc_get_var_double(this->ncid, i_var, times);
+                    times_c = (double *)malloc(sizeof(double)*datetime_ntimes);
+                    status = nc_get_var_double(this->ncid, i_var, times_c);
+                    for (int i = 0; i < datetime_ntimes; i++)
+                    {
+                        times.push_back(times_c[i]);
+                    }
+                    free(times_c);
+                    times_c = nullptr;
                     if (datetime_ntimes >= 2)
                     {
                         dt = times[1] - times[0];
@@ -280,7 +286,7 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
                             times[j] = times[j] * 24.0 * 3600.0;
                             qdt_times.append(this->RefDate->addSecs(times[j]));
                         }
-                        // time[j] is now defined in seconds
+                        // times[j] is now defined in seconds
 #if defined (DEBUG)
                         if (dt < 1.0)
                             QString janm = qdt_times[j].toString("yyyy-MM-dd hh:mm:ss.zzz");
@@ -302,7 +308,7 @@ long TSFILE::get_count_times()
     return (long) this->datetime_ntimes;
 }
 
-double * TSFILE::get_times()
+std::vector<double> TSFILE::get_times()
 {
     return this->times;
 }
@@ -1009,7 +1015,7 @@ struct _global_attributes * TSFILE::get_global_attributes()
     return this->global_attributes;
 }
 
-double * TSFILE::get_time_series(long cb_index, char * parameter, long loc_id, long layer_id)
+vector<double> TSFILE::get_time_series(long cb_index, char * parameter, long loc_id, long layer_id)
 {
     int ndims, nvars, natts, nunlimited;
     long status;
@@ -1082,25 +1088,26 @@ double * TSFILE::get_time_series(long cb_index, char * parameter, long loc_id, l
     //select colum loc_id from variable "parameter"
     j = -1;
     long ii_layer = fmax(0, layer_id);
-    this->y_values = (double *)malloc(sizeof(double) * this->datetime_ntimes);
+    m_y_values.clear();
+    m_y_values.reserve(this->datetime_ntimes);
     int ii;
     for (int i_times = 0; i_times < this->datetime_ntimes; i_times++)
     {
         j = j + 1;
         ii = ii_layer + nr_layers * loc_id + nr_layers * nr_loc * i_times;
-        this->y_values[j] = y_array[ii];
+        m_y_values.push_back(y_array[ii]);
     }
 
-    free(y_array); y_array = NULL;
-    free(var_dims); var_dims= NULL;
-    free(dim_name); dim_name = NULL;
-    free(var_name); var_name = NULL;
+    free(y_array); y_array = nullptr;
+    free(var_dims); var_dims= nullptr;
+    free(dim_name); dim_name = nullptr;
+    free(var_name); var_name = nullptr;
 
     status = nc_close(this->ncid);
     if (status != NC_NOERR) {
         // handle_error(status);
     }
-    return this->y_values;
+    return m_y_values;
 }
 
 bool TSFILE::get_pre_selection()

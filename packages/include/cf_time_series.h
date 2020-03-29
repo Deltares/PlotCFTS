@@ -63,7 +63,7 @@ public:
     void read_parameters();
     void read_locations();
     struct _global_attributes * get_global_attributes(void);
-    double * get_time_series(long, char *, long, long);
+    std::vector<double> get_time_series(long, char *, long, long);
     QString get_xaxis_label(void);
     long get_count_par_loc();
     long get_count_parameters(long);
@@ -75,7 +75,7 @@ public:
     long put_parameter(long, long, struct _parameter *);
 
     long get_count_times();
-    double * get_times();
+    std::vector<double> get_times();
     QList<QDateTime> get_qdt_times();
     quint64 ReferenceDatemSecsSinceEpoch();
     bool get_pre_selection();
@@ -97,7 +97,8 @@ public:
     QString datetime_units;
     QDateTime * RefDate;
 
-    double * times;  // only the seconds
+    double * times_c;  // only the seconds
+    std::vector<double> times;  // vector of seconds
     QList<QDateTime> qdt_times;  // date time presentation yyyy-MM-dd hh:mm:ss.zzz
     char ** location_name;
     char ** parameter;
@@ -124,7 +125,7 @@ private:
     bool m_pre_selection;
     int m_cb_parloc_index;
     int ncid;
-    double * y_values;
+    std::vector<double> m_y_values;
 };
 
 #endif

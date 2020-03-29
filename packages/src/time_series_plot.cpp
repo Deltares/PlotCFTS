@@ -167,7 +167,7 @@ int TSPlot::get_active_plot_nr()
 void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
 {
     int nr_x_values = tsfile->get_count_times();
-    double * x_values = tsfile->get_times();
+    vector<double> x_values = tsfile->get_times();
     int i_tsfile_par = -1;
     int i_tsfile_loc = -1;
     QListWidgetItem * sel_item;
@@ -210,7 +210,7 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
     QString yaxis_label = set_yaxis_label(param[i_tsfile_par].name, param[i_tsfile_par].unit, y_label_counter);
     customPlot->yAxis->setLabel(yaxis_label);
 
-    double * y_values = tsfile->get_time_series(cb_index, param[i_tsfile_par].name, i_tsfile_loc, i_layer);
+    std::vector<double> y_values = tsfile->get_time_series(cb_index, param[i_tsfile_par].name, i_tsfile_loc, i_layer);
 
     // x-axis
     QString xaxis_label = tsfile->get_xaxis_label();
@@ -251,9 +251,7 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
     xv.insert(xv.end(), &x_tmp[0], &x_tmp[nr_x_values]);
     QVector<qreal> x_val = QVector<qreal>::fromStdVector(xv);
 
-    std::vector<double> yv;
-    yv.insert(yv.end(), &y_values[0], &y_values[nr_x_values]);
-    QVector<qreal> y_val = QVector<qreal>::fromStdVector(yv);
+    QVector<qreal> y_val = QVector<qreal>::fromStdVector(y_values);
 
     customPlot->addGraph();
     _nr_graphs = customPlot->graphCount();
@@ -325,9 +323,7 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
     //customPlot->xAxis->setRange(xmin, xmax);
     //customPlot->yAxis->setRange(ymin, ymax);
     free(x_tmp); x_tmp = NULL;
-    free(y_values); y_values = NULL;
     xv.clear();
-    yv.clear();
     x_val.clear();
     y_val.clear();
 }
@@ -713,7 +709,7 @@ void TSPlot::onMouseMove(QMouseEvent *event)
     double y = customPlot->yAxis->pixelToCoord(event->pos().y());
     // convert x to date time
     QList<QDateTime> qdt_times = tsfile->get_qdt_times();
-    double * times = tsfile->get_times();
+    vector<double> times = tsfile->get_times();
     int nr_times = tsfile->get_count_times();
     i_time = -1;
     if (x < times[0] + double(ref_date_msecs) / 1000.0 ||

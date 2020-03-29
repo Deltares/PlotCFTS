@@ -328,8 +328,6 @@ void MainWindow::ExportToCSV()
     int nr_layers = this->sb_layer->maximum();
     int i_layer = this->sb_layer->value() - 1;  // used as array index (ie zero based)
 
-    double *** y_values;
-
     // get selected parameter
     long nr_pars = 0;
     long * pars = (long *)malloc(sizeof(long) * 1);
@@ -466,26 +464,20 @@ void MainWindow::ExportToCSV()
     fpo << endl;
 
     // allocate memory for the y-values
-    y_values = (double ***)malloc(sizeof(double **) * nr_pars);
-    double * d = (double *)malloc(sizeof(double) * nr_pars * nr_locs * nr_tims);
-    for (int j = 0; j < nr_pars; j++)
-    {
-        y_values[j] = (double **)malloc(sizeof(double *) * nr_locs);
-        for (int i = 0; i < nr_locs; i++)
-        {
-            y_values[j][i] = d + j * nr_locs * nr_tims + i * nr_tims;
-        }
-    }
+    vector<vector<vector<double>>> y_values(nr_pars, vector<vector<double>>( nr_locs, vector<double>(nr_tims)));
 
     for (int j = 0; j < nr_pars; j++)
     {
         {
             i_tsfile_par = pars[j];
-
             for (int i = 0; i < nr_locs; i++)
             {
                 int i_par_loc = this->cb_par_loc->currentIndex();
-                y_values[j][i] = tsfile->get_time_series(i_par_loc, parameter[pars[j]].name, locs[i], i_layer);
+                vector<double> janm = tsfile->get_time_series(i_par_loc, parameter[pars[j]].name, locs[i], i_layer);
+                for (int k = 0; k < janm.size(); k++)
+                {
+                    y_values[j][i][k] = janm[k];
+                }
             }
         }
     }
@@ -517,16 +509,9 @@ void MainWindow::ExportToCSV()
         fpo << endl;
     }
 
-    for (int j = 0; j < nr_pars; j++)
-    {
-        free(y_values[j]); y_values[j] = NULL;
-    }
     fpo.close();
 
-    // delete location_name //    todo QString **  = tsfile->get_location_names();
     free(csv_filename); csv_filename = NULL;
-    free(y_values); y_values = NULL;
-    free(d); d = NULL;
     free(datumtijd);
     free(pars); pars = NULL;
     free(locs); locs = NULL;
