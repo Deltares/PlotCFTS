@@ -329,22 +329,18 @@ void MainWindow::ExportToCSV()
     int i_layer = this->sb_layer->value() - 1;  // used as array index (ie zero based)
 
     // get selected parameter
-    long nr_pars = 0;
-    long * pars = (long *)malloc(sizeof(long) * 1);
-    pars[0] = -1;
+    vector<long> pars;
     for (long i = 0; i < lb_parameters->count(); i++)
     {
         QListWidgetItem * item = lb_parameters->item(i);
         if (item->isSelected())
         {
-            pars = (long *)realloc(pars, sizeof(long *) * (nr_pars + 1));
             for (long j = 0; j < nr_parameters; j++)
             {
                 QString *tmp_name = new QString(parameter[j].name);
                 if (!tmp_name->compare(this->lb_parameters->item(i)->text().toUtf8()))
                 {
-                    pars[nr_pars] = j;
-                    nr_pars = nr_pars + 1;
+                    pars.push_back(j);
                     break;
                 }
                 delete tmp_name;
@@ -352,29 +348,24 @@ void MainWindow::ExportToCSV()
         }
     }
     // get selected locations
-    long nr_locs = 0;
-    long * locs = (long *)malloc(sizeof(long) * 1);
-    locs[0] = -1;
+    vector<long> locs ;
     for (long i = 0; i < lb_locations->count(); i++)
     {
         QListWidgetItem * item = lb_locations->item(i);
         if (item->isSelected())
         {
-            locs = (long *)realloc(locs, sizeof(long *) * (nr_locs + 1));
             for (long j = 0; j < nr_locations; j++)
             {
                 if (!location[j].name->compare(this->lb_locations->item(i)->text().toUtf8()))
                 {
-                    locs[nr_locs] = j;
-                    nr_locs = nr_locs + 1;
+                    locs.push_back(j);
                     break;
                 }
             }
         }
     }
     // get selected times
-    long nr_tims = 0;
-    long * tims = (long *)malloc(sizeof(long) * 1);
+    vector<long> tims;
     if (lb_times->currentRow() != -1)
     {
         for (int i = 0; i < lb_times->count(); i++)
@@ -382,19 +373,15 @@ void MainWindow::ExportToCSV()
             QListWidgetItem * item = lb_times->item(i);
             if (item->isSelected())
             {
-                tims = (long *)realloc(tims, sizeof(long) * (nr_tims + 1));
-                tims[nr_tims] = i;
-                nr_tims = nr_tims + 1;
+                tims.push_back(i);
             }
         }
     }
     else
     {
-        nr_tims = lb_times->count();
-        tims = (long *)realloc(tims, sizeof(long) * (nr_tims));
         for (int i = 0; i < lb_times->count(); i++)
         {
-            tims[i] = i;
+            tims.push_back(i);
         }
     }
 
@@ -419,10 +406,10 @@ void MainWindow::ExportToCSV()
     i_rec++;
     fpo << i_rec << " ------------------" << endl;
     i_rec++;
-    fpo << i_rec << " Parameters: " << nr_pars;  // No endl, list of stations is given
-    for (int j = 0; j < nr_pars; j++)
+    fpo << i_rec << " Parameters: " << pars.size();  // No endl, list of stations is given
+    for (int j = 0; j < pars.size(); j++)
     {
-        for (int i = 0; i < nr_locs; i++)
+        for (int i = 0; i < locs.size(); i++)
         {
             QString q_name(parameter[pars[j]].name);
             if (nr_layers != 0)
@@ -437,10 +424,10 @@ void MainWindow::ExportToCSV()
     fpo << endl;
 
     i_rec++;
-    fpo << i_rec << " Locations : " << nr_locs;  // No endl, list of stations is given
-    for (int j = 0; j < nr_pars; j++)
+    fpo << i_rec << " Locations : " << locs.size();  // No endl, list of stations is given
+    for (int j = 0; j < pars.size(); j++)
     {
-        for (int i = 0; i < nr_locs; i++)
+        for (int i = 0; i < locs.size(); i++)
         {
             QString q_loc(*location[locs[i]].name);
             fpo << ", " << strdup(q_loc.toUtf8().trimmed().replace(",", ";"));
@@ -448,14 +435,14 @@ void MainWindow::ExportToCSV()
     }
     fpo << endl;
     i_rec++;
-    fpo << i_rec << " Time steps: " << nr_tims << endl;
+    fpo << i_rec << " Time steps: " << tims.size() << endl;
     i_rec++;
     fpo << i_rec << " ----------------- " << endl;
     fpo << "DateTime";
-    for (int j = 0; j < nr_pars; j++)
+    for (int j = 0; j < pars.size(); j++)
     {
         QString q_name(parameter[pars[j]].name);
-        for (int i = 0; i < nr_locs; i++)
+        for (int i = 0; i < locs.size(); i++)
         {
             QString q_loc(*location[locs[i]].name);
             fpo << ", " << strdup(q_name.toUtf8().trimmed().replace(",", ";")) << " --- " << strdup(q_loc.toUtf8().trimmed().replace(",",";"));  // In a csv file, the names do not allow commas
@@ -464,17 +451,17 @@ void MainWindow::ExportToCSV()
     fpo << endl;
 
     // allocate memory for the y-values
-    vector<vector<vector<double>>> y_values(nr_pars, vector<vector<double>>( nr_locs, vector<double>(nr_tims)));
+    vector<vector<vector<double>>> y_values(pars.size(), vector<vector<double>>( locs.size(), vector<double>(lb_times->count())));
 
-    for (int j = 0; j < nr_pars; j++)
+    for (int j = 0; j < pars.size(); j++)
     {
         {
             i_tsfile_par = pars[j];
-            for (int i = 0; i < nr_locs; i++)
+            for (int i = 0; i < locs.size(); i++)
             {
                 int i_par_loc = this->cb_par_loc->currentIndex();
                 vector<double> janm = tsfile->get_time_series(i_par_loc, parameter[pars[j]].name, locs[i], i_layer);
-                for (int k = 0; k < janm.size(); k++)
+                for (int k = 0; k < janm.size(); k++)  // janm.size() == lb_times->count()
                 {
                     y_values[j][i][k] = janm[k];
                 }
@@ -485,7 +472,7 @@ void MainWindow::ExportToCSV()
     char * datumtijd = (char *)malloc(sizeof(char) * (4 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 4 + 1));  //  19+4 +1 = 24 = "yyyy-MM-dd hh:mm:ss.zzz"
     QList<QDateTime> qdt_times = tsfile->get_qdt_times();
     double dt = qdt_times.at(0).msecsTo(qdt_times.at(1));
-    for (int k = 0; k < nr_tims; k++)
+    for (int k = 0; k < tims.size(); k++)
     {
         QString qdt;
         if (dt < 1000.)  // milli seconds
@@ -499,9 +486,9 @@ void MainWindow::ExportToCSV()
         strcpy(datumtijd, qdt.toUtf8());
 
         fpo << datumtijd;
-        for (int j = 0; j < nr_pars; j++)
+        for (int j = 0; j < pars.size(); j++)
         {
-            for (int i = 0; i < nr_locs; i++)
+            for (int i = 0; i < locs.size(); i++)
             {
                 fpo << std::scientific << std::setprecision(std::numeric_limits<long double>::digits10 + 1) << ", " << y_values[j][i][tims[k]];  // maximal precision
             }
@@ -513,9 +500,6 @@ void MainWindow::ExportToCSV()
 
     free(csv_filename); csv_filename = NULL;
     free(datumtijd);
-    free(pars); pars = NULL;
-    free(locs); locs = NULL;
-    free(tims); tims = NULL;
 }
 
 void MainWindow::OpenPreSelection()
