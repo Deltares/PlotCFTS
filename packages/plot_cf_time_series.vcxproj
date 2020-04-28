@@ -14,7 +14,7 @@
     <ProjectGuid>{E416BD51-4B40-316F-9703-D9547497EF04}</ProjectGuid>
     <RootNamespace>interaction-example</RootNamespace>
     <Keyword>Qt4VSv1.0</Keyword>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -63,7 +63,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;.\include;$(QTDIR)\include;$(QTDIR)\include\QtPrintSupport;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtCore;release;.;$(QTDIR)\mkspecs\win32-msvc2013;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;.\include;$(QT5DIR64)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:strictStrings -w34100 -w34189 -w44996 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>release\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -71,7 +71,7 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <ObjectFileName>release\</ObjectFileName>
       <Optimization>MaxSpeed</Optimization>
-      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN64;QT_NO_DEBUG;QT_PRINTSUPPORT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN64;QT_NO_DEBUG;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <ProgramDataBaseFileName>
       </ProgramDataBaseFileName>
@@ -83,8 +83,8 @@
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>qtmain.lib;shell32.lib;Qt5PrintSupport.lib;Qt5Widgets.lib;Qt5Gui.lib;Qt5Core.lib;netcdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(QTDIR)\lib;..\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;Qt5PrintSupport.lib;netcdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(QT5DIR64)\lib;..\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -110,7 +110,7 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;.\include;$(QTDIR)\include;$(QTDIR)\include\QtPrintSupport;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtCore;debug;.;$(QTDIR)\mkspecs\win32-msvc2013;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;.\include;$(QT5DIR64)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-w34100 -w34189 -w44996 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>debug\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -118,7 +118,7 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
       <ExceptionHandling>Sync</ExceptionHandling>
       <ObjectFileName>debug\</ObjectFileName>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>DEBUG;_WINDOWS;UNICODE;WIN64;QT_PRINTSUPPORT_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DEBUG;_WINDOWS;UNICODE;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -128,8 +128,8 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>qtmaind.lib;shell32.lib;Qt5PrintSupportd.lib;Qt5Widgetsd.lib;Qt5Guid.lib;Qt5Cored.lib;netcdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(QTDIR)\lib;..\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;Qt5PrintSupportd.lib;netcdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(QT5DIR64)\lib;..\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -153,9 +153,18 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="generated\moc_mainwindow.cpp" />
-    <ClCompile Include="generated\moc_qcustomplot.cpp" />
-    <ClCompile Include="generated\moc_time_series_plot.cpp" />
+    <ClCompile Include="generated\moc_mainwindow.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(QT5DIR64)\include;release;.;$(QT5DIR64)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.;.\include;$(QT5DIR64)\include;debug;.;$(QT5DIR64)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="generated\moc_qcustomplot.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.;.\include;$(QT5DIR64)\include;debug;.;$(QT5DIR64)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(QT5DIR64)\include;release;.;$(QT5DIR64)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="generated\moc_time_series_plot.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(QT5DIR64)\include;release;.;$(QT5DIR64)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.;.\include;$(QT5DIR64)\include;debug;.;$(QT5DIR64)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="src\cf_timeseries.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mainwindow.cpp" />
@@ -170,22 +179,22 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
     <CustomBuild Include="include\qcustomplot.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QT5DIR64)/bin/moc.exe   %(FullPath)    -o generated\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN64 -DQT_NO_DEBUG -DNDEBUG -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include" "-I$(QT5DIR64)\include\QtPrintSupport" "-I$(QT5DIR64)\include\QtWidgets" "-I$(QT5DIR64)\include\QtGui" "-I$(QT5DIR64)\include\QtANGLE" "-I$(QT5DIR64)\include\QtCore" "-I.\release" "-I$(QT5DIR64)\mkspecs\win32-msvc2013"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">generated\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QT5DIR64)/bin/moc.exe   %(FullPath)    -o generated\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -DDEBUG -D_WINDOWS -DUNICODE -DWIN64 -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">generated\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="include\mainwindow.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QT5DIR64)/bin/moc.exe   %(FullPath)    -o generated\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -DDEBUG -D_WINDOWS -DUNICODE -DWIN64 -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QT5DIR64)/bin/moc.exe   %(FullPath)    -o generated\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN64 -DQT_NO_DEBUG -DNDEBUG -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">generated\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">generated\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -202,8 +211,8 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
     <ClInclude Include="include\program_arguments.h" />
     <ClInclude Include="include\read_json.h" />
     <CustomBuild Include="include\time_series_plot.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QT5DIR64)/bin/moc.exe   %(FullPath)    -o generated\moc_%(Filename).cpp</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QT5DIR64)/bin/moc.exe   %(FullPath)    -o generated\moc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -DDEBUG -D_WINDOWS -DUNICODE -DWIN64 -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN64 -DQT_NO_DEBUG -DNDEBUG -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">generated\moc_%(Filename).cpp;%(Outputs)</Outputs>
@@ -218,7 +227,7 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
   <ImportGroup Label="ExtensionTargets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Qt5Version_x0020_x64="Qt5.12.6" />
+      <UserProperties Qt5Version_x0020_x64="$(DefaultQtVersion)" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

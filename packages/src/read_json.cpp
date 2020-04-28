@@ -15,7 +15,7 @@ using c++11 regular expression functionality.
 #include <iostream>
 #include <string>
 #include "read_json.h"
-#include "QMessageBox"
+#include <QtWidgets/QMessageBox>
 
 struct Getter
 {
