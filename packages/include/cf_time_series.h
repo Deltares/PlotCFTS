@@ -77,7 +77,7 @@ public:
     long get_count_times();
     std::vector<double> get_times();
     QList<QDateTime> get_qdt_times();
-    quint64 ReferenceDatemSecsSinceEpoch();
+    QDateTime * get_reference_date();
     bool get_pre_selection();
     void put_pre_selection(bool);
     int get_cb_parloc_index();

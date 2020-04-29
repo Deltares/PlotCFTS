@@ -174,6 +174,7 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
     QListWidgetItem * sel_item;
 
     // i_par and i_loc taken from sorted listboxes
+    QDateTime * RefDate = tsfile->get_reference_date();
     struct _parameter * param = tsfile->get_parameters(cb_index);
     int nr_parameters = tsfile->get_count_parameters(cb_index);
     struct _location * location = tsfile->get_locations(cb_index);
@@ -217,16 +218,7 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
     QString xaxis_label = tsfile->get_xaxis_label();
     customPlot->xAxis->setLabel(xaxis_label);
 
-    quint64 ref_date_msecs = tsfile->ReferenceDatemSecsSinceEpoch();
-    double * x_tmp = (double *)malloc(sizeof(double) * nr_x_values);
-    for (long i = 0; i < nr_x_values; i++)
-    {
-        x_tmp[i] = x_values[i] + double(ref_date_msecs) / 1000.0;
-    }
     // configure bottom axis to show date instead of number:
-    QSharedPointer<QCPAxisTickerDateTime> dateTimeTicker(new QCPAxisTickerDateTime);
-    dateTimeTicker->setDateTimeFormat("hh:mm:ss\ndd MMM yyyy");
-    customPlot->xAxis->setTicker(dateTimeTicker);
 
     // Select part of time series, determine by the time interval selected in the listbox
     // if nothing is selected the whole series is used
@@ -240,18 +232,26 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
             if (item->isSelected())
             {
                 j += 1;
-                x_tmp[j] = x_tmp[i];
+                x_values[j] = x_values[i];
                 y_values[j] = y_values[i];
                 nr_x_values = j + 1;  // one-based
             }
         }
     }
-    dateTimeTicker->setTickOrigin(x_tmp[0]);
+    QSharedPointer<QCPAxisTickerDateTime> dateTimeTicker(new QCPAxisTickerDateTime);
+    dateTimeTicker->setDateTimeFormat("hh:mm:ss\ndd MMM yyyy");
+    dateTimeTicker->setDateTimeSpec(Qt::UTC);
+    dateTimeTicker->setTickOrigin(RefDate->addSecs(x_values[0]));
+    QString janm1 = RefDate->toString("yyyy-MM-dd hh:mm:ss.zzz");
+    customPlot->xAxis->setTicker(dateTimeTicker);
 
-    std::vector<double> xv;
-    xv.insert(xv.end(), &x_tmp[0], &x_tmp[nr_x_values]);
-    QVector<qreal> x_val = QVector<qreal>::fromStdVector(xv);
+    qint64 offset = RefDate->toSecsSinceEpoch();
+    for (int i = 0; i < x_values.size(); i++)
+    {
+        x_values[i] = x_values[i] + (double) offset;
+    }
 
+    QVector<qreal> x_val = QVector<qreal>::fromStdVector(x_values);
     QVector<qreal> y_val = QVector<qreal>::fromStdVector(y_values);
 
     customPlot->addGraph();
@@ -323,8 +323,6 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
 
     //customPlot->xAxis->setRange(xmin, xmax);
     //customPlot->yAxis->setRange(ymin, ymax);
-    free(x_tmp); x_tmp = NULL;
-    xv.clear();
     x_val.clear();
     y_val.clear();
 }
@@ -703,17 +701,19 @@ void TSPlot::contextMenuRemoveSelectedGraph()
 void TSPlot::onMouseMove(QMouseEvent *event)
 {
     int i_time;
-    quint64 ref_date_msecs = tsfile->ReferenceDatemSecsSinceEpoch();
 
     double x = customPlot->xAxis->pixelToCoord(event->pos().x());
     double y = customPlot->yAxis->pixelToCoord(event->pos().y());
     // convert x to date time
     QList<QDateTime> qdt_times = tsfile->get_qdt_times();
+    QDateTime * RefDate = tsfile->get_reference_date();
     vector<double> times = tsfile->get_times();
     int nr_times = tsfile->get_count_times();
     i_time = -1;
-    if (x < times[0] + double(ref_date_msecs) / 1000.0 ||
-        x > times[nr_times-1] + double(ref_date_msecs) / 1000.0)
+
+    qint64 offset = RefDate->toSecsSinceEpoch();
+    if (x < times[0] + offset ||
+        x > times[nr_times-1] + offset )
     {
         // nothing
     }
@@ -721,24 +721,21 @@ void TSPlot::onMouseMove(QMouseEvent *event)
     {
         for (int i = 1; i < nr_times; i++)
         {
-            if (times[i] + double(ref_date_msecs) / 1000.0 > x)
+            if (times[i-1] + offset > x && x < times[i] + offset)
             {
-                i_time = i-1;
+                double alpha = (x - times[i - 1] - offset) / (times[i] - times[i - 1]);
+                double times_aver = (1.0 - alpha) * times[i - 1] +  alpha * times[i];
+                QDateTime qdt_aver = RefDate->addSecs(times_aver);
+                QString qdt = qdt_aver.toString("hh:mm:ss.zzz dd MMM yyyy");
+                customPlot->setToolTipDuration(5000);
+                customPlot->setToolTip(QString("%1, %2").arg(qdt).arg(y));
                 break;
+            }
+            else
+            {
+                customPlot->setToolTipDuration(0);
+                customPlot->setToolTip(QString(""));
             }
         }
     }
-    if (i_time >= 0 && i_time < nr_times)
-    {
-        //QString qdt = qdt_times[i_time].toString("yyyy-MM-dd hh:mm:ss");
-        QString qdt = qdt_times[i_time].toString("hh:mm:ss.zzz dd MMM yyyy");
-        customPlot->setToolTipDuration(5000);
-        customPlot->setToolTip(QString("%1, %2").arg(qdt).arg(y));
-    }
-    else
-    {
-        customPlot->setToolTipDuration(0);
-        customPlot->setToolTip(QString(""));
-    }
-    //qDeleteAll(qdt_times);
 }

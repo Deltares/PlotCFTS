@@ -213,11 +213,10 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
 
                     QDate date = QDate::fromString(date_time.at(2), "yyyy-MM-dd");
                     QTime time = QTime::fromString(date_time.at(3), "hh:mm:ss");
-                    this->RefDate = new QDateTime(date, time);
+                    this->RefDate = new QDateTime(date, time, Qt::UTC);
 #if defined(DEBUG)
-                    QString janm = date.toString("yyyy-MM-dd");
-                    janm = time.toString();
-                    janm = this->RefDate->toString("yyyy-MM-dd hh:mm:ss.zzz");
+                    QString janm1 = this->RefDate->toString("yyyy-MM-dd hh:mm:ss.zzz");
+                    QString janm2 = this->RefDate->toUTC().toString("yyyy-MM-dd hh:mm:ss.zzz");
 #endif
                     times_c = (double *)malloc(sizeof(double)*datetime_ntimes);
                     status = nc_get_var_double(this->ncid, i_var, times_c);
@@ -290,9 +289,14 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
                         // times[j] is now defined in seconds
 #if defined (DEBUG)
                         if (dt < 1.0)
+                        { 
                             QString janm = qdt_times[j].toString("yyyy-MM-dd hh:mm:ss.zzz");
+                        }
                         else
+                        {
                             QString janm = qdt_times[j].toString("yyyy-MM-dd hh:mm:ss");
+                            int a = 1;
+                        }
 #endif
                     }
                     break;
@@ -313,17 +317,17 @@ std::vector<double> TSFILE::get_times()
 {
     return this->times;
 }
+QDateTime * TSFILE::get_reference_date()
+{
+    return this->RefDate;
+}
 QList<QDateTime> TSFILE::get_qdt_times()  // qdt: Qt Date Time
 {
     return this->qdt_times;
 }
-quint64 TSFILE::ReferenceDatemSecsSinceEpoch()
-{
-    return this->RefDate->toMSecsSinceEpoch();
-}
 QString TSFILE::get_xaxis_label(void)
 {
-    return this->xaxis_label.trimmed() + " [" + this->xaxis_unit.trimmed() + "]";
+    return this->xaxis_label.trimmed() + " [" + this->xaxis_unit.trimmed() + " UTC]";
 }
 void TSFILE::read_parameters()
 {
