@@ -218,7 +218,7 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
                     QString janm1 = this->RefDate->toString("yyyy-MM-dd hh:mm:ss.zzz");
                     QString janm2 = this->RefDate->toUTC().toString("yyyy-MM-dd hh:mm:ss.zzz");
 #endif
-                    times_c = (double *)malloc(sizeof(double)*datetime_ntimes);
+                    double * times_c = (double *)malloc(sizeof(double)*datetime_ntimes);
                     status = nc_get_var_double(this->ncid, i_var, times_c);
                     times.clear();
                     for (int i = 0; i < datetime_ntimes; i++)

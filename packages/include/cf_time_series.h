@@ -97,7 +97,6 @@ public:
     QString datetime_units;
     QDateTime * RefDate;
 
-    double * times_c;  // only the seconds
     std::vector<double> times;  // vector of seconds
     QList<QDateTime> qdt_times;  // date time presentation yyyy-MM-dd hh:mm:ss.zzz
     char ** location_name;
