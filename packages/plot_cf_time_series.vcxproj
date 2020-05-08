@@ -90,7 +90,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreImportLibrary>true</IgnoreImportLibrary>
       <LinkIncremental>false</LinkIncremental>
-      <OutputFile>$(OutDir)plot_cf_time_series.exe</OutputFile>
+      <OutputFile>$(OutDir)plotcfts.exe</OutputFile>
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <SubSystem>Windows</SubSystem>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -134,7 +134,7 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreImportLibrary>true</IgnoreImportLibrary>
-      <OutputFile>$(OutDir)plot_cf_time_series.exe</OutputFile>
+      <OutputFile>$(OutDir)plotcfts.exe</OutputFile>
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <SubSystem>Windows</SubSystem>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -179,22 +179,22 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
     <CustomBuild Include="include\qcustomplot.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN64 -DQT_NO_DEBUG -DNDEBUG -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include" "-I$(QT5DIR64)\include\QtPrintSupport" "-I$(QT5DIR64)\include\QtWidgets" "-I$(QT5DIR64)\include\QtGui" "-I$(QT5DIR64)\include\QtANGLE" "-I$(QT5DIR64)\include\QtCore" "-I.\release" "-I$(QT5DIR64)\mkspecs\win32-msvc2013"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QT5DIR64)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN64 -DQT_NO_DEBUG -DNDEBUG -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include" "-I$(QT5DIR64)\include\QtPrintSupport" "-I$(QT5DIR64)\include\QtWidgets" "-I$(QT5DIR64)\include\QtGui" "-I$(QT5DIR64)\include\QtANGLE" "-I$(QT5DIR64)\include\QtCore" "-I.\release" "-I$(QT5DIR64)\mkspecs\win32-msvc2013"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">generated\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -DDEBUG -D_WINDOWS -DUNICODE -DWIN64 -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QT5DIR64)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -DDEBUG -D_WINDOWS -DUNICODE -DWIN64 -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">generated\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="include\mainwindow.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -DDEBUG -D_WINDOWS -DUNICODE -DWIN64 -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QT5DIR64)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -DDEBUG -D_WINDOWS -DUNICODE -DWIN64 -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN64 -DQT_NO_DEBUG -DNDEBUG -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QT5DIR64)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN64 -DQT_NO_DEBUG -DNDEBUG -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">generated\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">generated\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -211,8 +211,8 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
     <ClInclude Include="include\program_arguments.h" />
     <ClInclude Include="include\read_json.h" />
     <CustomBuild Include="include\time_series_plot.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -DDEBUG -D_WINDOWS -DUNICODE -DWIN64 -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN64 -DQT_NO_DEBUG -DNDEBUG -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QT5DIR64)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -DDEBUG -D_WINDOWS -DUNICODE -DWIN64 -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QT5DIR64)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN64 -DQT_NO_DEBUG -DNDEBUG -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">generated\moc_%(Filename).cpp;%(Outputs)</Outputs>
