@@ -627,7 +627,7 @@ void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
             {
                 for (int k = 0; k < pre_locations.size(); k++)
                 {
-                    string loc = location[j].name->toStdString();
+                    string loc = location[j].name->trimmed().toStdString();
                     if (pre_locations[k] == loc)  // compare string with string
                     {
                         location[j].pre_selected = 1;

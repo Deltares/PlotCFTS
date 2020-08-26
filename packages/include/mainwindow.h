@@ -39,6 +39,7 @@
 #include <QtGui/QIcon>
 #include <QtGui/QDrag>
 #include <QtGui/QDragEnterEvent>
+#include <QtGui/QPaintDevice>
 #include <QtGui/QStandardItem>
 #include <QtGui/QStandardItemModel>
 
