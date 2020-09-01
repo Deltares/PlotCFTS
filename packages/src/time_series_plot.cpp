@@ -251,8 +251,13 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
         x_values[i] = x_values[i] + (double) offset;
     }
 
-    QVector<qreal> x_val = QVector<qreal>::fromStdVector(x_values);
-    QVector<qreal> y_val = QVector<qreal>::fromStdVector(y_values);
+    std::vector<double> xv;
+    xv.insert(xv.end(), &x_values[0], &x_values[nr_x_values]);
+    QVector<qreal> x_val = QVector<qreal>::fromStdVector(xv);
+
+    std::vector<double> yv;
+    yv.insert(yv.end(), &y_values[0], &y_values[nr_x_values]);
+    QVector<qreal> y_val = QVector<qreal>::fromStdVector(yv);
 
     customPlot->addGraph();
     _nr_graphs = customPlot->graphCount();

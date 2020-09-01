@@ -56,7 +56,7 @@ MainWindow::MainWindow(QDir exec_dir_in, QDir startup_dir_in)
     int width = d->screenGeometry(scridx).width();  // returns screen width
     int height = d->screenGeometry(scridx).height(); // returns screen height
     width = (int)(0.4 * double(width));
-    height = (int)(0.6 * double(height)); // Do not count the taskbar pixels, assumed to be 1 percent of the screen
+    height = (int)(0.7 * double(height)); // Do not count the taskbar pixels, assumed to be 1 percent of the screen
 
     resize(width, height);
     mainWidget->setGeometry(0, 0, width, height);
