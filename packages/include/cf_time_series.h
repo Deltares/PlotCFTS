@@ -39,6 +39,15 @@ struct _location {
                        //            2: show pre-selected; decrease by 1, show all (0 and 1) (Should know what was previously selected)
 };
 
+class _time {
+public:
+    std::vector<double> time;  // vector of seconds
+    QList<QDateTime> qdt_time;  // date time presentation yyyy-MM-dd hh:mm:ss.zzz
+    std::vector<int> pre_selected;  // tri-state: 0: not pre-selected (show all); only when saved to json file (also in memory will this action be performed to generate a new set of preselected parameters)
+                                    //            1: pre-selected (show all); increase by 1 show then show only (2)
+                                    //            2: show pre-selected; decrease by 1, show all (0 and 1) (Should know what was previously selected)
+};
+
 struct _par_loc {
     char * location_var_name;  // to check the coordinate attribute
     char * location_long_name;  // to present in combobox
@@ -74,10 +83,13 @@ public:
     long put_location(long, long, struct _location *);
     long put_parameter(long, long, struct _parameter *);
 
+    _time times;
     long get_count_times();
-    std::vector<double> get_times();
+    _time get_times();
+    void put_times(_time);
     QList<QDateTime> get_qdt_times();
     QDateTime * get_reference_date();
+
     bool get_pre_selection();
     void put_pre_selection(bool);
     int get_cb_parloc_index();
@@ -97,8 +109,6 @@ public:
     QString datetime_units;
     QDateTime * RefDate;
 
-    std::vector<double> times;  // vector of seconds
-    QList<QDateTime> qdt_times;  // date time presentation yyyy-MM-dd hh:mm:ss.zzz
     char ** location_name;
     char ** parameter;
 #if defined (DEBUG)

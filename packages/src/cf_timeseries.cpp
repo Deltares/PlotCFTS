@@ -95,9 +95,9 @@ TSFILE::~TSFILE()
         // delete locations
         par_loc[i]->nr_locations = 0;
         // delete times (it is a list)
-        for (auto iter = qdt_times.begin(); iter != qdt_times.end(); ++iter)
+        for (auto iter = times.qdt_time.begin(); iter != times.qdt_time.end(); ++iter)
         {
-            qdt_times.erase(iter);
+            times.qdt_time.erase(iter);
         }
     }
     if (nr_par_loc != 0)
@@ -220,16 +220,17 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
 #endif
                     double * times_c = (double *)malloc(sizeof(double)*datetime_ntimes);
                     status = nc_get_var_double(this->ncid, i_var, times_c);
-                    times.clear();
+                    times.time.clear();
                     for (int i = 0; i < datetime_ntimes; i++)
                     {
-                        times.push_back(times_c[i]);
+                        times.time.push_back(times_c[i]);
+                        times.pre_selected.push_back(0);  // not pre selected
                     }
                     free(times_c);
                     times_c = nullptr;
                     if (datetime_ntimes >= 2)
                     {
-                        dt = times[1] - times[0];
+                        dt = times.time[1] - times.time[0];
                     }
                     fraction = double(pgBar_start);
                     pgBar->setValue(int(fraction));
@@ -264,37 +265,37 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
                         {
                             if (dt < 1.0)
                             {
-                                qdt_times.append(this->RefDate->addMSecs(1000.*times[j]));  // milli seconds as smallest time unit
+                                times.qdt_time.append(this->RefDate->addMSecs(1000.*times.time[j]));  // milli seconds as smallest time unit
                             }
                             else
                             {
-                                qdt_times.append(this->RefDate->addSecs(times[j]));  // seconds as smallest time unit
+                                times.qdt_time.append(this->RefDate->addSecs(times.time[j]));  // seconds as smallest time unit
                             }
                         }
                         else if (datetime_units.contains("min"))  // minutes, minute, min
                         {
-                            times[j] = times[j] * 60.0;
-                            qdt_times.append(this->RefDate->addSecs(times[j]));
+                            times.time[j] = times.time[j] * 60.0;
+                            times.qdt_time.append(this->RefDate->addSecs(times.time[j]));
                         }
                         else if (datetime_units.contains("h"))  // hours, hour, hrs, hr, h
                         {
-                            times[j] = times[j] * 3600.0;
-                            qdt_times.append(this->RefDate->addSecs(times[j]));
+                            times.time[j] = times.time[j] * 3600.0;
+                            times.qdt_time.append(this->RefDate->addSecs(times.time[j]));
                         }
                         else if (datetime_units.contains("d"))  // days, day, d
                         {
-                            times[j] = times[j] * 24.0 * 3600.0;
-                            qdt_times.append(this->RefDate->addSecs(times[j]));
+                            times.time[j] = times.time[j] * 24.0 * 3600.0;
+                            times.qdt_time.append(this->RefDate->addSecs(times.time[j]));
                         }
                         // times[j] is now defined in seconds
 #if defined (DEBUG)
                         if (dt < 1.0)
                         { 
-                            QString janm = qdt_times[j].toString("yyyy-MM-dd hh:mm:ss.zzz");
+                            QString janm = times.qdt_time[j].toString("yyyy-MM-dd hh:mm:ss.zzz");
                         }
                         else
                         {
-                            QString janm = qdt_times[j].toString("yyyy-MM-dd hh:mm:ss");
+                            QString janm = times.qdt_time[j].toString("yyyy-MM-dd hh:mm:ss");
                             int a = 1;
                         }
 #endif
@@ -312,19 +313,26 @@ long TSFILE::get_count_times()
 {
     return (long) this->datetime_ntimes;
 }
-
-std::vector<double> TSFILE::get_times()
+_time TSFILE::get_times()
 {
     return this->times;
 }
+void TSFILE::put_times(_time times)
+{
+    this->times = times;
+    return;
+}
+
 QDateTime * TSFILE::get_reference_date()
 {
     return this->RefDate;
 }
 QList<QDateTime> TSFILE::get_qdt_times()  // qdt: Qt Date Time
 {
-    return this->qdt_times;
+    return this->times.qdt_time;
 }
+
+
 QString TSFILE::get_xaxis_label(void)
 {
     return this->xaxis_label.trimmed() + " [" + this->xaxis_unit.trimmed() + " UTC]";

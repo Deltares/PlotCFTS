@@ -168,7 +168,8 @@ int TSPlot::get_active_plot_nr()
 void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
 {
     int nr_x_values = tsfile->get_count_times();
-    vector<double> x_values = tsfile->get_times();
+    _time struct_times = tsfile->get_times();
+    vector<double> x_values = struct_times.time;
     int i_tsfile_par = -1;
     int i_tsfile_loc = -1;
     QListWidgetItem * sel_item;
@@ -212,7 +213,7 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
     QString yaxis_label = set_yaxis_label(param[i_tsfile_par].name, param[i_tsfile_par].unit, y_label_counter);
     customPlot->yAxis->setLabel(yaxis_label);
 
-    std::vector<double> y_values = tsfile->get_time_series(cb_index, param[i_tsfile_par].name, i_tsfile_loc, i_layer);
+    vector<double> y_values = tsfile->get_time_series(cb_index, param[i_tsfile_par].name, i_tsfile_loc, i_layer);
 
     // x-axis
     QString xaxis_label = tsfile->get_xaxis_label();
@@ -246,17 +247,23 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
     customPlot->xAxis->setTicker(dateTimeTicker);
 
     qint64 offset = RefDate->toSecsSinceEpoch();
-    for (int i = 0; i < x_values.size(); i++)
+    for (int i = 0; i < nr_x_values; i++)
     {
         x_values[i] = x_values[i] + (double) offset;
     }
 
-    std::vector<double> xv;
-    xv.insert(xv.end(), &x_values[0], &x_values[nr_x_values]);
+    std::vector<double> xv(nr_x_values);
+    for (int i = 0; i < nr_x_values; i++)
+    {
+        xv[i] = x_values[i];
+    }
     QVector<qreal> x_val = QVector<qreal>::fromStdVector(xv);
 
-    std::vector<double> yv;
-    yv.insert(yv.end(), &y_values[0], &y_values[nr_x_values]);
+    std::vector<double> yv(nr_x_values);
+    for (int i = 0; i < nr_x_values; i++)
+    {
+        yv[i] = y_values[i];
+    }
     QVector<qreal> y_val = QVector<qreal>::fromStdVector(yv);
 
     customPlot->addGraph();
@@ -712,7 +719,8 @@ void TSPlot::onMouseMove(QMouseEvent *event)
     // convert x to date time
     QList<QDateTime> qdt_times = tsfile->get_qdt_times();
     QDateTime * RefDate = tsfile->get_reference_date();
-    vector<double> times = tsfile->get_times();
+    _time struct_time = tsfile->get_times();
+    vector<double> times = struct_time.time;
     int nr_times = tsfile->get_count_times();
     i_time = -1;
 

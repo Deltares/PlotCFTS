@@ -549,6 +549,9 @@ void MainWindow::OpenPreSelection()
             long nr_parameters = tsfile->get_count_parameters(cb_index);
             struct _location *  location = tsfile->get_locations(cb_index);
             long nr_locations = tsfile->get_count_locations(cb_index);
+            _time times = tsfile->get_times();
+            long nr_times = times.time.size();
+
             for (long i = 0; i < nr_parameters; i++)
             {
                 if (parameter[i].pre_selected != 0)
@@ -565,10 +568,6 @@ void MainWindow::OpenPreSelection()
             }
             if (!pre_selection)
             {
-                struct _parameter * parameter = tsfile->get_parameters(cb_index);
-                long nr_parameters = tsfile->get_count_parameters(cb_index);
-                struct _location *  location = tsfile->get_locations(cb_index);
-                long nr_locations = tsfile->get_count_locations(cb_index);
                 for (long i = 0; i < nr_parameters; i++)
                 {
                     parameter[i].pre_selected = 1;
@@ -578,6 +577,10 @@ void MainWindow::OpenPreSelection()
                 {
                     location[i].pre_selected = 1;
                     tsfile->put_location(cb_index, i, location);
+                }
+                for (long i = 0; i < nr_times; i++)
+                {
+                    times.pre_selected[i] = 1;
                 }
             }
         }
@@ -601,11 +604,19 @@ void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
         {
             continue;
         }
+        else
+        {
+            // set combo box to this index
+            tsfile->put_cb_parloc_index(cb_index);
+        }
         // initialize pre-selected on: not selected
         struct _parameter * parameter = tsfile->get_parameters(cb_index);
         long nr_parameters = tsfile->get_count_parameters(cb_index);
-        struct _location *  location = tsfile->get_locations(cb_index);
+        struct _location * location = tsfile->get_locations(cb_index);
         long nr_locations = tsfile->get_count_locations(cb_index);
+        _time times = tsfile->get_times();
+        long nr_times = tsfile->get_count_times();
+
         for (long i = 0; i < nr_parameters; i++)
         {
             parameter[i].pre_selected = 0;
@@ -658,6 +669,28 @@ void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
                 }
             }
         }
+
+        values = name + ".times.time";
+        vector<string> pre_times;
+        status = pt_pre_selection->get(values, pre_times);
+        if (pre_times.size() != 0)
+        {
+            // set pre-selection for times
+            for (int j = 0; j < tsfile->get_count_times(); j++)
+            {
+                for (int k = 0; k < pre_times.size(); k++)
+                {
+                    QString qdt = times.qdt_time[j].toString("yyyy-MM-dd hh:mm:ss");
+                    if (pre_times[k] == qdt.toStdString())  // compare string with string
+                    {
+                        times.pre_selected[j] = 1;
+                        tsfile->put_pre_selection(true);
+                    }
+                }
+            }
+            tsfile->put_times(times);
+        }
+
     }
 }
 
@@ -689,7 +722,7 @@ void MainWindow::SavePreSelection()
     char * json_preselect_filename = strdup(filename.toUtf8());
 
     // make the property tree (pt)
-    boost::property_tree::ptree pt_root, pt_param, pt_location;
+    boost::property_tree::ptree pt_root, pt_param, pt_location, pt_times;
     //for (int cb_index = 0; cb_index < nr_par_loc; cb_index++)
     {
         int cb_index = tsfile->get_cb_parloc_index();
@@ -747,6 +780,19 @@ void MainWindow::SavePreSelection()
                 }
             }
         }
+        // get selected times
+        vector<long> tims;
+        if (lb_times->currentRow() != -1)
+        {
+            for (int i = 0; i < lb_times->count(); i++)
+            {
+                QListWidgetItem * item = lb_times->item(i);
+                if (item->isSelected())
+                {
+                    tims.push_back(i);
+                }
+            }
+        }
 
         QString cb_name = this->cb_par_loc->currentText();
         QString tmp;
@@ -770,6 +816,29 @@ void MainWindow::SavePreSelection()
         }
         tmp = cb_name + ".location";
         pt_root.put_child(tmp.toStdString(), pt_location);
+
+        if (tims.size() > 0)
+        {
+            QList<QDateTime> qdt_times = tsfile->get_qdt_times();
+            double dt = qdt_times.at(0).msecsTo(qdt_times.at(1));
+            for (int j = 0; j < tims.size(); j++)
+            {
+                QString qdt;
+                if (dt < 1000.)  // milli seconds
+                {
+                    qdt = qdt_times[tims[j]].toString("yyyy-MM-dd hh:mm:ss.zzz");
+                }
+                else
+                {
+                    qdt = qdt_times[tims[j]].toString("yyyy-MM-dd hh:mm:ss");
+                }
+                boost::property_tree::ptree elem;
+                elem.put<string>("time", strdup(qdt.toUtf8().trimmed()));
+                pt_times.push_back(std::make_pair("", elem));
+            }
+            tmp = cb_name + ".times";
+            pt_root.put_child(tmp.toStdString(), pt_times);
+        }
     }
     boost::property_tree::write_json(json_preselect_filename, pt_root);
 }
@@ -814,17 +883,13 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     int nr_times;
     struct _parameter * param;
     struct _location * location;
+    _time times;
     char count[11];
     QString text1;
     QList<QDateTime> qdt_times;
-    int cb_indx;
+    int cb_indx = -1;
     int cnt;
 
-    // fill the combobox and select the first one
-    cb_indx = this->cb_par_loc->currentIndex();
-    this->cb_par_loc->blockSignals(true);
-    this->cb_par_loc->clear();
-    this->cb_par_loc->blockSignals(false);
     if (tsfile == NULL)
     {
         cnt = 0;
@@ -832,13 +897,18 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     else
     {
         cnt = tsfile->get_count_par_loc();
+        cb_indx = tsfile->get_cb_parloc_index();
         lb_filenames->setToolTip(tsfile->fname.canonicalFilePath());
     }
     cb_indx = cb_indx >= cnt-1 ? cnt-1 : cb_indx;
-    cb_par_loc->setEnabled(false);
+    // fill the combobox and select the first one
+    this->cb_par_loc->blockSignals(true);
+    this->cb_par_loc->clear();
+    this->cb_par_loc->blockSignals(false);
+    this->cb_par_loc->setEnabled(false);
     if (cnt >= 0)
     {
-        cb_par_loc->setEnabled(true);
+        this->cb_par_loc->setEnabled(true);
     }
 
     for (int i = 0; i < cnt; i++)
@@ -920,6 +990,7 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     }
     else
     {
+        times = tsfile->get_times();
         nr_times = tsfile->get_count_times();
         qdt_times = tsfile->get_qdt_times();
     }
@@ -939,6 +1010,10 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
         else
         {
             lb_times->addItem(qdt_times[i].toString("yyyy-MM-dd hh:mm:ss"));
+        }
+        if (times.pre_selected[i] == 1)
+        {
+            lb_times->setCurrentRow(i);
         }
     }
     lb_times->blockSignals(false);
