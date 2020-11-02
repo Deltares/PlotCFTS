@@ -26,7 +26,7 @@ char * get_dirname(char *);
 void GetArguments(long, char **, struct _program_arguments *);
 void set_theme(QApplication *, QDir);
 
-struct _program_arguments prg_arg;
+struct _program_arguments m_prg_arg;
 
 /*
 * commandline arguments
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 		exec_dir = startup_dir;
     }
 
-    (void)GetArguments(argc, argv, &prg_arg);
+    (void)GetArguments(argc, argv, &m_prg_arg);
     set_theme(&app, exec_dir);
 
     MainWindow * mainWin = new MainWindow(exec_dir, startup_dir);
@@ -54,9 +54,9 @@ int main(int argc, char *argv[])
 
     app.processEvents();
 
-    if (prg_arg.ncfile != nullptr && prg_arg.ncfile->exists() && prg_arg.type != UNKNOWN)
+    if (m_prg_arg.ncfile != nullptr && m_prg_arg.ncfile->exists() && m_prg_arg.type != UNKNOWN)
     {
-        mainWin->openFile(*prg_arg.ncfile, prg_arg.type);
+        mainWin->openFile(*m_prg_arg.ncfile, m_prg_arg.type);
     }
 
     return app.exec();

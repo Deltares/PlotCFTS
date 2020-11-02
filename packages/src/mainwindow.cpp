@@ -27,7 +27,6 @@ QDir _startup_dir;
 char * fileTypeString;
 bool canceled;
 QIcon * icon;
-double * times;
 
 QCPAxis * janm;
 int dim_model_wide;
@@ -465,10 +464,10 @@ void MainWindow::ExportToCSV()
             for (int i = 0; i < locs.size(); i++)
             {
                 int i_par_loc = this->cb_par_loc->currentIndex();
-                vector<double> janm = tsfile->get_time_series(i_par_loc, parameter[pars[j]].name, locs[i], i_layer);
-                for (int k = 0; k < janm.size(); k++)  // janm.size() == lb_times->count()
+                vector<double> tmp_vec = tsfile->get_time_series(i_par_loc, parameter[pars[j]].name, locs[i], i_layer);
+                for (int k = 0; k < tmp_vec.size(); k++)  // janm.size() == lb_times->count()
                 {
-                    y_values[j][i][k] = janm[k];
+                    y_values[j][i][k] = tmp_vec[k];
                 }
             }
         }

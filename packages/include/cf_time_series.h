@@ -83,7 +83,7 @@ public:
     long put_location(long, long, struct _location *);
     long put_parameter(long, long, struct _parameter *);
 
-    _time times;
+    _time m_times;
     long get_count_times();
     _time get_times();
     void put_times(_time);
@@ -103,7 +103,7 @@ public:
     FILE_TYPE type;
     struct _meta * meta;
     _global_attributes * global_attributes;
-    struct _parameter * param;
+    struct _parameter * m_param;
     char * time_var_name;
     size_t datetime_ntimes;
     QString datetime_units;
@@ -111,9 +111,6 @@ public:
 
     char ** location_name;
     char ** parameter;
-#if defined (DEBUG)
-    char  janm;
-#endif
 
 private:
     char * StripWhiteSpaces(char *);
@@ -128,12 +125,12 @@ private:
     QString yaxis_label;
     QString yaxis_unit;
     size_t name_len;
-    long nr_par_loc;
+    long m_nr_par_loc;
     long nr_parameters;
-    long nr_locations;
+    long m_nr_locations;
     bool m_pre_selection;
     int m_cb_parloc_index;
-    int ncid;
+    int m_ncid;
     std::vector<double> m_y_values;
 };
 
