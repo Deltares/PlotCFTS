@@ -186,7 +186,7 @@ void MainWindow::createStatusBar()
     label->setFrameShadow(QFrame::Sunken);
     statusBar()->addWidget(label);
 
-    char * text1 = strdup("QCustomPlot version 2.0.1 (25 juni 2018)");
+    char * text1 = strdup("QCustomPlot version 2.1.0 (29 March 2021)");
     label = new QLabel(QString(text1), this);
     label->setFrameShape(QFrame::Panel);
     label->setFrameShadow(QFrame::Sunken);
