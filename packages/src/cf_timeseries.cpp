@@ -1031,6 +1031,7 @@ struct _global_attributes * TSFILE::get_global_attributes()
 vector<double> TSFILE::get_time_series(long cb_index, char * param_name, long loc_id, long layer_id)
 {
     int ndims, nvars, natts, nunlimited;
+    nc_type nc_type;
     long status;
     long par_id = -1;
     long j;
@@ -1080,7 +1081,7 @@ vector<double> TSFILE::get_time_series(long cb_index, char * param_name, long lo
     }
 
     // retrieve the data belonging to the parameter variable
-    status = nc_inq_var(this->m_ncid, par_id, var_name, NULL, &ndims, NULL, &natts);
+    status = nc_inq_var(this->m_ncid, par_id, var_name, &nc_type, &ndims, NULL, &natts);
 
     var_dims = (long *)malloc(sizeof(long) * ndims);
     status = nc_inq_vardimid(this->m_ncid, par_id, (int *)var_dims);
@@ -1096,8 +1097,34 @@ vector<double> TSFILE::get_time_series(long cb_index, char * param_name, long lo
         mem_length = mem_length * length;
     }
 
-    y_array = (double *)malloc(sizeof(double) * mem_length);
-    status = nc_get_var_double(this->m_ncid, par_id, y_array);
+    if (nc_type == NC_DOUBLE)
+    {
+        double att_value;
+        status = nc_get_att_double(this->m_ncid, par_id, "_FillValue", &att_value);
+
+        y_array = (double*)malloc(sizeof(double) * mem_length);
+        status = nc_get_var_double(this->m_ncid, par_id, y_array);
+        for (int i = 0; i < mem_length; ++i)
+        {
+            if (y_array[i] == att_value) { y_array[i] = numeric_limits<double>::quiet_NaN(); }
+        }
+    }
+    else if (nc_type == NC_FLOAT)
+    {
+        float att_value;
+        status = nc_get_att_float(this->m_ncid, par_id, "_FillValue", &att_value);
+
+        float * y_array_s = (float *)malloc(sizeof(float) * mem_length);
+        status = nc_get_var_float(this->m_ncid, par_id, y_array_s);
+        y_array = (double*)malloc(sizeof(double) * mem_length);
+        for (int i = 0; i < mem_length; ++i)
+        {
+            if (y_array_s[i] == att_value) { y_array_s[i] = numeric_limits<float>::quiet_NaN(); }
+            y_array[i] = (double)y_array_s[i];
+        }
+        free(y_array_s);
+        y_array_s = nullptr;
+    }
     //select colum loc_id from variable "parameter"
     j = -1;
     long ii_layer = fmax(0, layer_id);
