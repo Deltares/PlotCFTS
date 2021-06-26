@@ -175,19 +175,15 @@ void MainWindow::createMenus()
 
 void MainWindow::createStatusBar()
 {
-    char * text = (char *)malloc(160 + 1);
-    text[0] = '\0';
-    strcat(text, getprogramstring_plot_cf_time_series());
-    strcat(text, " compiled: ");
-    strcat(text, "" __DATE__ ", ");
-    strcat(text, "" __TIME__ "");
+    QString text = QString(getprogramstring_plot_cf_time_series());
+    text = text + " compiled: " + __DATE__ + ", " + __TIME__ ;
     QLabel * label = new QLabel(QString(text), this);
     label->setFrameShape(QFrame::Panel);
     label->setFrameShadow(QFrame::Sunken);
     statusBar()->addWidget(label);
 
-    char * text1 = strdup("QCustomPlot version 2.1.0 (29 March 2021)");
-    label = new QLabel(QString(text1), this);
+    QString text1 = QString("QCustomPlot version 2.1.0 (29 March 2021)");
+    label = new QLabel(text1, this);
     label->setFrameShape(QFrame::Panel);
     label->setFrameShadow(QFrame::Sunken);
     statusBar()->addWidget(label);
@@ -198,9 +194,6 @@ void MainWindow::createStatusBar()
     pgBar->setValue(0);
     pgBar->setMaximumWidth(150);
     statusBar()->addPermanentWidget(pgBar, 150);
-
-    free(text); text = nullptr;
-    free(text1); text1 = nullptr;
 }
 
 void MainWindow::openFile()
