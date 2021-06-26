@@ -59,11 +59,11 @@
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\boost\boost_1_75_0;</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\boost\boost_1_75_0;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;.\include;$(QT5DIR64)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;.\include;$(QT5DIR64)\include;$(BOOST_INCLUDEDIR)%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:strictStrings -w34100 -w34189 -w44996 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>release\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -110,7 +110,7 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;.\include;$(QT5DIR64)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;.\include;$(QT5DIR64)\include;$(BOOST_INCLUDEDIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-w34100 -w34189 -w44996 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>debug\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -172,7 +172,9 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
     <ClCompile Include="src\qcustomplot.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(QT5DIR64)\include;$(QT5DIR64)\include\QtPrintSupport;$(QT5DIR64)\include\QtWidgets;$(QT5DIR64)\include\QtGui;$(QT5DIR64)\include\QtANGLE;$(QT5DIR64)\include\QtCore;release;.;$(QT5DIR64)\mkspecs\win32-msvc2013;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="src\read_json.cpp" />
+    <ClCompile Include="src\read_json.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(QT5DIR64)\include;$(BOOST_INCLUDEDIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="src\time_series_plot.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -395,9 +395,9 @@ void MainWindow::ExportToCSV()
     for (int i = 0; i < global_attributes->count; i++)
     {
         i_rec++;
-        QString name1(global_attributes->attribute[i]->name);
-        QString name2(global_attributes->attribute[i]->cvalue);
-        fpo << i_rec << " " << name1.trimmed().replace(",", ";").toStdString() << ", " << name2.trimmed().replace(",", ";").toStdString() << endl;
+        QString name_a(global_attributes->attribute[i]->name);
+        QString name_b(global_attributes->attribute[i]->cvalue);
+        fpo << i_rec << " " << name_a.trimmed().replace(",", ";").toStdString() << ", " << name_b.trimmed().replace(",", ";").toStdString() << endl;
     }
 
     i_rec++;
@@ -607,7 +607,6 @@ void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
         struct _location * location = tsfile->get_locations(cb_index);
         long nr_locations = tsfile->get_count_locations(cb_index);
         _time times = tsfile->get_times();
-        long nr_times = tsfile->get_count_times();
 
         for (long i = 0; i < nr_parameters; i++)
         {
@@ -839,7 +838,6 @@ void MainWindow::updateFileListBox(TSFILE * tsfile)
 {
     int cnt;
     QString text1;
-    char count[11];
 
     if (tsfile != NULL)
     {
@@ -859,10 +857,7 @@ void MainWindow::updateFileListBox(TSFILE * tsfile)
         openPreSelect->setEnabled(true);
     }
 
-    text1 = QString("Filenames (count ");
-    sprintf(count, "%d", lb_filenames->count());
-    text1.append(count);
-    text1.append(")");
+    text1 = QString("Filenames (count %1)").arg(lb_filenames->count());
     gb_filenames->setTitle(text1);
 
     lb_filenames->setCurrentRow(cnt - 1);  // select the last read file
@@ -876,7 +871,6 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     struct _parameter * param;
     struct _location * location;
     _time times;
-    char count[11];
     QString text1;
     QList<QDateTime> qdt_times;
     int cb_indx = -1;
@@ -940,10 +934,7 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     lb_parameters->blockSignals(false);
     lb_parameters->setCurrentRow(0);
 
-    text1 = QString("Parameter (count ");
-    sprintf(count, "%d", lb_parameters->count());
-    text1.append(count);
-    text1.append(")");
+    text1 = QString("Parameter (count %1)").arg(lb_parameters->count());
     gb_parameters->setTitle(text1);
 
     // List the locations
@@ -969,10 +960,7 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     lb_locations->blockSignals(false);
     lb_locations->setCurrentRow(0);
 
-    text1 = QString("Location (count ");
-    sprintf(count, "%d", lb_locations->count());
-    text1.append(count);
-    text1.append(")");
+    text1 = QString("Location (count %1)").arg(lb_locations->count());
     gb_locations->setTitle(text1);
 
     // List the times
@@ -1010,10 +998,7 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     }
     lb_times->blockSignals(false);
 
-    text1 = QString("Time series (count ");
-    sprintf(count, "%d", lb_times->count());
-    text1.append(count);
-    text1.append(")");
+    text1 = QString("Time series (count %1)").arg(lb_times->count());
     gb_times->setTitle(text1);
 
     // List the meta-data
