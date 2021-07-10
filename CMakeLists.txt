@@ -4,14 +4,16 @@ set(CMAKE_SYSTEM_VERSION 10.0 CACHE STRING "" FORCE)
 
 project(PlotCFTS VERSION 3.5.0.1 LANGUAGES CXX)
 
+set(CMAKE_PREFIX_PATH "c:/Qt/Qt5.12.10/5.12.10/msvc2017_64/")
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Boost 1.75.0 COMPONENTS REQUIRED)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
-
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 ################################################################################
 # Set target arch type if empty. Visual studio solution generator provides it.
