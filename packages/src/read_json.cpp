@@ -53,10 +53,10 @@ struct Getter
         }
         catch (const ptree_error &e)
         {
-#if defined DEBUG
             //cout << e.what() << endl;
             QString msg = QString::fromStdString(e.what()).trimmed();
-            //QMessageBox::warning(0, "DEBUG: READ_JSON::prop_get_json", QString("%1").arg(msg));
+#if defined DEBUG
+            QMessageBox::warning(0, "DEBUG: READ_JSON::prop_get_json", QString("%1").arg(msg));
 #endif
         }
     }

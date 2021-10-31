@@ -65,8 +65,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 # Output directory
 ################################################################################
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    OUTPUT_DIRECTORY_DEBUG   "${CMAKE_SOURCE_DIR}/bin/$ENV{platform}/$<CONFIG>"
-    OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin/$ENV{platform}/$<CONFIG>"
+    OUTPUT_DIRECTORY_DEBUG   "${CMAKE_SOURCE_DIR}/bin/${CMAKE_VS_PLATFORM_NAME}/$<CONFIG>"
+    OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin/${CMAKE_VS_PLATFORM_NAME}/$<CONFIG>"
 )
 ################################################################################
 # MSVC runtime library
@@ -180,6 +180,11 @@ set(ADDITIONAL_LIBRARY_DEPENDENCIES
     "netcdf"
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE "${ADDITIONAL_LIBRARY_DEPENDENCIES}")
+
+#install(
+#    FILES "$ENV{QT5DIR64}/lib/${ADDITIONAL_LIBRARY_DEPENDENCIES}"
+#    DESTINATION "${CMAKE_SOURCE_DIR}/bin/${CMAKE_VS_PLATFORM_NAME}/$<CONFIG>"
+#)
 
 target_link_directories(${PROJECT_NAME} PRIVATE
     "$ENV{QT5DIR64}/lib;"

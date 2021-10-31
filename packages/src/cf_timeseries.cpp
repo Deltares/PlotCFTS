@@ -715,7 +715,7 @@ void TSFILE::read_locations()
     char * var_name;
     size_t length;
     size_t mem_length;
-    long i_par_loc;
+    long i_par_loc = -1;
     long * sn_dims; // station names dimensions
     bool model_wide_found = false;
     bool model_wide_exist = false;
@@ -843,7 +843,7 @@ void TSFILE::read_locations()
                     janm[name_len] = '\0';
                     for (int k = 0; k < m_nr_locations; k++)
                     {
-                        strncpy(janm, location_chars + k * name_len, name_len);
+                        (void)strncpy_s(janm, name_len + 1, location_chars + k * name_len, name_len);
                         this->par_loc[i_par_loc]->location[k]->name = new QString(janm);
                     }
                     free(janm);
@@ -1038,7 +1038,7 @@ vector<double> TSFILE::get_time_series(long cb_index, char * param_name, long lo
     long nr_loc;
     int nr_layers;
     size_t length;
-    double * y_array;
+    double * y_array = nullptr;
     size_t mem_length;
     char * dim_name;
     char * var_name;
@@ -1234,7 +1234,7 @@ char * TSFILE::StripWhiteSpaces(char * string)
         s--);
     *(s + 1) = '\0';
     for (s = string; *s == ' ' || *s == '\t'; s++);
-    strcpy(string, s);
+    (void)strcpy_s(string, strlen(string)+1, s);
     return string;
 }
 
