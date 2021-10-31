@@ -5,6 +5,8 @@ To build the program PlotCTS you have to install QT 5.12 LTS, BOOST 1.72.0 and n
 The executable plot_cf_time_series.exe will placed in folder bin/x64/debug or bin/x64/release.
 The batch file dispatch_plotcfts.bat is used to dispatch and rename the executable to plotcfts.exe
 
+![alt tag](doc/pictures/plotcfts_with_chinese_karakters2.png)
+
 ## Development environment
 At this moment the environment is based on Visual Studio 2019
 
