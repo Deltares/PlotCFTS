@@ -296,7 +296,6 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
                         else
                         {
                             QString janm = m_times.qdt_time[j].toString("yyyy-MM-dd hh:mm:ss");
-                            int a = 1;
                         }
 #endif
                     }

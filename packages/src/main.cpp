@@ -131,29 +131,29 @@ void set_theme(QApplication * app, QDir exec_dir)
         // Delft3D steelblue3 style
         app->setStyle(QStyleFactory::create("Fusion"));
 
-        palette.setColor(QPalette::Window, QColor(79, 148, 205));
-        palette.setColor(QPalette::WindowText, Qt::white);
-        palette.setColor(QPalette::Base, QColor(79, 148, 205));
         palette.setColor(QPalette::AlternateBase, QColor(79, 148, 205));
-        palette.setColor(QPalette::ToolTipBase, Qt::white);
-        palette.setColor(QPalette::ToolTipText, Qt::white);
-        palette.setColor(QPalette::Text, Qt::white);
+        palette.setColor(QPalette::Base, QColor(79, 148, 205));
+        palette.setColor(QPalette::BrightText, Qt::red);
         palette.setColor(QPalette::Button, QColor(79, 148, 205));
         palette.setColor(QPalette::ButtonText, Qt::white);
-        palette.setColor(QPalette::BrightText, Qt::red);
         palette.setColor(QPalette::Dark, QColor(35, 35, 35));
-        palette.setColor(QPalette::Shadow, QColor(20, 20, 20));
         palette.setColor(QPalette::Link, QColor(42, 130, 218));
+        palette.setColor(QPalette::Shadow, QColor(20, 20, 20));
+        palette.setColor(QPalette::Text, Qt::white);
+        palette.setColor(QPalette::ToolTipBase, Qt::white);
+        palette.setColor(QPalette::ToolTipText, Qt::white);
+        palette.setColor(QPalette::Window, QColor(79, 148, 205));
+        palette.setColor(QPalette::WindowText, Qt::white);
 
         palette.setColor(QPalette::Highlight, QColor(131, 180, 220));
         palette.setColor(QPalette::HighlightedText, Qt::white);
 
         palette.setColor(QPalette::Disabled, QPalette::Button, QColor(63, 119, 165));
         palette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(55, 103, 143));
-        palette.setColor(QPalette::Disabled, QPalette::WindowText, QColor(55, 103, 143));
-        palette.setColor(QPalette::Disabled, QPalette::Text, QColor(55, 103, 143));
         palette.setColor(QPalette::Disabled, QPalette::Highlight, QColor(80, 80, 80));
         palette.setColor(QPalette::Disabled, QPalette::HighlightedText, QColor(127, 127, 127));
+        palette.setColor(QPalette::Disabled, QPalette::Text, QColor(55, 103, 143));
+        palette.setColor(QPalette::Disabled, QPalette::WindowText, QColor(55, 103, 143));
 
         app->setPalette(palette);
 
@@ -162,17 +162,17 @@ void set_theme(QApplication * app, QDir exec_dir)
         // Dark style
         app->setStyle(QStyleFactory::create("Fusion"));
 
-        palette.setColor(QPalette::Window, QColor(53, 53, 53));
-        palette.setColor(QPalette::WindowText, Qt::white);
-        palette.setColor(QPalette::Base, QColor(25, 25, 25));
         palette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
-        palette.setColor(QPalette::ToolTipBase, Qt::white);
-        palette.setColor(QPalette::ToolTipText, Qt::white);
-        palette.setColor(QPalette::Text, Qt::white);
+        palette.setColor(QPalette::Base, QColor(25, 25, 25));
+        palette.setColor(QPalette::BrightText, Qt::red);
         palette.setColor(QPalette::Button, QColor(53, 53, 53));
         palette.setColor(QPalette::ButtonText, Qt::white);
-        palette.setColor(QPalette::BrightText, Qt::red);
         palette.setColor(QPalette::Link, QColor(180, 180, 180));
+        palette.setColor(QPalette::Text, Qt::white);
+        palette.setColor(QPalette::ToolTipBase, Qt::white);
+        palette.setColor(QPalette::ToolTipText, Qt::white);
+        palette.setColor(QPalette::Window, QColor(53, 53, 53));
+        palette.setColor(QPalette::WindowText, Qt::white);
 
         palette.setColor(QPalette::Highlight, QColor(180, 180, 180));
         palette.setColor(QPalette::HighlightedText, Qt::black);
@@ -183,18 +183,17 @@ void set_theme(QApplication * app, QDir exec_dir)
         // Default windows style, experiment colour settings
         app->setStyle(QStyleFactory::create("WindowsXP"));
 
-        palette.setColor(QPalette::Base, Qt::green);  // background listboxes, tables
-        palette.setColor(QPalette::Background, Qt::white);
-        palette.setColor(QPalette::Shadow, Qt::white);
-        palette.setColor(QPalette::Window, Qt::yellow); // background window, groupbox lines changed
-        palette.setColor(QPalette::WindowText, Qt::darkCyan);
         palette.setColor(QPalette::AlternateBase, Qt::white);
-        palette.setColor(QPalette::ToolTipBase, Qt::blue);
-        palette.setColor(QPalette::ToolTipText, Qt::white);
-        palette.setColor(QPalette::Text, Qt::darkBlue);  // text on listbox, combo box, spinner
+        palette.setColor(QPalette::Base, Qt::green);  // background listboxes, tables
+        palette.setColor(QPalette::BrightText, Qt::white);
         palette.setColor(QPalette::Button, Qt::red);
         palette.setColor(QPalette::ButtonText, Qt::darkBlue); // text on button
-        palette.setColor(QPalette::BrightText, Qt::white);
+        palette.setColor(QPalette::Shadow, Qt::white);
+        palette.setColor(QPalette::Text, Qt::darkBlue);  // text on listbox, combo box, spinner
+        palette.setColor(QPalette::ToolTipBase, Qt::blue);
+        palette.setColor(QPalette::ToolTipText, Qt::white);
+        palette.setColor(QPalette::Window, Qt::yellow); // background window, groupbox lines changed
+        palette.setColor(QPalette::WindowText, Qt::darkCyan);
 
         palette.setColor(QPalette::Highlight, Qt::darkBlue); // highlighter in spinner
         palette.setColor(QPalette::HighlightedText, Qt::white); // highlighted text in spinner
@@ -202,8 +201,8 @@ void set_theme(QApplication * app, QDir exec_dir)
         palette.setColor(QPalette::Disabled, QPalette::Base, QColor(0, 255, 0));
         palette.setColor(QPalette::Disabled, QPalette::Button, QColor(63, 119, 165));
         palette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(55, 103, 143));
-        palette.setColor(QPalette::Disabled, QPalette::WindowText, QColor(55, 103, 143));
         palette.setColor(QPalette::Disabled, QPalette::Text, QColor(55, 103, 143));
+        palette.setColor(QPalette::Disabled, QPalette::WindowText, QColor(55, 103, 143));
 
         app->setPalette(palette);
 
