@@ -1,5 +1,3 @@
-#include "qcustomplot.h"
-#include "cf_time_series.h"
 #include "time_series_plot.h"
 using namespace std;
 
@@ -17,11 +15,11 @@ TSPlot::TSPlot(QWidget * qparent, QIcon qicon, int qnr_plot)
     // Center and resize application window; suppose that the taskbar
     // is at the bottom of the screen
     //
-    QDesktopWidget *d = QApplication::desktop();
-    int scridx = d->primaryScreen();
+    QScreen* screen = QGuiApplication::primaryScreen();
+    QRect  screenGeometry = screen->geometry();
+    plot_width = screenGeometry.width();
+    plot_height = screenGeometry.height();
 
-    plot_width = d->screenGeometry(scridx).width();  // returns screen width
-    plot_height = d->screenGeometry(scridx).height(); // returns screen height
     plot_width = (int)(0.495 * double(plot_width));
     plot_height = (int)(0.495 * double(plot_height)); // Do not count the taskbar pixels, assumed to be 1 percent of the screen
     if (plot_width > 2 * plot_height) 
@@ -624,13 +622,12 @@ void TSPlot::contextMenuSaveAsPDF()
 {
     // select first a filename, no actions need to be performed when cancel is pressed
 
-    QString s = QDateTime::currentDateTime().toString("yyyy-MM-dd_hhmmss");
+    QString s = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss");
     QString filename = s.append(".pdf");
     QFileDialog * fd = new QFileDialog();
     fd->setWindowTitle("Save PDF file");
     fd->setNameFilter("PDF-format (*.pdf)");
     fd->selectFile(filename);
-    fd->setConfirmOverwrite(true);
     fd->setAcceptMode(QFileDialog::AcceptSave);
     if (fd->exec() != QDialog::Accepted)
     {

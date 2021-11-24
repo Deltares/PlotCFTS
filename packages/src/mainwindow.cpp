@@ -50,22 +50,20 @@ MainWindow::MainWindow(QDir exec_dir_in, QDir startup_dir_in)
     nr_plot = -1;
     m_fil_index = -1;
 
-    QDesktopWidget *d = QApplication::desktop();
-    int scridx = d->primaryScreen();
-    int width = d->screenGeometry(scridx).width();  // returns screen width
-    int height = d->screenGeometry(scridx).height(); // returns screen height
-    width = (int)(0.4 * double(width));
-    height = (int)(0.7 * double(height)); // Do not count the taskbar pixels, assumed to be 1 percent of the screen
+    QScreen* screen = QGuiApplication::primaryScreen();
+    QRect  screenGeometry = screen->geometry();
+    int scr_width = screenGeometry.width();
+    int scr_height = screenGeometry.height();
+    int width = (int)(0.4 * double(scr_width));
+    int height = (int)(0.7 * double(scr_height)); // Do not count the taskbar pixels, assumed to be 1 percent of the screen
 
     resize(width, height);
     mainWidget->setGeometry(0, 0, width, height);
 
-    int w = d->screenGeometry(scridx).width();  // returns screen width
-    int h = d->screenGeometry(scridx).height(); // returns screen height
-
-    w = (int)(0.5 * double(w) - 0.5 * double(width));
-    h = (int)(0.5 * double(h) - 0.15 * double(height) - 0.5 * double(height));
-    move(w, h);
+    QRect r = mainWidget->geometry();
+    QPoint center = screen->availableGeometry().center();
+    r.moveCenter(center);
+    mainWidget->setGeometry(r);
 
     _exec_dir = exec_dir_in;
     _startup_dir = startup_dir_in;
@@ -480,7 +478,7 @@ void MainWindow::ExportToCSV()
         {
             qdt = qdt_times[tims[k]].toString("yyyy-MM-dd hh:mm:ss");
         }
-        strcpy(datumtijd, qdt.toUtf8());
+        strcpy_s(datumtijd, strlen(datumtijd), qdt.toUtf8());
 
         fpo << datumtijd;
         for (int j = 0; j < pars.size(); j++)
@@ -1071,7 +1069,8 @@ void MainWindow::ShowUserManual()
      QByteArray manual = user_manual.toUtf8();
      char * pdf_document = manual.data();
 
-     FILE *fp = fopen(pdf_document, "r");
+     FILE* fp;
+     errno_t error = fopen_s(&fp, pdf_document, "r");
      if (fp != NULL)
      {
           fclose(fp);
@@ -1612,7 +1611,7 @@ void MainWindow::update_cb_add_to_plot()
         cnt = -1;
         for (int i = 0; i < nr_plot + 1; i++)
         {
-            sprintf(count, "%d", i + 1);
+            sprintf_s(count, sizeof(count), "%d", i + 1);
             if (this->cplot[i] != NULL)
             {
                 cb_add_to_plot->addItem(QString(count).trimmed());
@@ -1689,7 +1688,7 @@ void MainWindow::contextMenuFileListBox(const QPoint &pos)
         {
             char count[11];
             QString * text1 = new QString("Filenames (count ");
-            sprintf(count, "%d", lb_filenames->count());
+            sprintf_s(count, sizeof(count), "%d", lb_filenames->count());
             text1->append(count);
             text1->append(")");
             gb_filenames->setTitle(*text1);

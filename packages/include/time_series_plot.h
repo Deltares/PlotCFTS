@@ -1,6 +1,7 @@
 #ifndef TIME_SERIES_PLOT_H
 #define TIME_SERIES_PLOT_H
 
+#include <QtGui/QScreen>
 #include <QtWidgets/QWidget>
 #include "qcustomplot.h"
 #include "cf_time_series.h"

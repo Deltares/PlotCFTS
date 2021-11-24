@@ -30,6 +30,10 @@
 #include "string.h"
 #include "plot_cf_time_series_version.h"
 
+#if defined(WIN64)
+#   define strdup _strdup
+#endif
+
 #if defined(WIN32)
 static char plot_cf_time_series_version[] = {plot_cf_time_series_major "." plot_cf_time_series_minor "." plot_cf_time_series_revision "." plot_cf_time_series_build" (Win32)"};
 static char plot_cf_time_series_version_id[] = { "@(#)Deltares, " plot_cf_time_series_program " Version " plot_cf_time_series_major "." plot_cf_time_series_minor "." plot_cf_time_series_revision "." plot_cf_time_series_build " (Win32), " __DATE__ ", " __TIME__ "" };
