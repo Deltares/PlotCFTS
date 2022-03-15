@@ -34,6 +34,8 @@
 
 #include "cf_time_series.h"
 #include "netcdf.h"
+#include<boost/algorithm/string/split.hpp>       
+#include<boost/algorithm/string.hpp>
 
 using namespace std;
 
@@ -186,6 +188,14 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
                     // retrieve the long_name, standard_name -> var_name for the xaxis label
                     length = (size_t) -1;
                     status = nc_inq_var(this->m_ncid, i_var, var_name, NULL, &ndims, &dimids, &natts);
+                    
+                    // skip variable where name contains analysis_time
+                    string var_name_str(var_name);
+                    string var_sub_str("analysis_time");
+                    if (var_name_str.find(var_sub_str) != string::npos) {
+                        continue;
+                    }
+                    
                     status = nc_inq_attlen(this->m_ncid, i_var, "long_name", &length);
                     if (status == NC_NOERR)
                     {
@@ -399,6 +409,14 @@ void TSFILE::read_parameters()
             coord = (char *)malloc(sizeof(char) * (length + 1));
             status = nc_get_att(this->m_ncid, i_var, "coordinates", coord);
             coord[length] = '\0';
+            
+            // if coordinates contains multiple elements, ignore it then
+            vector<string> strVec;
+            using boost::is_any_of;
+            boost::algorithm::split(strVec, string(coord), is_any_of(" "),boost::token_compress_on);
+            if (strVec.size() > 1) {
+                status = nc_inq_attlen(this->m_ncid, i_var, "babaslfalskjlskdjflksdjf", &length);
+            }
         }
 
         if (status != NC_NOERR)
