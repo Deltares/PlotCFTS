@@ -1,12 +1,13 @@
 #include "time_series_plot.h"
-using namespace std;
-
 
 TSPlot::TSPlot(QWidget * qparent, QIcon qicon, int qnr_plot)
 {
     tsfile = nullptr;
     customPlot = new QCustomPlot(qparent);
     customPlot->setAttribute(Qt::WA_DeleteOnClose, true);
+    //customPlot->axisRect()->setBackground(QColor(240, 240, 240));
+    //customPlot->setBackground(QColor(230, 230, 230));
+
     icon = qicon;
     current_plot = qnr_plot;
     has_focus = -1;
@@ -166,8 +167,8 @@ int TSPlot::get_active_plot_nr()
 void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
 {
     int nr_x_values = tsfile->get_count_times();
-    _time struct_times = tsfile->get_times();
-    vector<double> x_values = struct_times.time;
+    _time_series struct_times = tsfile->get_times();
+    std::vector<double> x_values = struct_times.times;
     int i_tsfile_par = -1;
     int i_tsfile_loc = -1;
     QListWidgetItem * sel_item;
@@ -211,7 +212,7 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
     QString yaxis_label = set_yaxis_label(param[i_tsfile_par].name, param[i_tsfile_par].unit, y_label_counter);
     customPlot->yAxis->setLabel(yaxis_label);
 
-    vector<double> y_values = tsfile->get_time_series(cb_index, param[i_tsfile_par].name, i_tsfile_loc, i_layer);
+    std::vector<double> y_values = tsfile->get_time_series(cb_index, param[i_tsfile_par].name, i_tsfile_loc, i_layer);
 
     // x-axis
     QString xaxis_label = tsfile->get_xaxis_label();
@@ -354,15 +355,15 @@ QString TSPlot::set_yaxis_label(QString parname, QString unit, QString y_label_c
     if (_nr_y_axis_labels == 0)
     {
         _nr_y_axis_labels += 1;
-        yaxis_label = this->get_yaxis_label(parname, unit);
+        m_yaxis_label = this->get_yaxis_label(parname, unit);
         _ylabel_dic[QString("Y1")] = 1;
     }
     else
     {
-        if (yaxis_label.contains(parname))
+        if (m_yaxis_label.contains(parname))
         {
             // already in y_axis_label
-            QStringList yaxis_list = yaxis_label.split('\n');
+            QStringList yaxis_list = m_yaxis_label.split('\n');
             long i = 0;  // yaxis_list.length();
             for (QStringList::Iterator it = yaxis_list.begin(); it != yaxis_list.end(); it++)
             {
@@ -391,7 +392,7 @@ QString TSPlot::set_yaxis_label(QString parname, QString unit, QString y_label_c
             // not in y_axis_label
             if (_nr_y_axis_labels == 1)
             {
-                yaxis_label.insert(0, "Y1: ");
+                m_yaxis_label.insert(0, "Y1: ");
             }
             _nr_y_axis_labels = _ylabel_dic.size() + 1;
             QString dic_name = (QString("Y%1").arg(_nr_y_axis_labels));
@@ -399,10 +400,10 @@ QString TSPlot::set_yaxis_label(QString parname, QString unit, QString y_label_c
             tmp_label.append("\n");
             tmp_label.append(dic_name + QString(": ") + this->get_yaxis_label(parname, unit));
             _ylabel_dic[dic_name] = 1;
-            yaxis_label.append(tmp_label);
+            m_yaxis_label.append(tmp_label);
         }
     }
-    return yaxis_label;
+    return m_yaxis_label;
 }
 QString TSPlot::get_yaxis_label(QString name, QString unit)
 {
@@ -653,8 +654,8 @@ void TSPlot::contextMenuRemoveSelectedGraph()
         QString legend_name = ind->name();  // ie legend name
         QStringList dic_names = legend_name.split(":");
         dic_name = dic_names[0];
-        QStringList names = this->yaxis_label.split('\n');
-        yaxis_label.clear();
+        QStringList names = m_yaxis_label.split('\n');
+        m_yaxis_label.clear();
         long j = 0;
         for (QStringList::iterator it = names.begin(); it != names.end(); it++)
         {
@@ -684,9 +685,9 @@ void TSPlot::contextMenuRemoveSelectedGraph()
             {
                 if (j != 1)
                 {
-                    yaxis_label.append("\n");
+                    m_yaxis_label.append("\n");
                 }
-                yaxis_label.append(*it);
+                m_yaxis_label.append(*it);
             }
         }
         // Zoek in naam naar voorvoegsel Y? en verwijder de daarbij behorende yaxis_label
@@ -696,7 +697,7 @@ void TSPlot::contextMenuRemoveSelectedGraph()
         //set_yaxis_label(name, unit);
         //set_legend();
         _nr_y_axis_labels -= 1;
-        customPlot->yAxis->setLabel(this->yaxis_label);
+        customPlot->yAxis->setLabel(m_yaxis_label);
         customPlot->replot();
 
         if (_nr_graphs == 0)
@@ -716,8 +717,8 @@ void TSPlot::onMouseMove(QMouseEvent *event)
     // convert x to date time
     QList<QDateTime> qdt_times = tsfile->get_qdt_times();
     QDateTime * RefDate = tsfile->get_reference_date();
-    _time struct_time = tsfile->get_times();
-    vector<double> times = struct_time.time;
+    _time_series struct_time = tsfile->get_times();
+    std::vector<double> times = struct_time.times;
     int nr_times = tsfile->get_count_times();
     i_time = -1;
 

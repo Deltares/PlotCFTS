@@ -5,25 +5,24 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
-using namespace std;
 using namespace boost;
 using namespace property_tree;
 
 class READ_JSON
 {
 public:
-    READ_JSON(string);
+    READ_JSON(std::string);
     ~READ_JSON();
-    long get(string, vector<string> &);
-    long get(string, vector<double> &);
-    long READ_JSON::find(string);
+    long get(std::string, std::vector<std::string> &);
+    long get(std::string, std::vector<double> &);
+    long READ_JSON::find(std::string);
         
-    void prop_get_json(boost::property_tree::ptree &, const string, vector<string> &);
-    void prop_get_json(boost::property_tree::ptree &, const string, vector<double> &);
-    template<class T> void gett(string, vector<T>);
+    void prop_get_json(boost::property_tree::ptree &, const std::string, std::vector<std::string> &);
+    void prop_get_json(boost::property_tree::ptree &, const std::string, std::vector<double> &);
+    template<class T> void gett(std::string, std::vector<T>);
 
 private:
-    string m_filename;
+    std::string m_filename;
     boost::property_tree::ptree m_ptrtree;
 };
 #endif  // __READ_JSON_H

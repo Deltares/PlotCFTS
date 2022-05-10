@@ -13,8 +13,6 @@
 #include "time_series_plot.h"
 #include "netcdf.h"
 
-using namespace std;
-
 QString selectedFilter;
 QVBoxLayout * showFilenameLayout;
 QGridLayout * showMetaLayout;
@@ -324,7 +322,7 @@ void MainWindow::ExportToCSV()
     int i_layer = this->sb_layer->value() - 1;  // used as array index (ie zero based)
 
     // get selected parameter
-    vector<long> pars;
+    std::vector<long> pars;
     for (long i = 0; i < lb_parameters->count(); i++)
     {
         QListWidgetItem * item = lb_parameters->item(i);
@@ -343,7 +341,7 @@ void MainWindow::ExportToCSV()
         }
     }
     // get selected locations
-    vector<long> locs ;
+    std::vector<long> locs ;
     for (long i = 0; i < lb_locations->count(); i++)
     {
         QListWidgetItem * item = lb_locations->item(i);
@@ -360,7 +358,7 @@ void MainWindow::ExportToCSV()
         }
     }
     // get selected times
-    vector<long> tims;
+    std::vector<long> tims;
     if (lb_times->currentRow() != -1)
     {
         for (int i = 0; i < lb_times->count(); i++)
@@ -380,13 +378,13 @@ void MainWindow::ExportToCSV()
         }
     }
 
-    ofstream fpo;
+    std::ofstream fpo;
     fpo.open(csv_filename);
     int i_rec = 1;
     QString name1(getfullversionstring_plot_cf_time_series() + 4);
-    fpo << i_rec << " Created by:, " <<  name1.trimmed().replace(",", ";").toStdString() << endl;  // Skip the @(#) string in the result of getfullversionstring_plot_cf_time_series()
+    fpo << i_rec << " Created by:, " <<  name1.trimmed().replace(",", ";").toStdString() << std::endl;  // Skip the @(#) string in the result of getfullversionstring_plot_cf_time_series()
     i_rec++;
-    fpo << i_rec << " Results taken from file:, " << strdup(tsfile->fname.absoluteFilePath().toUtf8()) << endl;
+    fpo << i_rec << " Results taken from file:, " << strdup(tsfile->fname.absoluteFilePath().toUtf8()) << std::endl;
 
     // List the meta-data
     global_attributes = tsfile->get_global_attributes();
@@ -395,11 +393,11 @@ void MainWindow::ExportToCSV()
         i_rec++;
         QString name_a(global_attributes->attribute[i]->name);
         QString name_b(global_attributes->attribute[i]->cvalue);
-        fpo << i_rec << " " << name_a.trimmed().replace(",", ";").toStdString() << ", " << name_b.trimmed().replace(",", ";").toStdString() << endl;
+        fpo << i_rec << " " << name_a.trimmed().replace(",", ";").toStdString() << ", " << name_b.trimmed().replace(",", ";").toStdString() << std::endl;
     }
 
     i_rec++;
-    fpo << i_rec << " ------------------" << endl;
+    fpo << i_rec << " ------------------" << std::endl;
     i_rec++;
     fpo << i_rec << " Parameters: " << pars.size();  // No endl, list of stations is given
     for (int j = 0; j < pars.size(); j++)
@@ -416,7 +414,7 @@ void MainWindow::ExportToCSV()
             }
         }
     }
-    fpo << endl;
+    fpo << std::endl;
 
     i_rec++;
     fpo << i_rec << " Locations : " << locs.size();  // No endl, list of stations is given
@@ -428,11 +426,11 @@ void MainWindow::ExportToCSV()
             fpo << ", " << strdup(q_loc.toUtf8().trimmed().replace(",", ";"));
         }
     }
-    fpo << endl;
+    fpo << std::endl;
     i_rec++;
-    fpo << i_rec << " Time steps: " << tims.size() << endl;
+    fpo << i_rec << " Time steps: " << tims.size() << std::endl;
     i_rec++;
-    fpo << i_rec << " ----------------- " << endl;
+    fpo << i_rec << " ----------------- " << std::endl;
     fpo << "DateTime";
     for (int j = 0; j < pars.size(); j++)
     {
@@ -443,10 +441,10 @@ void MainWindow::ExportToCSV()
             fpo << ", " << strdup(q_name.toUtf8().trimmed().replace(",", ";")) << " --- " << strdup(q_loc.toUtf8().trimmed().replace(",",";"));  // In a csv file, the names do not allow commas
         }
     }
-    fpo << endl;
+    fpo << std::endl;
 
     // allocate memory for the y-values
-    vector<vector<vector<double>>> y_values(pars.size(), vector<vector<double>>( locs.size(), vector<double>(lb_times->count())));
+    std::vector<std::vector<std::vector<double>>> y_values(pars.size(), std::vector<std::vector<double>>( locs.size(), std::vector<double>(lb_times->count())));
 
     for (int j = 0; j < pars.size(); j++)
     {
@@ -455,7 +453,7 @@ void MainWindow::ExportToCSV()
             for (int i = 0; i < locs.size(); i++)
             {
                 int i_par_loc = this->cb_par_loc->currentIndex();
-                vector<double> tmp_vec = tsfile->get_time_series(i_par_loc, parameter[pars[j]].name, locs[i], i_layer);
+                std::vector<double> tmp_vec = tsfile->get_time_series(i_par_loc, parameter[pars[j]].name, locs[i], i_layer);
                 for (int k = 0; k < tmp_vec.size(); k++)  // janm.size() == lb_times->count()
                 {
                     y_values[j][i][k] = tmp_vec[k];
@@ -488,7 +486,7 @@ void MainWindow::ExportToCSV()
                 fpo << std::scientific << std::setprecision(std::numeric_limits<long double>::digits10 + 1) << ", " << y_values[j][i][tims[k]];  // maximal precision
             }
         }
-        fpo << endl;
+        fpo << std::endl;
     }
 
     fpo.close();
@@ -539,8 +537,8 @@ void MainWindow::OpenPreSelection()
             long nr_parameters = tsfile->get_count_parameters(cb_index);
             struct _location *  location = tsfile->get_locations(cb_index);
             long nr_locations = tsfile->get_count_locations(cb_index);
-            _time times = tsfile->get_times();
-            long nr_times = times.time.size();
+            _time_series time_series = tsfile->get_times();
+            long nr_times = time_series.times.size();
 
             for (long i = 0; i < nr_parameters; i++)
             {
@@ -570,7 +568,7 @@ void MainWindow::OpenPreSelection()
                 }
                 for (long i = 0; i < nr_times; i++)
                 {
-                    times.pre_selected[i] = 1;
+                    time_series.pre_selected[i] = 1;
                 }
             }
         }
@@ -583,12 +581,12 @@ void MainWindow::OpenPreSelection()
 void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
 {
     int status = -1;
-    string fname = json_file.absoluteFilePath().toUtf8().toStdString();
+    std::string fname = json_file.absoluteFilePath().toUtf8().toStdString();
     READ_JSON * pt_pre_selection = new READ_JSON(fname);
     int cnt = tsfile->get_count_par_loc();
     for (int cb_index = 0; cb_index < cnt; cb_index++)
     {
-        string name = string(tsfile->get_par_loc_long_name(cb_index));
+        std::string name = std::string(tsfile->get_par_loc_long_name(cb_index));
         status = pt_pre_selection->find(name);
         if (status == 1)  // name is not in the json file
         {
@@ -604,7 +602,7 @@ void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
         long nr_parameters = tsfile->get_count_parameters(cb_index);
         struct _location * location = tsfile->get_locations(cb_index);
         long nr_locations = tsfile->get_count_locations(cb_index);
-        _time times = tsfile->get_times();
+        _time_series times = tsfile->get_times();
 
         for (long i = 0; i < nr_parameters; i++)
         {
@@ -617,8 +615,8 @@ void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
             tsfile->put_location(cb_index, i, location);
         }
 
-        string values = name + ".location.name";
-        vector<string> pre_locations;
+        std::string values = name + ".location.name";
+        std::vector<std::string> pre_locations;
         status = pt_pre_selection->get(values, pre_locations);
         if (pre_locations.size() != 0)
         {
@@ -627,7 +625,7 @@ void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
             {
                 for (int k = 0; k < pre_locations.size(); k++)
                 {
-                    string loc = location[j].name->trimmed().toStdString();
+                    std::string loc = location[j].name->trimmed().toStdString();
                     if (pre_locations[k] == loc)  // compare string with string
                     {
                         location[j].pre_selected = 1;
@@ -639,7 +637,7 @@ void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
         }
 
         values = name + ".parameter.name";
-        vector<string> pre_parameters;
+        std::vector<std::string> pre_parameters;
         status = pt_pre_selection->get(values, pre_parameters);
         if (pre_parameters.size() != 0)
         {
@@ -648,7 +646,7 @@ void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
             {
                 for (int k = 0; k < pre_parameters.size(); k++)
                 {
-                    string param(parameter[j].name);
+                    std::string param(parameter[j].name);
                     if (pre_parameters[k] == param)  // compare string with string
                     {
                         parameter[j].pre_selected = 1;
@@ -660,7 +658,7 @@ void MainWindow::OpenPreSelection(TSFILE * tsfile, QFileInfo json_file)
         }
 
         values = name + ".times.time";
-        vector<string> pre_times;
+        std::vector<std::string> pre_times;
         status = pt_pre_selection->get(values, pre_times);
         if (pre_times.size() != 0)
         {
@@ -720,7 +718,7 @@ void MainWindow::SavePreSelection()
         struct _location *  location = tsfile->get_locations(cb_index);
         long nr_locations = tsfile->get_count_locations(cb_index);
         // get selected parameter
-        vector<long> pars{};
+        std::vector<long> pars{};
         for (long i = 0; i < nr_parameters; i++)
         {
             parameter[i].pre_selected = 0;
@@ -745,7 +743,7 @@ void MainWindow::SavePreSelection()
             }
         }
         // get selected locations
-        vector<long> locs{};
+        std::vector<long> locs{};
         for (long i = 0; i < nr_locations; i++)
         {
             location[i].pre_selected = 0;
@@ -770,7 +768,7 @@ void MainWindow::SavePreSelection()
             }
         }
         // get selected times
-        vector<long> tims;
+        std::vector<long> tims;
         if (lb_times->currentRow() != -1)
         {
             for (int i = 0; i < lb_times->count(); i++)
@@ -790,7 +788,7 @@ void MainWindow::SavePreSelection()
         {
             QString q_name(parameter[pars[j]].name);
             boost::property_tree::ptree elem;
-            elem.put<string>("name", strdup(q_name.toUtf8().trimmed()));
+            elem.put<std::string>("name", strdup(q_name.toUtf8().trimmed()));
             pt_param.push_back(std::make_pair("", elem));
         }
         tmp = cb_name + ".parameter";
@@ -800,7 +798,7 @@ void MainWindow::SavePreSelection()
         {
             QString q_name(*location[locs[j]].name);
             boost::property_tree::ptree elem;
-            elem.put<string>("name", strdup(q_name.toUtf8().trimmed()));
+            elem.put<std::string>("name", strdup(q_name.toUtf8().trimmed()));
             pt_location.push_back(std::make_pair("", elem));
         }
         tmp = cb_name + ".location";
@@ -822,7 +820,7 @@ void MainWindow::SavePreSelection()
                     qdt = qdt_times[tims[j]].toString("yyyy-MM-dd hh:mm:ss");
                 }
                 boost::property_tree::ptree elem;
-                elem.put<string>("time", strdup(qdt.toUtf8().trimmed()));
+                elem.put<std::string>("time", strdup(qdt.toUtf8().trimmed()));
                 pt_times.push_back(std::make_pair("", elem));
             }
             tmp = cb_name + ".times";
@@ -868,7 +866,7 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     int nr_times;
     struct _parameter * param;
     struct _location * location;
-    _time times;
+    _time_series times;
     QString text1;
     QList<QDateTime> qdt_times;
     int cb_indx = -1;
@@ -900,7 +898,7 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
         char * name = tsfile->get_par_loc_long_name(i);
         this->cb_par_loc->addItem(QString(name).trimmed());
     }
-    cb_indx = max(0, cb_indx);
+    cb_indx = std::max(0, cb_indx);
     this->cb_par_loc->setCurrentIndex(cb_indx);
 
     // List the parameters
@@ -1070,7 +1068,7 @@ void MainWindow::ShowUserManual()
      char * pdf_document = manual.data();
 
      FILE* fp;
-     errno_t error = fopen_s(&fp, pdf_document, "r");
+     (void) fopen_s(&fp, pdf_document, "r");
      if (fp != NULL)
      {
           fclose(fp);
@@ -1264,6 +1262,8 @@ void MainWindow::createDisplayMeta()
     gb_meta->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     table = new QTableView();
+
+
     long rows = 1;
     long cols = 2;
     int i, j;
@@ -1273,7 +1273,6 @@ void MainWindow::createDisplayMeta()
 
     table->setModel(table_model);
     table->horizontalHeader()->setStretchLastSection(true);
-    table->horizontalHeader()->setStyleSheet("QHeaderView::section { background-color: rgb(240, 240, 240) }");
     table->horizontalHeader()->setFrameStyle(QFrame::Sunken);
     table->verticalHeader()->hide();
     table->setMaximumHeight(100);
@@ -1693,7 +1692,7 @@ void MainWindow::contextMenuFileListBox(const QPoint &pos)
             text1->append(")");
             gb_filenames->setTitle(*text1);
 
-            i_file = min(i_file, nr_files - 1);
+            i_file = std::min(i_file, nr_files - 1);
             lb_filenames->setCurrentRow(i_file);
 
             tsfile = this->openedUgridFile[i_file];

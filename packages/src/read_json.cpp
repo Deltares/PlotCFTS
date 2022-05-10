@@ -20,13 +20,13 @@ using c++11 regular expression functionality.
 struct Getter
 {
     template<typename T, class Ptree>
-    static void prop_get_json(Ptree &pt, const string & data, vector<T> & results)
+    static void prop_get_json(Ptree &pt, const std::string & data, std::vector<T> & results)
     {
         try {
             // first strip key from data, ex. data=data.boundary.nodeid, chapter==data.boundary, key==nodeid
             size_t i = data.find_last_of(".");
-            string chapter = data.substr(0, i);
-            string key = data.substr(i + 1);
+            std::string chapter = data.substr(0, i);
+            std::string key = data.substr(i + 1);
             auto child = pt.get_child(chapter);
             for (auto& p : child)
             {
@@ -62,7 +62,7 @@ struct Getter
     }
 };
 
-READ_JSON::READ_JSON(string file_json)
+READ_JSON::READ_JSON(std::string file_json)
 {
     m_filename = file_json;
     try
@@ -82,17 +82,17 @@ READ_JSON::~READ_JSON()
 {
     delete & m_ptrtree;
 }
-long READ_JSON::get(string data, vector<string> & strJsonResults)
+long READ_JSON::get(std::string data, std::vector<std::string> & strJsonResults)
 {
     Getter::prop_get_json(m_ptrtree, data, strJsonResults);
     return 0;
 }
-long READ_JSON::get(string data, vector<double> & strJsonResults)
+long READ_JSON::get(std::string data, std::vector<double> & strJsonResults)
 {
     Getter::prop_get_json(m_ptrtree, data, strJsonResults);
     return 0;
 }
-long READ_JSON::find(string data)
+long READ_JSON::find(std::string data)
 {
     long error = 1;
     boost::optional<std::string> c = m_ptrtree.get_optional<std::string>(data);

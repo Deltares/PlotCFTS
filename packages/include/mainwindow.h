@@ -75,8 +75,6 @@
 #define    WAIT_MODE 1
 #define NO_WAIT_MODE 0
 
-using namespace std;
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT

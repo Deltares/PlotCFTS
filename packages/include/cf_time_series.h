@@ -1,6 +1,8 @@
 #ifndef TSFILE_H
 #define TSFILE_H
 
+#include <boost/algorithm/string/trim.hpp>
+
 typedef enum{
     UNKNOWN,
     HISTORY,
@@ -39,9 +41,10 @@ struct _location {
                        //            2: show pre-selected; decrease by 1, show all (0 and 1) (Should know what was previously selected)
 };
 
-class _time {
-public:
-    std::vector<double> time;  // vector of seconds
+struct _time_series {
+    QString long_name;
+    QString unit;
+    std::vector<double> times;  // vector of seconds
     QList<QDateTime> qdt_time;  // date time presentation yyyy-MM-dd hh:mm:ss.zzz
     std::vector<int> pre_selected;  // tri-state: 0: not pre-selected (show all); only when saved to json file (also in memory will this action be performed to generate a new set of preselected parameters)
                                     //            1: pre-selected (show all); increase by 1 show then show only (2)
@@ -83,10 +86,16 @@ public:
     long put_location(long, long, struct _location *);
     long put_parameter(long, long, struct _parameter *);
 
-    _time m_times;
+    _time_series m_times;
     long get_count_times();
-    _time get_times();
-    void put_times(_time);
+    _time_series get_times();
+    void put_times(_time_series);
+
+    // Needed for reading times; taken from read_ugrid example
+    struct _time_series m_time_series;
+    QVector<QDateTime> qdt_times;
+    std::vector<_time_series> time_series;
+
     QList<QDateTime> get_qdt_times();
     QDateTime * get_reference_date();
 
@@ -104,7 +113,6 @@ public:
     struct _meta * meta;
     _global_attributes * global_attributes;
     struct _parameter * m_param;
-    char * time_var_name;
     size_t datetime_ntimes;
     QString datetime_units;
     QDateTime * RefDate;
@@ -113,20 +121,28 @@ public:
     char ** parameter;
 
 private:
-    char * StripWhiteSpaces(char *);
+    int get_attribute(int, int, char*, char**);
+    int get_attribute(int, int, char*, std::string*);
+    int get_attribute(int, int, std::string, std::string*);
+    int get_attribute(int, int, char*, double*);
+    int get_attribute(int, int, char*, int*);   
+    int get_attribute(int, int, char*, long*);
+    std::string trim(std::string);
+    char* trim(char*);
 
     char * tsfilefilename;
     struct _par_loc ** par_loc;  // array of parameters, locations and time-series
-    QStringList date_time;
+    QStringList m_date_time;
     QStringList datetime_ref_date;
     QStringList datetime_ref_time;
+    char* m_time_var_name;
     QString xaxis_label;
     QString xaxis_unit;
-    QString yaxis_label;
+    QString m_yaxis_label;
     QString yaxis_unit;
     size_t name_len;
     long m_nr_par_loc;
-    long nr_parameters;
+    long m_nr_parameters;
     long m_nr_locations;
     bool m_pre_selection;
     int m_cb_parloc_index;

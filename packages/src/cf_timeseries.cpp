@@ -35,8 +35,6 @@
 #include "cf_time_series.h"
 #include "netcdf.h"
 
-using namespace std;
-
 TSFILE::TSFILE(QFileInfo filename, FILE_TYPE ftype)
 {
     this->tsfilefilename = (char *) malloc(sizeof(char) * (FILENAME_MAX + 1));
@@ -45,7 +43,7 @@ TSFILE::TSFILE(QFileInfo filename, FILE_TYPE ftype)
     this->type = ftype;
     this->tsfilefilename = strdup(this->fname.absoluteFilePath().toUtf8());
     m_nr_par_loc = 0;
-    time_var_name = NULL;
+    m_time_var_name = NULL;
     datetime_ntimes = 0;
     m_pre_selection = false;
     m_cb_parloc_index = -1;
@@ -53,7 +51,7 @@ TSFILE::TSFILE(QFileInfo filename, FILE_TYPE ftype)
 TSFILE::~TSFILE()
 {
     delete tsfilefilename;
-    delete[] time_var_name;
+    delete[] m_time_var_name;
     for (int i = 0; i < this->global_attributes->count; i++)
     {
         if (this->global_attributes->attribute[i]->name != NULL) free(this->global_attributes->attribute[i]->name); this->global_attributes->attribute[i]->name = NULL;
@@ -138,7 +136,7 @@ long TSFILE::read(QProgressBar * pgBar)
     {
         QMessageBox::warning(NULL, QObject::tr("Warning"), QObject::tr("Only HISTORY is yet supported"));
     }
-    if (time_var_name == NULL)
+    if (m_time_var_name == NULL)
     {
         QMessageBox::warning(NULL, QObject::tr("Error"), QString("No time variable found in file:\n%1.\nFile will not be read.").arg(this->tsfilefilename));
         return 1;
@@ -157,166 +155,167 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
     int ndims, nvars, natts, nunlimited;
     int status;
     char * var_name;
-    char * c_units;
-    size_t length;
     int dimids;
     int nr_time_series = 0;
     double fraction;
     double dt = 0.0;
 
     pgBar->setValue(pgBar_start);
-    var_name = (char *)malloc(sizeof(char) * (NC_MAX_NAME + 1));
+
+    // look for time variable
+    std::string time_unit_string;
+    std::string time_std_name;
+    int time_var = -1;
+    QStringList date_time;
+
     status = nc_inq(this->m_ncid, &ndims, &nvars, &natts, &nunlimited);
-    for (long i_var = 0; i_var < nvars; i_var++)
+    for (long i_var = 0; i_var < nvars; ++i_var)
     {
-        length = (size_t) -1;
-        status = nc_inq_attlen(this->m_ncid, i_var, "units", &length);
-        if (status == NC_NOERR)
+        int error_code = get_attribute(m_ncid, i_var, "units", &time_unit_string);
+        if (error_code == 0 && time_unit_string.find("since") != -1)
         {
-            c_units = (char *)malloc(sizeof(char) * (length + 1));
-            c_units[length] = '\0';
-            status = nc_get_att(this->m_ncid, i_var, "units", c_units);
-            QString units = QString(c_units).replace("T", " ");  // "seconds since 1970-01-01T00:00:00" changed into "seconds since 1970-01-01 00:00:00"
+            QString units = QString::fromStdString(time_unit_string).replace("T", " ");  // "seconds since 1970-01-01T00:00:00" changed into "seconds since 1970-01-01 00:00:00"
             date_time = units.split(" ");
-            if (date_time.count()>=2)
+            if (date_time.at(1).toUtf8() == "since")
             {
-                if (!strcmp("since", date_time.at(1).toUtf8()))
-                {
-                    // now it is the time variable, can only be detected by the "seconds since 1970-01-01T00:00:00" character string
-                    // retrieve the long_name, standard_name -> var_name for the xaxis label
-                    length = (size_t) -1;
-                    status = nc_inq_var(this->m_ncid, i_var, var_name, NULL, &ndims, &dimids, &natts);
-                    status = nc_inq_attlen(this->m_ncid, i_var, "long_name", &length);
-                    if (status == NC_NOERR)
-                    {
-                        char * c_label = (char *)malloc(sizeof(char) * (length + 1));
-                        c_label[length] = '\0';
-                        status = nc_get_att(this->m_ncid, i_var, "long_name", c_label);
-                        this->xaxis_label = QString(c_label);
-                        free(c_label); c_label = NULL;
-                    }
-                    else
-                    {
-                        this->xaxis_label = QString(var_name);
-                    }
-
-                    // retrieve the time series
-                    nr_time_series += 1;
-                    if (nr_time_series > 1)
-                    {
-                        QMessageBox::warning(NULL, QObject::tr("Warning"), QObject::tr("Support of just one time series, only the first one will be supported.\nPlease mail to jan.mooiman@deltares.nl"));
-                        continue;
-                    }
-                    time_var_name = strdup(var_name);
-                    status = nc_inq_dimlen(this->m_ncid, dimids, &datetime_ntimes);
-                    // ex. date_time = "seconds since 2017-02-25 15:26:00"   year, yr, day, d, hour, hr, h, minute, min, second, sec, s and all plural forms
-                    datetime_units = date_time.at(0);
-
-                    QDate date = QDate::fromString(date_time.at(2), "yyyy-MM-dd");
-                    QTime time = QTime::fromString(date_time.at(3), "hh:mm:ss");
-                    this->RefDate = new QDateTime(date, time, Qt::UTC);
-#if defined(DEBUG)
-                    QString janm1 = this->RefDate->toString("yyyy-MM-dd hh:mm:ss.zzz");
-                    QString janm2 = this->RefDate->toUTC().toString("yyyy-MM-dd hh:mm:ss.zzz");
-#endif
-                    double * times_c = (double *)malloc(sizeof(double)*datetime_ntimes);
-                    status = nc_get_var_double(this->m_ncid, i_var, times_c);
-                    for (int i = 0; i < datetime_ntimes; i++)
-                    {
-                        m_times.time.push_back(times_c[i]);
-                        m_times.pre_selected.push_back(0);  // not pre selected
-                    }
-                    free(times_c);
-                    times_c = nullptr;
-                    if (datetime_ntimes >= 2)
-                    {
-                        dt = m_times.time[1] - m_times.time[0];
-                    }
-                    fraction = double(pgBar_start);
-                    pgBar->setValue(int(fraction));
-
-                    if (datetime_units.contains("sec") ||
-                        datetime_units.trimmed() == "s")  // seconds, second, sec, s
-                    {
-                        this->xaxis_unit = QString("sec");
-                    }
-                    else if (datetime_units.contains("min"))  // minutes, minute, min
-                    {
-                        this->xaxis_unit = QString("min");
-                    }
-                    else if (datetime_units.contains("h"))  // hours, hour, hrs, hr, h
-                    {
-                        this->xaxis_unit = QString("hour");
-                    }
-                    else if (datetime_units.contains("d"))  // days, day, d
-                    {
-                        this->xaxis_unit = QString("day");
-                    }
-
-                    for (int j = 0; j < datetime_ntimes; j++)
-                    {
-                        if (fmod(j, int(0.01*double(datetime_ntimes))) == 0)
-                        {
-                            fraction = double(pgBar_start) + double(j) / double(datetime_ntimes) * (double(pgBar_end) - double(pgBar_start));
-                            pgBar->setValue(int(fraction));
-                        }
-                        if (datetime_units.contains("sec") ||
-                            datetime_units.trimmed() == "s")  // seconds, second, sec, s
-                        {
-                            if (dt < 1.0)
-                            {
-                                m_times.qdt_time.append(this->RefDate->addMSecs(1000.*m_times.time[j]));  // milli seconds as smallest time unit
-                            }
-                            else
-                            {
-                                m_times.qdt_time.append(this->RefDate->addSecs(m_times.time[j]));  // seconds as smallest time unit
-                            }
-                        }
-                        else if (datetime_units.contains("min"))  // minutes, minute, min
-                        {
-                            m_times.time[j] = m_times.time[j] * 60.0;
-                            m_times.qdt_time.append(this->RefDate->addSecs(m_times.time[j]));
-                        }
-                        else if (datetime_units.contains("h"))  // hours, hour, hrs, hr, h
-                        {
-                            m_times.time[j] = m_times.time[j] * 3600.0;
-                            m_times.qdt_time.append(this->RefDate->addSecs(m_times.time[j]));
-                        }
-                        else if (datetime_units.contains("d"))  // days, day, d
-                        {
-                            m_times.time[j] = m_times.time[j] * 24.0 * 3600.0;
-                            m_times.qdt_time.append(this->RefDate->addSecs(m_times.time[j]));
-                        }
-                        // times[j] is now defined in seconds
-#if defined (DEBUG)
-                        if (dt < 1.0)
-                        { 
-                            QString janm = m_times.qdt_time[j].toString("yyyy-MM-dd hh:mm:ss.zzz");
-                        }
-                        else
-                        {
-                            QString janm = m_times.qdt_time[j].toString("yyyy-MM-dd hh:mm:ss");
-                        }
-#endif
-                    }
-                    break;
-                }
+                time_var = i_var;
             }
-            free(c_units);
+            error_code = get_attribute(m_ncid, i_var, "standard_name", &time_std_name);
+            if (error_code == 0 && time_std_name == "time")
+            {
+                time_var = i_var;
+                break;
+            }
         }
+    }
+
+    var_name = (char *)malloc(sizeof(char) * (NC_MAX_NAME + 1));
+
+    // now it is the time variable, can only be detected by the "seconds since 1970-01-01T00:00:00" character string
+    // retrieve the long_name, standard_name -> var_name for the xaxis label
+    std::string label;
+    status = nc_inq_var(this->m_ncid, time_var, var_name, NULL, &ndims, &dimids, &natts);
+    status = get_attribute(this->m_ncid, time_var, "long_name", &label);
+    if (status == NC_NOERR)
+    {
+        this->xaxis_label = QString::fromStdString(label);
+    }
+    else
+    {
+        this->xaxis_label = QString(var_name);
+    }
+
+    // retrieve the time series
+    nr_time_series += 1;
+    if (nr_time_series > 1)
+    {
+        QMessageBox::warning(NULL, QObject::tr("Warning"), QObject::tr("Support of just one time series, only the first one will be supported.\nPlease mail to jan.mooiman@deltares.nl"));
+    }
+    m_time_var_name = strdup(var_name);
+    status = nc_inq_dimlen(this->m_ncid, dimids, &datetime_ntimes);
+    // ex. date_time = "seconds since 2017-02-25 15:26:00"   year, yr, day, d, hour, hr, h, minute, min, second, sec, s and all plural forms
+    datetime_units = date_time.at(0);
+
+    QDate date = QDate::fromString(date_time.at(2), "yyyy-MM-dd");
+    QTime time = QTime::fromString(date_time.at(3), "hh:mm:ss");
+    this->RefDate = new QDateTime(date, time, Qt::UTC);
+#if defined(DEBUG)
+    QString janm1 = this->RefDate->toString("yyyy-MM-dd hh:mm:ss.zzz");
+    QString janm2 = this->RefDate->toUTC().toString("yyyy-MM-dd hh:mm:ss.zzz");
+#endif
+    double * times_c = (double *)malloc(sizeof(double)*datetime_ntimes);
+    status = nc_get_var_double(this->m_ncid, time_var, times_c);
+    for (int i = 0; i < datetime_ntimes; i++)
+    {
+        m_times.times.push_back(times_c[i]);
+        m_times.pre_selected.push_back(0);  // not pre selected
+    }
+    free(times_c);
+    times_c = nullptr;
+    if (datetime_ntimes >= 2)
+    {
+        dt = m_times.times[1] - m_times.times[0];
+    }
+    fraction = double(pgBar_start);
+    pgBar->setValue(int(fraction));
+
+    if (datetime_units.contains("sec") ||
+        datetime_units.trimmed() == "s")  // seconds, second, sec, s
+    {
+        this->xaxis_unit = QString("sec");
+    }
+    else if (datetime_units.contains("min"))  // minutes, minute, min
+    {
+        this->xaxis_unit = QString("min");
+    }
+    else if (datetime_units.contains("h"))  // hours, hour, hrs, hr, h
+    {
+        this->xaxis_unit = QString("hour");
+    }
+    else if (datetime_units.contains("d"))  // days, day, d
+    {
+        this->xaxis_unit = QString("day");
+    }
+
+    for (int j = 0; j < datetime_ntimes; j++)
+    {
+        if (fmod(j, int(0.01 * double(datetime_ntimes))) == 0)
+        {
+            fraction = double(pgBar_start) + double(j) / double(datetime_ntimes) * (double(pgBar_end) - double(pgBar_start));
+            pgBar->setValue(int(fraction));
+        }
+        if (datetime_units.contains("sec") ||
+            datetime_units.trimmed() == "s")  // seconds, second, sec, s
+        {
+            if (dt < 1.0)
+            {
+                m_times.qdt_time.append(this->RefDate->addMSecs(1000. * m_times.times[j]));  // milli seconds as smallest time unit
+            }
+            else
+            {
+                m_times.qdt_time.append(this->RefDate->addSecs(m_times.times[j]));  // seconds as smallest time unit
+            }
+        }
+        else if (datetime_units.contains("min"))  // minutes, minute, min
+        {
+            m_times.times[j] = m_times.times[j] * 60.0;
+            m_times.qdt_time.append(this->RefDate->addSecs(m_times.times[j]));
+        }
+        else if (datetime_units.contains("h"))  // hours, hour, hrs, hr, h
+        {
+            m_times.times[j] = m_times.times[j] * 3600.0;
+            m_times.qdt_time.append(this->RefDate->addSecs(m_times.times[j]));
+        }
+        else if (datetime_units.contains("d"))  // days, day, d
+        {
+            m_times.times[j] = m_times.times[j] * 24.0 * 3600.0;
+            m_times.qdt_time.append(this->RefDate->addSecs(m_times.times[j]));
+        }
+        // times[j] is now defined in seconds
+#if defined (DEBUG)
+        if (dt < 1.0)
+        {
+            QString janm = m_times.qdt_time[j].toString("yyyy-MM-dd hh:mm:ss.zzz");
+        }
+        else
+        {
+            QString janm = m_times.qdt_time[j].toString("yyyy-MM-dd hh:mm:ss");
+        }
+#endif
     }
     free(var_name); var_name = NULL;
     pgBar->setValue(pgBar_end);
 }
+
 long TSFILE::get_count_times()
 {
     return (long) this->datetime_ntimes;
 }
-_time TSFILE::get_times()
+_time_series TSFILE::get_times()
 {
     return this->m_times;
 }
-void TSFILE::put_times(_time times)
+void TSFILE::put_times(_time_series times)
 {
     this->m_times = times;
     return;
@@ -347,18 +346,17 @@ void TSFILE::read_parameters()
     char * var_name;
     char * parameter_name;
     char * unit;
-    char * coord = NULL;
 
     size_t * par_dim;
     long i_par_loc = -1;
     long i_param = -1;
 
-    if (this->time_var_name == NULL)
+    if (this->m_time_var_name == NULL)
     {
         return;
     }
 
-    this->nr_parameters = -1;
+    m_nr_parameters = -1;
 
     var_name = (char *)malloc(sizeof(char) * (NC_MAX_NAME + 1));
     dim_name = (char *)malloc(sizeof(char) * (NC_MAX_NAME + 1));
@@ -381,7 +379,7 @@ void TSFILE::read_parameters()
         for (int i = 0; i < ndims; i++)
         {
             status = nc_inq_dim(this->m_ncid, par_dim_ids[i], dim_name, &par_dim[i]);
-            if (!strcmp(this->time_var_name, dim_name))
+            if (!strcmp(this->m_time_var_name, dim_name))
             {
                 is_time_series = true;
                 break;
@@ -393,13 +391,8 @@ void TSFILE::read_parameters()
             continue;
         }
 
-        status = nc_inq_attlen(this->m_ncid, i_var, "coordinates", &length);
-        if (status == NC_NOERR)
-        {
-            coord = (char *)malloc(sizeof(char) * (length + 1));
-            status = nc_get_att(this->m_ncid, i_var, "coordinates", coord);
-            coord[length] = '\0';
-        }
+        std::string coord;
+        status = get_attribute(this->m_ncid, i_var, "coordinates", &coord);
 
         if (status != NC_NOERR)
         {
@@ -409,7 +402,7 @@ void TSFILE::read_parameters()
             for (int i = 0; i < ndims; i++)
             {
                 status = nc_inq_dim(this->m_ncid, par_dim_ids[i], dim_name, &par_dim[i]);
-                if (!strcmp(dim_name, this->time_var_name))
+                if (!strcmp(dim_name, this->m_time_var_name))
                 {
                     var_found += 1;
                 }
@@ -417,7 +410,7 @@ void TSFILE::read_parameters()
                 {
                     if (!strcmp(dim_name, this->par_loc[j]->location_dim_name))
                     {
-                        coord = strdup(this->par_loc[j]->location_var_name);
+                        coord = this->par_loc[j]->location_var_name;
                         var_found += 1;
                     }
                 }
@@ -432,17 +425,15 @@ void TSFILE::read_parameters()
         {
             for (int i = 0; i < m_nr_par_loc; i++)
             {
-                char * crd = strdup(this->par_loc[i]->location_var_name);
-                if (strstr(coord, (const char *)crd))
+                std::string crd(this->par_loc[i]->location_var_name);
+                if (coord.find(crd) != -1)
                 {
                     i_par_loc = i;
                     i_param = this->par_loc[i_par_loc]->nr_parameters;
                     this->par_loc[i_par_loc]->nr_parameters += 1;
-                    this->nr_parameters = this->par_loc[i_par_loc]->nr_parameters;
-                    delete crd;
+                    m_nr_parameters = this->par_loc[i_par_loc]->nr_parameters;
                     break;
                 }
-                delete crd;
             }
             if (i_par_loc == -1 ||  i_param == -1)
             {
@@ -452,7 +443,7 @@ void TSFILE::read_parameters()
             // add this parameter
             status = nc_inq_var(this->m_ncid, i_var, var_name, NULL, &ndims, NULL, &natts);
             this->par_loc[i_par_loc]->ndim = ndims;
-            this->nr_parameters = this->par_loc[i_par_loc]->nr_parameters;
+            m_nr_parameters = this->par_loc[i_par_loc]->nr_parameters;
             ensure_capacity_parameters(i_par_loc, ndims);
 
             this->par_loc[i_par_loc]->parameter[i_param]->ndim = ndims;
@@ -467,42 +458,36 @@ void TSFILE::read_parameters()
             status = nc_inq_attlen(this->m_ncid, i_var, "long_name", &length);
             if (status == NC_NOERR)
             {
-                char * parameter_name_c = (char *)malloc(sizeof(char) * (length + 1));
-                status = nc_get_att(this->m_ncid, i_var, "long_name", parameter_name_c);
-                parameter_name_c[length] = '\0';
-                parameter_name = strdup(StripWhiteSpaces(parameter_name_c));
-                free(parameter_name_c);
-                parameter_name_c = nullptr;
+                std::string tmp;
+                status = get_attribute(this->m_ncid, i_var, "long_name", &tmp);
+                parameter_name = strdup(tmp.c_str());
             }
             else
             {
                 parameter_name = strdup(var_name);
             }
-            this->yaxis_label = QString(var_name);
+            m_yaxis_label = QString(var_name);
 
             this->par_loc[i_par_loc]->parameter[i_param]->name = strdup(parameter_name);
             status = nc_inq_attlen(this->m_ncid, i_var, "units", &length);
             if (status == NC_NOERR)
             {
-                unit = (char *)malloc(sizeof(char) * (length + 1));
-                status = nc_get_att(this->m_ncid, i_var, "units", unit);
-                unit[length] = '\0';
-                this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup(unit);
-                free(unit); unit = NULL;
+                std::string tmp;
+                status = get_attribute(this->m_ncid, i_var, "units", &tmp);
+                this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup(tmp.c_str());
             }
             else
             {
                 this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup("?");
             }
             free(parameter_name); parameter_name = NULL;
-            free(coord); coord = NULL;
         }
         else
         {
             // no coordinates attribute found, so search for variables with only the time-dimension and add the variable to the parameter list for location "Model wide"
             status = nc_inq_var(this->m_ncid, i_var, var_name, NULL, &ndims, NULL, &natts);
             status = nc_inq_dim(this->m_ncid, par_dim_ids[0], dim_name, &par_dim[0]);  // just one dimension, so index == 0
-            if (ndims == 1 && !strcmp(time_var_name, dim_name)) // The dimension is the 'time' dimension
+            if (ndims == 1 && !strcmp(m_time_var_name, dim_name)) // The dimension is the 'time' dimension
             {
                 for (int i = 0; i < m_nr_par_loc; i++)
                 {
@@ -512,7 +497,7 @@ void TSFILE::read_parameters()
                         i_par_loc = i;
                         i_param = this->par_loc[i_par_loc]->nr_parameters;
                         this->par_loc[i_par_loc]->nr_parameters += 1;
-                        this->nr_parameters = this->par_loc[i_par_loc]->nr_parameters;
+                        m_nr_parameters = this->par_loc[i_par_loc]->nr_parameters;
                         delete crd;
                         break;
                     }
@@ -539,7 +524,7 @@ void TSFILE::read_parameters()
                     char * parameter_name_c = (char *)malloc(sizeof(char) * (length + 1));
                     status = nc_get_att(this->m_ncid, i_var, "long_name", parameter_name_c);
                     parameter_name_c[length] = '\0';
-                    parameter_name = strdup(StripWhiteSpaces(parameter_name_c));
+                    parameter_name = strdup(trim(parameter_name_c));
                     free(parameter_name_c);
                     parameter_name_c = nullptr;
                 }
@@ -547,7 +532,7 @@ void TSFILE::read_parameters()
                 {
                     parameter_name = strdup(var_name);
                 }
-                this->yaxis_label = QString(var_name);
+                m_yaxis_label = QString(var_name);
 
                 this->par_loc[i_par_loc]->parameter[i_param]->name = strdup(parameter_name);
                 status = nc_inq_attlen(this->m_ncid, i_var, "units", &length);
@@ -573,7 +558,7 @@ void TSFILE::read_parameters()
                 {
                     status = nc_inq_dim(this->m_ncid, par_dim_ids[i], dim_name, &par_dim[i]);
 
-                    if (!strcmp(this->time_var_name, dim_name))
+                    if (!strcmp(this->m_time_var_name, dim_name))
                     {
                         accepted += 1;
                     }
@@ -594,7 +579,7 @@ void TSFILE::read_parameters()
                             i_par_loc = i;
                             i_param = this->par_loc[i_par_loc]->nr_parameters;
                             this->par_loc[i_par_loc]->nr_parameters += 1;
-                            this->nr_parameters = this->par_loc[i_par_loc]->nr_parameters;
+                            m_nr_parameters = this->par_loc[i_par_loc]->nr_parameters;
                             delete crd;
                             break;
                         }
@@ -621,7 +606,7 @@ void TSFILE::read_parameters()
                         char * parameter_name_c = (char *)malloc(sizeof(char) * (length + 1));
                         status = nc_get_att(this->m_ncid, i_var, "long_name", parameter_name_c);
                         parameter_name_c[length] = '\0';
-                        parameter_name = StripWhiteSpaces(parameter_name_c);
+                        parameter_name = trim(parameter_name_c);
                         free(parameter_name_c);
                         parameter_name_c = nullptr;
                     }
@@ -664,9 +649,9 @@ long TSFILE::get_count_parameters(long i_par_loc)
 struct _parameter * TSFILE::get_parameters(long i_par_loc)
 {
     struct _parameter * param;
-    this->nr_parameters = this->par_loc[i_par_loc]->nr_parameters;
-    param = (struct _parameter *) malloc(sizeof(struct _parameter) * this->nr_parameters);
-    for (long i = 0; i < this->nr_parameters; i++)
+    m_nr_parameters = this->par_loc[i_par_loc]->nr_parameters;
+    param = (struct _parameter *) malloc(sizeof(struct _parameter) * m_nr_parameters);
+    for (long i = 0; i < m_nr_parameters; i++)
     {
         param[i].name = strdup(this->par_loc[i_par_loc]->parameter[i]->name);
         param[i].unit = strdup(this->par_loc[i_par_loc]->parameter[i]->unit);
@@ -719,7 +704,7 @@ void TSFILE::read_locations()
     bool model_wide_found = false;
     bool model_wide_exist = false;
 
-    if (this->time_var_name == NULL)
+    if (this->m_time_var_name == NULL)
     {
         return;
     }
@@ -871,7 +856,7 @@ void TSFILE::read_locations()
                 sn_dims = (long *)malloc(sizeof(long)*ndims);
                 status = nc_inq_vardimid(this->m_ncid, location_name_varid, (int*)sn_dims);
                 status = nc_inq_dim(this->m_ncid, sn_dims[0], dim_name, &length);
-                if (!strcmp(this->time_var_name, dim_name))
+                if (!strcmp(this->m_time_var_name, dim_name))
                 {
                     for (int i = 0; i < m_nr_par_loc; i++)
                     {
@@ -904,7 +889,7 @@ void TSFILE::read_locations()
                 {
                     status = nc_inq_dim(this->m_ncid, sn_dims[i], dim_name, &length);
 
-                    if (!strcmp(this->time_var_name, dim_name))
+                    if (!strcmp(this->m_time_var_name, dim_name))
                     {
                         accepted += 1;
                     }
@@ -1004,7 +989,7 @@ void TSFILE::read_global_attributes()
         status = nc_inq_att(this->m_ncid, NC_GLOBAL, att_name_c, &att_type, &att_length);
         this->global_attributes->attribute[i]->name = strdup(att_name_c);
         this->global_attributes->attribute[i]->type = NC_CHAR;
-        this->global_attributes->attribute[i]->length = att_length;
+        this->global_attributes->attribute[i]->length = (int) att_length;
         this->global_attributes->attribute[i]->cvalue = NULL;
         //global_attributes->attribute[i]->svalue = NULL;
         this->global_attributes->attribute[i]->ivalue = NULL;
@@ -1027,7 +1012,7 @@ struct _global_attributes * TSFILE::get_global_attributes()
     return this->global_attributes;
 }
 
-vector<double> TSFILE::get_time_series(long cb_index, char * param_name, long loc_id, long layer_id)
+std::vector<double> TSFILE::get_time_series(long cb_index, char * param_name, long loc_id, long layer_id)
 {
     int ndims, nvars, natts, nunlimited;
     nc_type nc_type;
@@ -1059,7 +1044,7 @@ vector<double> TSFILE::get_time_series(long cb_index, char * param_name, long lo
             tmp_name = (char *)malloc(sizeof(char) * (length + 1));
             tmp_name[length] = '\0';
             status = nc_get_att(this->m_ncid, i, "long_name", tmp_name);
-            tmp_name = StripWhiteSpaces(tmp_name);
+            tmp_name = trim(tmp_name);
             if (!strcmp(param_name, tmp_name))
             {
                 par_id = i;
@@ -1092,7 +1077,7 @@ vector<double> TSFILE::get_time_series(long cb_index, char * param_name, long lo
     for (int i = 0; i < ndims; i++)
     {
         status = nc_inq_dim(this->m_ncid, var_dims[i], dim_name, &length);
-        if (i == 2) nr_layers = length;  // third dimension is the layer
+        if (i == 2) nr_layers = (int) length;  // third dimension is the layer
         mem_length = mem_length * length;
     }
 
@@ -1105,7 +1090,7 @@ vector<double> TSFILE::get_time_series(long cb_index, char * param_name, long lo
         status = nc_get_var_double(this->m_ncid, par_id, y_array);
         for (int i = 0; i < mem_length; ++i)
         {
-            if (y_array[i] == att_value) { y_array[i] = numeric_limits<double>::quiet_NaN(); }
+            if (y_array[i] == att_value) { y_array[i] = std::numeric_limits<double>::quiet_NaN(); }
         }
     }
     else if (nc_type == NC_FLOAT)
@@ -1118,7 +1103,7 @@ vector<double> TSFILE::get_time_series(long cb_index, char * param_name, long lo
         y_array = (double*)malloc(sizeof(double) * mem_length);
         for (int i = 0; i < mem_length; ++i)
         {
-            if (y_array_s[i] == att_value) { y_array_s[i] = numeric_limits<float>::quiet_NaN(); }
+            if (y_array_s[i] == att_value) { y_array_s[i] = std::numeric_limits<float>::quiet_NaN(); }
             y_array[i] = (double)y_array_s[i];
         }
         free(y_array_s);
@@ -1193,13 +1178,13 @@ void TSFILE::ensure_capacity_par_loc(long nr_par_loc)
 void TSFILE::ensure_capacity_parameters(long i_par_loc, long ndims)
 {
     long i_param;
-    if (this->nr_parameters == 1)
+    if (m_nr_parameters == 1)
     {
-        this->par_loc[i_par_loc]->parameter = (struct _parameter **) malloc(sizeof(struct _parameter *) * this->nr_parameters);
+        this->par_loc[i_par_loc]->parameter = (struct _parameter **) malloc(sizeof(struct _parameter *) * m_nr_parameters);
     }
-    else if (this->nr_parameters > 1)
+    else if (m_nr_parameters > 1)
     {
-        this->par_loc[i_par_loc]->parameter = (struct _parameter **) realloc(this->par_loc[i_par_loc]->parameter, sizeof(struct _parameter *) * this->nr_parameters);
+        this->par_loc[i_par_loc]->parameter = (struct _parameter **) realloc(this->par_loc[i_par_loc]->parameter, sizeof(struct _parameter *) * m_nr_parameters);
     }
     i_param = this->par_loc[i_par_loc]->nr_parameters - 1;
     this->par_loc[i_par_loc]->parameter[i_param] = (struct _parameter *) malloc(sizeof(struct _parameter) * 1);
@@ -1218,13 +1203,105 @@ void TSFILE::ensure_capacity_locations(long i_par_loc, long nr_locations)
         //this->par_loc[i_par_loc]->location[i]->pre_selected = 0;
     }
 }
-/* @@
- *
- * Remove leading and trailing blanks from a string ended with \0
- */
-char * TSFILE::StripWhiteSpaces(char * string)
+
+int TSFILE::get_attribute(int ncid, int i_var, char* att_name, char** att_value)
 {
-    char * s;
+    size_t length = 0;
+    int status = -1;
+
+    status = nc_inq_attlen(ncid, i_var, att_name, &length);
+    *att_value = (char*)malloc(sizeof(char) * (length + 1));
+    *att_value[0] = '\0';
+    if (status != NC_NOERR)
+    {
+        *att_value = '\0';
+    }
+    else
+    {
+        status = nc_get_att(ncid, i_var, att_name, *att_value);
+        att_value[0][length] = '\0';
+    }
+    return status;
+}
+//------------------------------------------------------------------------------
+int TSFILE::get_attribute(int ncid, int i_var, char* att_name, std::string* att_value)
+{
+    size_t length = 0;
+    int status = -1;
+
+    status = nc_inq_attlen(ncid, i_var, att_name, &length);
+    if (status != NC_NOERR)
+    {
+        *att_value = "";
+    }
+    else
+    {
+        char* tmp_value = (char*)malloc(sizeof(char) * (length + 1));
+        tmp_value[0] = '\0';
+        status = nc_get_att(ncid, i_var, att_name, tmp_value);
+        tmp_value[length] = '\0';
+        *att_value = std::string(tmp_value, length);
+        free(tmp_value);
+    }
+    return status;
+}
+//------------------------------------------------------------------------------
+int TSFILE::get_attribute(int ncid, int i_var, std::string att_name, std::string* att_value)
+{
+    size_t length = 0;
+    int status = -1;
+
+    status = nc_inq_attlen(ncid, i_var, att_name.c_str(), &length);
+    if (status != NC_NOERR)
+    {
+        *att_value = "";
+    }
+    else
+    {
+        char* tmp_value = (char*)malloc(sizeof(char) * (length + 1));
+        tmp_value[0] = '\0';
+        status = nc_get_att(ncid, i_var, att_name.c_str(), tmp_value);
+        tmp_value[length] = '\0';
+        *att_value = std::string(tmp_value, length);
+        free(tmp_value);
+    }
+    return status;
+}
+//------------------------------------------------------------------------------
+int TSFILE::get_attribute(int ncid, int i_var, char* att_name, double* att_value)
+{
+    int status = -1;
+
+    status = nc_get_att_double(ncid, i_var, att_name, att_value);
+
+    return status;
+}
+//------------------------------------------------------------------------------
+int TSFILE::get_attribute(int ncid, int i_var, char* att_name, int* att_value)
+{
+    int status = -1;
+
+    status = nc_get_att_int(ncid, i_var, att_name, att_value);
+
+    return status;
+}
+//------------------------------------------------------------------------------
+int TSFILE::get_attribute(int ncid, int i_var, char* att_name, long* att_value)
+{
+    int status = -1;
+
+    status = nc_get_att_long(ncid, i_var, att_name, att_value);
+
+    return status;
+}
+std::string TSFILE::trim(std::string str)
+{
+    boost::algorithm::trim(str);
+    return str;
+}
+char* TSFILE::trim(char* string)
+{
+    char* s;
     /*
      * Remove first trailing whitespaces and than leading
      */
@@ -1233,7 +1310,6 @@ char * TSFILE::StripWhiteSpaces(char * string)
         s--);
     *(s + 1) = '\0';
     for (s = string; *s == ' ' || *s == '\t'; s++);
-    (void)strcpy_s(string, strlen(string)+1, s);
+    (void)strcpy_s(string, strlen(string) + 1, s);
     return string;
 }
-

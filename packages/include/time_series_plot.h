@@ -56,7 +56,7 @@ private:
     QSpinBox * sb_layer;
     QPushButton * pb_add_to_plot;
     QString tmp_label;
-    QString yaxis_label;
+    QString m_yaxis_label;
     long _nr_y_axis_labels;
     long _nr_graphs;
     long _nr_max_ylabel;
