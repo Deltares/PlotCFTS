@@ -23,10 +23,10 @@
 
 %{{\footnotesize
 %	{\textbf{Version control information}}
-%	
+%
 %	\begin{tabular}{@{}p{12,5mm}@{}p{0mm}p{\textwidth-27mm-24pt}}
 %		\textbf{Location} & \textbf{:} & \url{\svnkw{HeadURL}} \\
-%		\textbf{Revision} & \textbf{:} & \svnrev 
+%		\textbf{Revision} & \textbf{:} & \svnrev
 %	\end{tabular}
 %}}
 
@@ -38,25 +38,26 @@
 \phantom{m}\vspace{-\baselineskip}
 %
 %--- begin light blue table ---
-\begin{longtable}{p{16mm-12pt}|p{\textwidth-16mm-12pt}} 
-%\caption{Light blue theme of table} \\% 
-\rowcolor{dblue1} 
-\textbf{Release} 
-& \textbf{Description} 
-\\ 
-\topline 
-\endfirsthead 
-\rowcolor{dblue1} 
-\textbf{Release} 
+\begin{longtable}{p{16mm-12pt}|p{\textwidth-16mm-12pt}}
+%\caption{Light blue theme of table} \\%
+\rowcolor{dblue1}
+\textbf{Release}
+& \textbf{Description}
+\\
+\topline
+\endfirsthead
+\rowcolor{dblue1}
+\textbf{Release}
 & \textbf{Description} \hfill continued from previous page
-\\ 
-\topline 
-\endhead 
+\\
+\topline
+\endhead
 \midline
 \multicolumn{2}{r}{continued at next page}
-\endfoot 
-\bottomline 
-\endlastfoot 
+\endfoot
+\bottomline
+\endlastfoot
+3.07.00  &  - Integer variable values are now plotted, ex.\ pump\_actual\_stage \\
 3.06.01  &  - Some reorganization how to dected the time variable, now checking on standard\_name = 'time' \\
 3.06.00  &  - Upgrade to QT 5.15.2 \\
 3.05.00  &  - Use of QCustomPlot 2.1.0. \\
@@ -78,7 +79,7 @@
 2.07.00  &  - Show main window before loading the file given via the command line arguments.  \\
          &  - Time unit, now assigned once, so independent on the length of the time-series (a performance issue).  \\
 2.06.00  &  - Disable reading a file with no time variable.  \\
-2.05.00  &  - Export of \file{$\ast$.csv} file is now to start-up directory.  \\    
+2.05.00  &  - Export of \file{$\ast$.csv} file is now to start-up directory.  \\
 2.04.00  &  - Location of selected graph added to the top of the context menu. \\
          &  - Double click on a selected graph shows the location, time and value of the point where the cursor is when the double click is performed.  \\
 2.03.00  &  - Plot window is approximately a quarter of the main screen. \\
@@ -88,7 +89,7 @@
 2.02.01  &  - Set the tooltip to the filename which is selected in the file listbox.  \\
 2.02.00  &  - Upgrade to QT 5.12.1.  \\
 2.01.??  &  - No information available.  \\
-\end{longtable} 
+\end{longtable}
 %--- end light blue table ---
 %
 %--------------------------------------------------------------------------------
@@ -96,7 +97,7 @@
 \section{Main window}
 \phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
-    \centering    
+    \centering
         \includegraphics[width=0.9\textwidth]{pictures/main.png}
     \caption{Openings window of the program PlotCFTS (\textbf{Plot} \textbf{C}limate and \textbf{F}orecast \textbf{T}ime \textbf{S}eries)}
 \end{figure}
@@ -108,7 +109,7 @@
 \subsection{File}
 \phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.35\textwidth]{pictures/menu_file.png}
     \caption{Menu \menuarrow File}
 \end{figure}
@@ -116,18 +117,18 @@
 %------------------------------------------------------------------------------
 \subsubsection{Open file}
 An open file selection window will be shown where all \netcdf files with extension \ext{.nc} are listed, even if they do not meet the \cfstandard.
-If the selected file(s) does meet the Climate and Forecast standard 1.7 the file will be read and the main window will updated with the current information. 
+If the selected file(s) does meet the Climate and Forecast standard 1.7 the file will be read and the main window will updated with the current information.
 And if there exist (on the same directory) a file with the filename in the form \file{\emph{basename}\_presel.json} then this file will be also read to show the pre-selected parameters and locations.
 %
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.9\textwidth]{pictures/menu_file_open.png}
     \caption{Open window, to open several files which fulfil to the \cfstandard compliant Time Series file format}
 \end{figure}
 
 If the file does not meet the \cfstandard or cannot be read due to unsupported characters a message will presented (see \autoref{fig:notcffile})
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.6\textwidth]{pictures/message_not_cf_file.png}
     \caption{Message window when a file does not met the \cfstandard or the path contains unsupported characters.\label{fig:notcffile}}
 \end{figure}
@@ -143,9 +144,9 @@ Selecting several files at once is possible, as saving was dependent of the choi
 
 %------------------------------------------------------------------------------
 \subsubsection{Save Pre-selection}
-Save the selected parameters and locations of the main program window to an external file (JSON-format). 
+Save the selected parameters and locations of the main program window to an external file (JSON-format).
 This file can be read by a next session of the program \plotcfts.
-If there is a need for more pre-selections of other choices  in the combobox, see group \menu{Select time series}, they need to be saved separately. 
+If there is a need for more pre-selections of other choices  in the combobox, see group \menu{Select time series}, they need to be saved separately.
 Concatenation of files is not supported, but can be done manually.
 Reading of multi files is supported by the \menu{File} \menuarrow \menu{Open Pre-selection\ldots} option.
 
@@ -157,17 +158,17 @@ To exit the application \plotcfts.
 \subsection{Export}
 \phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.30\textwidth]{pictures/menu_export.png}
     \caption{Menu \menuarrow Export}
 \end{figure}
 
 %------------------------------------------------------------------------------
 \subsubsection{Export to CSV}
-Export the data selected in the main program window to a comma separated value file. 
+Export the data selected in the main program window to a comma separated value file.
 The default file name has as basename the current date/time combination  (ex.\ \file{2018-08-08\_230049}) and as extension \ext{csv}.
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.9\textwidth]{pictures/menu_export_csv.png}
     \caption{Export window to export the data as indicated in the main window of the program \plotcfts.}
 \end{figure}
@@ -176,7 +177,7 @@ The default file name has as basename the current date/time combination  (ex.\ \
 \subsection{Help}
 \phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.2\textwidth]{pictures/menu_help.png}
     \caption{Menu \menuarrow Help}
 \end{figure}
@@ -185,7 +186,7 @@ The default file name has as basename the current date/time combination  (ex.\ \
 \subsubsection{User Manual}
 Shows the user manual
 \begin{figure}[H]
-	\centering    
+	\centering
 	\includegraphics[width=0.9\textwidth]{pictures/menu_help_user_manual.png}
 	\caption{Header of the \plotcfts user manual}
 \end{figure}
@@ -194,7 +195,7 @@ Shows the user manual
 \subsubsection{About}
 Shows the about box.
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.4\textwidth]{pictures/menu_help_about.png}
     \caption{About box}
 \end{figure}
@@ -205,7 +206,7 @@ Shows the about box.
 \subsection{Tooltip}
 When the cursor is on the filename the tooltip will show the full path of the file, see \autoref{fig:filename_tooltip}
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.9\textwidth]{pictures/group_filenames_tooltip.png}
     \caption{List box for filenames, with tooltip.\label{fig:filename_tooltip}}
 \end{figure}
@@ -214,25 +215,25 @@ When the cursor is on the filename the tooltip will show the full path of the fi
 When the cursor is on the filename the context menu (when pressing right mouse button) contains two options, see \autoref{fig:filename_context_menu}.
 %
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.9\textwidth]{pictures/group_filenames_context_menu.png}
     \caption{List box for filenames, with context menu.\label{fig:filename_context_menu}}
 \end{figure}
 %
-The two options are 
+The two options are
 \begin{enumerate}
     \item \menu{Toggle pre-selectionof parameter(s) and location(s)}\newline
-    Toggle between showing the pre-selection or not. 
+    Toggle between showing the pre-selection or not.
     Sometimes the list boxes could be empty, this will occure if there are no pre-selections are made.
     \item \menu{Close and Delete file from list}\newline
-    Close and delete the file from the listbox. 
+    Close and delete the file from the listbox.
 \end{enumerate}
 
 %--------------------------------------------------------------------------------
 \section{Select time series}
 \phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
-\centering    
+\centering
 \includegraphics[width=0.9\textwidth]{pictures/group_select_time_series.png}
 \caption{Combobox within group \menuarrow{Selected time series}}
 \end{figure}
@@ -241,18 +242,18 @@ The two options are
 \section{Parameter, Location, Time series selection}
 The groups \menu{Parameter, Location}  and \menu{Time series} are shown in \autoref{fig:groupplotting}:
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.9\textwidth]{pictures/group_parameter_location_time.png}
     \caption{List boxes for the Parameter, Location and Time Series.}
 \end{figure}
-With these groups you are able to select a parameter(s) and a location(s) and the desired part of the time series. 
+With these groups you are able to select a parameter(s) and a location(s) and the desired part of the time series.
 If no part of the time-series is selected the whole time series will be used for plotting the graph.
 
 %--------------------------------------------------------------------------------
 \section{Plotting}
 The group \menu{Plotting} is shown in \autoref{fig:groupplotting}:
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.9\textwidth]{pictures/group_plotting.png}
     \caption{Group Plotting. \label{fig:groupplotting}}
 \end{figure}
@@ -261,7 +262,7 @@ The group \menu{Plotting} is shown in \autoref{fig:groupplotting}:
 \subsection{Button \button{New Plot}}
 \phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.9\textwidth]{pictures/plot.png}
     \caption{Initial plot after pressing button \emph{New Plot}}
 \end{figure}
@@ -277,7 +278,7 @@ When pressing this button the graph of the selected Parameter--Location will be 
 \section{Global Attributes}
 Showing the main global attributes as defined in the Climate and Forecast compliant Time Series file file (\netcdf format, see \autoref{fig:globalattributes}).
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.9\textwidth]{pictures/group_global_attributes.png}
     \caption{Status bar\label{fig:globalattributes}}
 \end{figure}
@@ -286,7 +287,7 @@ Showing the main global attributes as defined in the Climate and Forecast compli
 \section{Status bar}
 The status bar present the compilation date and time, the version number of the used \qcustomplot library and the progress bar when reading a file (see \autoref{fig:statusbar}).
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.9\textwidth]{pictures/status_bar.png}
     \caption{Status bar\label{fig:statusbar}}
 \end{figure}
@@ -319,7 +320,7 @@ The status bar present the compilation date and time, the version number of the 
 \subsubsection{Renaming a graph name}
 When double clicking on the legend item, the name of the graph can be changed, see \autoref{fig:selected graph}.
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.9\textwidth]{pictures/plot_selected_graph.png}
     \caption{Graph selected and edit window for graph name\label{fig:selected graph}}
 \end{figure}
@@ -329,7 +330,7 @@ When pressing the right mouse button in the legend area, the legend area can be 
 \begin{enumerate}
     \item Move to top left
     \item Move to top center
-    \item Move to top right 
+    \item Move to top right
     \item Move to bottom right
     \item Move to bottom left
 \end{enumerate}
@@ -337,7 +338,7 @@ When pressing the right mouse button in the legend area, the legend area can be 
 \subsection{Select a graph}
 \phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.9\textwidth]{pictures/plot_context_menu.png}
     \caption{Selected graph with context menu indicating the location in legend\label{fig:selected graph_with_context_menu}}
 \end{figure}
@@ -347,8 +348,8 @@ When pressing the right mouse button in the legend area, the legend area can be 
 The context menu may have four items:
 \begin{enumerate}
     \item \textbf{Legend item: $\ast$}\newline
-    This item cannot be selected. 
-    If a graph is selected the name of the location as presented in the legend is shown. 
+    This item cannot be selected.
+    If a graph is selected the name of the location as presented in the legend is shown.
     This context menu entry is useful when the plot area contains a lot of graphs and the number of legend entries is larger then the legend area.
     \item \textbf{Rescale axes}\newline
     Selecting this item the axes will be rescaled to the bounding box of the graphs.
@@ -362,7 +363,7 @@ The context menu may have four items:
 \subparagraph*{Double click on a selected graph}
 When a double click is given on een selected graph a message window will shown the location, time and value of the nearest point in time on the graph where the double click is performed.
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.9\textwidth]{pictures/plot_double_click_selected_graph.png}
     \caption{Selected graph with information window containing the location, time and value of the cursor location\label{fig:double_click_selected_graph}}
 \end{figure}
@@ -373,7 +374,7 @@ To be able to change the name of a lable, double click on the following lables:
 \begin{enumerate}
 	\item $x$-axis lable,
 	\item $y$-axis lable,
-	\item Plot title, 
+	\item Plot title,
 	\item Legend title.
 \end{enumerate}
 
@@ -381,7 +382,7 @@ To be able to change the name of a lable, double click on the following lables:
 \subsection{Multiple y-axis}
 When multiple axis are needed each y-axis label gets a prefix, this label will also be visible as prefix in the legend.
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.9\textwidth]{pictures/multiple_yaxis.png}
     \caption{Multiple y-axis, legend and y-axis labels has a prefix. \label{fig:multiple y-axis}}
 \end{figure}
@@ -392,7 +393,7 @@ The plot program support the ISO 10646 character set as seen in \autoref{fig:Chi
 and Chinese %(??)
 characters.
 \begin{figure}[H]
-    \centering    
+    \centering
     \includegraphics[width=0.9\textwidth]{pictures/plotcfts_with_chinese_karakters2.png}
     \caption{\emph{Location} list box contains Norwegian and Chinese characters. \label{fig:ChineseStation}}
 \end{figure}
