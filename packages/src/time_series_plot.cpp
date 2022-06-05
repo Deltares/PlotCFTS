@@ -166,9 +166,9 @@ int TSPlot::get_active_plot_nr()
 
 void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
 {
-    int nr_x_values = tsfile->get_count_times();
     _time_series struct_times = tsfile->get_times();
     std::vector<double> x_values = struct_times.times;
+    int nr_x_values = tsfile->get_count_times();
     int i_tsfile_par = -1;
     int i_tsfile_loc = -1;
     QListWidgetItem * sel_item;
@@ -324,7 +324,6 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
 
     customPlot->graph()->setPen(graphPen);
     this->draw_data(x_val, y_val);
-
 
     //assert(!listVal.empty());
     //double xmin = *std::min_element(x_val.begin(), x_val.end());

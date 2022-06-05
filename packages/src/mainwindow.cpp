@@ -837,7 +837,18 @@ void MainWindow::updateFileListBox(TSFILE * tsfile)
 
     if (tsfile != NULL)
     {
-        lb_filenames->addItem(tsfile->fname.fileName().toUtf8());
+        bool found = false;
+        for (int i = 0; i < lb_filenames->count(); ++i)
+        {
+            if (lb_filenames->item(i)->data(Qt::DisplayRole) == tsfile->fname.fileName().toUtf8())
+            {
+                found = true;
+            }
+        }
+        if (!found)
+        {
+            lb_filenames->addItem(tsfile->fname.fileName().toUtf8());
+        }
     }
     cnt = lb_filenames->count();
     if (cnt == 0)
@@ -1664,12 +1675,23 @@ void MainWindow::contextMenuFileListBox(const QPoint &pos)
     TSFILE * tsfile = this->openedUgridFile[i_file];
 
     submenu.addAction("Toggle pre-selection of parameter(s) and locations(s)");
+    submenu.addAction("Reread file");
+    submenu.addSeparator();
     submenu.addAction("Close and Delete file from list");
     QAction* rightClickItem = submenu.exec(item);
     if (rightClickItem && rightClickItem->text().contains("pre-selection"))
     {
         tsfile->put_pre_selection(!tsfile->get_pre_selection());
         updateListBoxes(tsfile);
+    }
+    if (rightClickItem && rightClickItem->text().contains("Reread file"))
+    {
+        long ierr = tsfile->read(this->pgBar);
+        if (ierr == 0)
+        {
+            updateFileListBox(tsfile);
+            updateListBoxes(tsfile);
+        }
     }
     if (rightClickItem && rightClickItem->text().contains("Delete"))
     {

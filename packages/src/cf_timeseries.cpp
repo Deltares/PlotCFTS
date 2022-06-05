@@ -225,6 +225,7 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
 #endif
     double * times_c = (double *)malloc(sizeof(double)*datetime_ntimes);
     status = nc_get_var_double(this->m_ncid, time_var, times_c);
+    m_times.times.clear();  // needed for reread
     for (int i = 0; i < datetime_ntimes; i++)
     {
         m_times.times.push_back(times_c[i]);

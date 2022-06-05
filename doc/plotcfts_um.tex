@@ -58,6 +58,7 @@
 \bottomline
 \endlastfoot
 3.07.00  &  - Integer variable values are now plotted, ex.\ pump\_actual\_stage \\
+         &  - Context menu option added. In the file listbox to reread a file \\
 3.06.01  &  - Some reorganization how to dected the time variable, now checking on standard\_name = 'time' \\
 3.06.00  &  - Upgrade to QT 5.15.2 \\
 3.05.00  &  - Use of QCustomPlot 2.1.0. \\
@@ -212,7 +213,7 @@ When the cursor is on the filename the tooltip will show the full path of the fi
 \end{figure}
 %--------------------------------------------------------------------------------
 \subsection{Contex menu}
-When the cursor is on the filename the context menu (when pressing right mouse button) contains two options, see \autoref{fig:filename_context_menu}.
+When the cursor is on the filename the context menu (when pressing right mouse button) contains three options, see \autoref{fig:filename_context_menu}.
 %
 \begin{figure}[H]
     \centering
@@ -220,11 +221,13 @@ When the cursor is on the filename the context menu (when pressing right mouse b
     \caption{List box for filenames, with context menu.\label{fig:filename_context_menu}}
 \end{figure}
 %
-The two options are
+The options are
 \begin{enumerate}
     \item \menu{Toggle pre-selectionof parameter(s) and location(s)}\newline
     Toggle between showing the pre-selection or not.
     Sometimes the list boxes could be empty, this will occure if there are no pre-selections are made.
+    \item \menu{Reread file}\newline
+    File will be reread, new data is read from that file.
     \item \menu{Close and Delete file from list}\newline
     Close and delete the file from the listbox.
 \end{enumerate}
