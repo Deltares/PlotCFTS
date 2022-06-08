@@ -462,7 +462,6 @@ void MainWindow::ExportToCSV()
         }
     }
 
-    char* datumtijd = strdup("0000-00-00 00:00:00.0000");
     QList<QDateTime> qdt_times = tsfile->get_qdt_times();
     double dt = qdt_times.at(0).msecsTo(qdt_times.at(1));
     for (int k = 0; k < tims.size(); k++)
@@ -476,9 +475,8 @@ void MainWindow::ExportToCSV()
         {
             qdt = qdt_times[tims[k]].toString("yyyy-MM-dd hh:mm:ss");
         }
-        strcpy_s(datumtijd, strlen(datumtijd), qdt.toUtf8());
 
-        fpo << datumtijd;
+        fpo << qdt.toStdString();
         for (int j = 0; j < pars.size(); j++)
         {
             for (int i = 0; i < locs.size(); i++)
@@ -492,7 +490,6 @@ void MainWindow::ExportToCSV()
     fpo.close();
 
     free(csv_filename); csv_filename = nullptr;
-    free(datumtijd); datumtijd = nullptr;
 }
 
 void MainWindow::OpenPreSelection()
@@ -1692,6 +1689,7 @@ void MainWindow::contextMenuFileListBox(const QPoint &pos)
             updateFileListBox(tsfile);
             updateListBoxes(tsfile);
         }
+        this->pgBar->hide();
     }
     if (rightClickItem && rightClickItem->text().contains("Delete"))
     {
