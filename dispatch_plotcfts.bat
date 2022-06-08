@@ -11,7 +11,7 @@ copy .\bin\x64\release\platforms\*.dll          "c:\Program Files\Deltares\plotc
 copy .\doc\plotcfts_um.pdf                      "c:\Program Files\Deltares\plotcfts\doc\plotcfts_um.pdf"
 
 rem copy to Bulletin
-copy .\bin\x64\release\plotcfts.exe             n:\Deltabox\Bulletin\mooiman\programs\PlotCFTS\plotcfts.exe
-copy .\bin\x64\release\*.dll                    n:\Deltabox\Bulletin\mooiman\programs\PlotCFTS\*.*
-copy .\bin\x64\release\platforms\*.dll          n:\Deltabox\Bulletin\mooiman\programs\PlotCFTS\platforms\*.*
-copy .\doc\plotcfts_um.pdf                      n:\Deltabox\Bulletin\mooiman\programs\PlotCFTS\doc\plotcfts_um.pdf 
+copy .\bin\x64\release\plotcfts.exe             n:\Deltabox\Bulletin\mooiman\programs\PlotCFTS_3.07.01\plotcfts.exe
+copy .\bin\x64\release\*.dll                    n:\Deltabox\Bulletin\mooiman\programs\PlotCFTS_3.07.01\*.*
+copy .\bin\x64\release\platforms\*.dll          n:\Deltabox\Bulletin\mooiman\programs\PlotCFTS_3.07.01\platforms\*.*
+copy .\doc\plotcfts_um.pdf                      n:\Deltabox\Bulletin\mooiman\programs\PlotCFTS_3.07.01\doc\plotcfts_um.pdf 
