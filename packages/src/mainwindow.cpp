@@ -462,7 +462,7 @@ void MainWindow::ExportToCSV()
         }
     }
 
-    char * datumtijd = (char *)malloc(sizeof(char) * (4 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 4 + 1));  //  19+4 +1 = 24 = "yyyy-MM-dd hh:mm:ss.zzz"
+    char* datumtijd = strdup("0000-00-00 00:00:00.0000");
     QList<QDateTime> qdt_times = tsfile->get_qdt_times();
     double dt = qdt_times.at(0).msecsTo(qdt_times.at(1));
     for (int k = 0; k < tims.size(); k++)
