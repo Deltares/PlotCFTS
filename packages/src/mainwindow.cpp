@@ -837,7 +837,7 @@ void MainWindow::updateFileListBox(TSFILE * tsfile)
         bool found = false;
         for (int i = 0; i < lb_filenames->count(); ++i)
         {
-            if (lb_filenames->item(i)->data(Qt::DisplayRole) == tsfile->fname.fileName().toUtf8())
+            if (lb_filenames->item(i)->toolTip() == tsfile->fname.canonicalFilePath()) // test on complete filepath
             {
                 found = true;
             }
