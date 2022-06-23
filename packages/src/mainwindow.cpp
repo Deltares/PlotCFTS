@@ -835,12 +835,9 @@ void MainWindow::updateFileListBox(TSFILE * tsfile)
     if (tsfile != NULL)
     {
         bool found = false;
-        for (int i = 0; i < lb_filenames->count(); ++i)
+        if (lb_filenames->toolTip() == tsfile->fname.canonicalFilePath()) // test on complete filepath
         {
-            if (lb_filenames->item(i)->toolTip() == tsfile->fname.canonicalFilePath()) // test on complete filepath
-            {
-                found = true;
-            }
+            found = true;
         }
         if (!found)
         {
