@@ -20,6 +20,7 @@ jobs:
         fetch-depth: 0
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
+      with: msbuild-architecture: 'x64'
     - name: Environment
       shell: bash
       run: |
