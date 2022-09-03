@@ -90,7 +90,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/.;"
     "${CMAKE_CURRENT_SOURCE_DIR}/include;"
     "$ENV{QT5DIR64}/include;"
-    "$ENV{BOOST_INCLUDEDIR}"
+    "$ENV{BOOST_INCLUDE_DIR}"
 )
 
 ################################################################################
