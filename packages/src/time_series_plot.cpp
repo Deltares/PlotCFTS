@@ -82,6 +82,8 @@ void TSPlot::add_data_to_plot()
         }
     }
     customPlot->rescaleAxes();
+    customPlot->xAxis->scaleRange(1.05, customPlot->xAxis->range().center());
+    customPlot->yAxis->scaleRange(1.05, customPlot->yAxis->range().center());
     customPlot->replot();
 }
 void TSPlot::draw_plot(int nr_plot, QString txt, QString fname)
@@ -112,6 +114,8 @@ void TSPlot::draw_plot(int nr_plot, QString txt, QString fname)
         }
     }
     customPlot->rescaleAxes();
+    customPlot->xAxis->scaleRange(1.05, customPlot->xAxis->range().center());
+    customPlot->yAxis->scaleRange(1.05, customPlot->yAxis->range().center());
 
     customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
     customPlot->axisRect()->setupFullAxesBox();
@@ -616,6 +620,8 @@ void TSPlot::contextMenuRequest(QPoint pos)
 void TSPlot::contextMenuRescaleAxes()
 {
     customPlot->rescaleAxes();
+    customPlot->xAxis->scaleRange(1.05, customPlot->xAxis->range().center());
+    customPlot->yAxis->scaleRange(1.05, customPlot->yAxis->range().center());
     customPlot->replot();
 }
 void TSPlot::contextMenuSaveAsPDF()
