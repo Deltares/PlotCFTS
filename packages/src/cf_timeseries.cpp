@@ -1333,6 +1333,10 @@ char* TSFILE::trim(char* string)
         s--);
     *(s + 1) = '\0';
     for (s = string; *s == ' ' || *s == '\t'; s++);
+#if defined(WIN32) || defined(WIN64)
     (void)strcpy_s(string, strlen(string) + 1, s);
+#else
+    strcpy(string, s);
+#endif
     return string;
 }
