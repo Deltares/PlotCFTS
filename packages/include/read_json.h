@@ -15,7 +15,7 @@ public:
     ~READ_JSON();
     long get(std::string, std::vector<std::string> &);
     long get(std::string, std::vector<double> &);
-    long READ_JSON::find(std::string);
+    long find(std::string);
         
     void prop_get_json(boost::property_tree::ptree &, const std::string, std::vector<std::string> &);
     void prop_get_json(boost::property_tree::ptree &, const std::string, std::vector<double> &);

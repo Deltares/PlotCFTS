@@ -6,7 +6,7 @@
 #include <QtCore/QDate>
 #include <QtCore/QFileInfo>
 #include <QtCore/QTime>
-#include <QtCore/qtextcodec.h>
+#include <QtCore/QStringConverter>
 #include <QtCore/qdebug.h>
 
 #include <QtWidgets/QApplication>
@@ -812,8 +812,9 @@ void TSFILE::read_locations()
                         janm = QString("");
                         for (int k2 = 0; k2 < name_len; k2++)
                         {
-                            QTextCodec *codec2 = QTextCodec::codecForName("UTF-8");
-                            QString str = codec2->toUnicode(*(location_strings + k * name_len + k2));
+                            auto toUtf8 = QStringDecoder(QStringDecoder::Utf8);
+                            QByteArray encodedString = *(location_strings + k * name_len + k2);
+                            QString str = toUtf8(encodedString);
                             janm = janm + str;
                         }
                         this->par_loc[i_par_loc]->location[k]->name = new QString(janm);
@@ -1235,11 +1236,7 @@ int TSFILE::get_attribute(int ncid, int i_var, char* att_name, char** att_value)
     status = nc_inq_attlen(ncid, i_var, att_name, &length);
     *att_value = (char*)malloc(sizeof(char) * (length + 1));
     *att_value[0] = '\0';
-    if (status != NC_NOERR)
-    {
-        *att_value = '\0';
-    }
-    else
+    if (status == NC_NOERR)
     {
         status = nc_get_att(ncid, i_var, att_name, *att_value);
         att_value[0][length] = '\0';

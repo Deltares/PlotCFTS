@@ -48,20 +48,20 @@ MainWindow::MainWindow(QDir exec_dir_in, QDir startup_dir_in)
     nr_plot = -1;
     m_fil_index = -1;
 
-    QScreen* screen = QGuiApplication::primaryScreen();
-    QRect  screenGeometry = screen->geometry();
-    int scr_width = screenGeometry.width();
-    int scr_height = screenGeometry.height();
+    QSize ssize = QGuiApplication::primaryScreen()->size();
+    int scr_width = ssize.width();  // returns screen width
+    int scr_height = ssize.height(); // returns screen height
     int width = (int)(0.4 * double(scr_width));
     int height = (int)(0.7 * double(scr_height)); // Do not count the taskbar pixels, assumed to be 1 percent of the screen
 
     resize(width, height);
     mainWidget->setGeometry(0, 0, width, height);
 
-    QRect r = mainWidget->geometry();
-    QPoint center = screen->availableGeometry().center();
-    r.moveCenter(center);
-    mainWidget->setGeometry(r);
+    int w = ssize.width();  // returns screen width
+    int h = ssize.height(); // returns screen height
+    w = (int)(0.5 * double(w) - 0.5 * double(width));
+    h = (int)(0.5 * double(h) - 0.15 * double(height) - 0.5 * double(height));
+    move(w, h);
 
     _exec_dir = exec_dir_in;
     _startup_dir = startup_dir_in;
@@ -178,7 +178,7 @@ void MainWindow::createStatusBar()
     label->setFrameShadow(QFrame::Sunken);
     statusBar()->addWidget(label);
 
-    QString text1 = QString("QCustomPlot version 2.1.0 (29 March 2021)");
+    QString text1 = QString("QCustomPlot version 2.1.1 (6 November 2022)");
     label = new QLabel(text1, this);
     label->setFrameShape(QFrame::Panel);
     label->setFrameShadow(QFrame::Sunken);
@@ -224,7 +224,7 @@ void MainWindow::openFile()
         ftype = HISTORY;
         for (QStringList::Iterator it = QFilenames->begin(); it != QFilenames->end(); ++it) {
             fname = *it;
-            openFile(fname, ftype);
+            openFile(QFileInfo(fname), ftype);
         }
     }
     delete fd;
@@ -293,7 +293,7 @@ void MainWindow::ExportToCSV()
     fd->setNameFilter("Comma Separated Value (*.csv)");
     fd->setDirectory(_startup_dir);
     fd->selectFile(filename);
-    fd->setConfirmOverwrite(true);
+    fd->setOption(QFileDialog::DontConfirmOverwrite, false);
     fd->setAcceptMode(QFileDialog::AcceptSave);
     if (fd->exec() != QDialog::Accepted)
     {
@@ -521,7 +521,7 @@ void MainWindow::OpenPreSelection()
         TSFILE * tsfile = this->openedUgridFile[fil_index];
         for (QStringList::Iterator it = QFilenames->begin(); it != QFilenames->end(); ++it) {
             fname = *it;
-            OpenPreSelection(tsfile, fname);
+            OpenPreSelection(tsfile, QFileInfo(fname));
         }
 
         // if a parameter-location group is not 
@@ -691,7 +691,7 @@ void MainWindow::SavePreSelection()
     fd.setNameFilter("pre-selection (*.json)");
     fd.setDirectory(_startup_dir);
     fd.selectFile(filename);
-    fd.setConfirmOverwrite(true);
+    fd.setOption(QFileDialog::DontConfirmOverwrite, false);
     fd.setAcceptMode(QFileDialog::AcceptSave);
     if (fd.exec() != QDialog::Accepted)
     {
@@ -1055,9 +1055,9 @@ void MainWindow::about()
 
    msg_text = new QString("Deltares\n");
    msg_text->append("Plot Climate and Forecast compliant Time Series\n");
-   msg_text->append(qtext);
+   msg_text->append(getversionstring_plot_cf_time_series());
    msg_text->append("\nSource: ");
-   msg_text->append(qsource_url);
+   msg_text->append(getsourceurlstring_plot_cf_time_series());
    QMessageBox::about(this, tr("About"), *msg_text);
 
 }
@@ -1072,9 +1072,9 @@ void MainWindow::ShowUserManual()
      QByteArray manual = user_manual.toUtf8();
      char * pdf_document = manual.data();
 
-     FILE* fp;
-     (void) fopen_s(&fp, pdf_document, "r");
-     if (fp != NULL)
+     FILE * fp;
+     errno_t err = fopen_s(&fp, pdf_document, "r");
+     if (err == 0)
      {
           fclose(fp);
           long res = (long) FindExecutableA((LPCSTR)pdf_document, NULL, (LPSTR)pdf_reader);
@@ -1178,7 +1178,7 @@ void MainWindow::dropEvent(QDropEvent * event)
         {
             return;
         }
-        openFile(filename, HISTORY);
+        openFile(QFileInfo(filename), HISTORY);
     }
 }
 
@@ -1229,7 +1229,7 @@ void MainWindow::lb_filenames_selection_changed()
     long ierr = 0;  //  tsfile->read(this->pgBar);
     // Preselection file
     QString bname = tsfile->fname.baseName();
-    QFileInfo filename = bname.append("_presel.json");
+    QFileInfo filename(bname.append("_presel.json"));
     if (filename.exists())
     {
         //QMessageBox::information(this, QObject::tr("Information"), QObject::tr("File exist:\n%1").arg(filename.absoluteFilePath()));

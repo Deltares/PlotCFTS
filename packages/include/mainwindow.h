@@ -22,9 +22,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <boost/lexical_cast.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+//#include <boost/lexical_cast.hpp>
+//#include <boost/property_tree/ptree.hpp>
+//#include <boost/property_tree/json_parser.hpp>
 
 #include <QtCore/QString>
 #include <QtCore/QFile>
@@ -34,6 +34,7 @@
 #include <QtCore/QModelIndex>
 #include <QtCore/QStringList>
 
+#include <QtGui/QAction>
 #include <QtGui/QtGui>
 #include <QtGui/QBrush>
 #include <QtGui/QIcon>
@@ -44,7 +45,6 @@
 #include <QtGui/QStandardItemModel>
 
 #include <QtWidgets/QAbstractButton>
-#include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFileDialog>

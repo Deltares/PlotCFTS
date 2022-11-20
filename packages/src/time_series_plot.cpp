@@ -34,7 +34,7 @@ TSPlot::TSPlot(QWidget * qparent, QIcon qicon, int qnr_plot)
 
     QVBoxLayout * vl_main = new QVBoxLayout;
     vl_main->setSpacing(0);
-    vl_main->setMargin(0);
+    vl_main->setContentsMargins(0, 0, 0, 0);
     vl_main->addWidget(customPlot);
 
     parent->setLayout(vl_main);
@@ -260,14 +260,14 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
     {
         xv[i] = x_values[i];
     }
-    QVector<qreal> x_val = QVector<qreal>::fromStdVector(xv);
+    QVector<qreal> x_val = QVector<qreal>(xv.begin(), xv.end());
 
     std::vector<double> yv(nr_x_values);
     for (int i = 0; i < nr_x_values; i++)
     {
         yv[i] = y_values[i];
     }
-    QVector<qreal> y_val = QVector<qreal>::fromStdVector(yv);
+    QVector<qreal> y_val = QVector<qreal>(yv.begin(), yv.end());
 
     customPlot->addGraph();
     _nr_graphs = customPlot->graphCount();
