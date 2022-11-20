@@ -579,7 +579,6 @@ void TSPlot::graphDoubleClicked(QCPAbstractPlottable *plottable, int dataIndex)
 void TSPlot::contextMenuRequest(QPoint pos)
 {
     QMenu *menu = new QMenu(this);
-    menu->setAttribute(Qt::WA_DeleteOnClose);
 
     if (customPlot->legend->selectTest(pos, false) >= 0) // context menu on legend requested
     {
@@ -611,8 +610,6 @@ void TSPlot::contextMenuRequest(QPoint pos)
         menu->addAction("Remove selected graph", this, SLOT(contextMenuRemoveSelectedGraph()));
         menu->addAction("Print to PDF", this, SLOT(contextMenuSaveAsPDF()));
     }
-
-
 
     menu->popup(customPlot->mapToGlobal(pos));
 }

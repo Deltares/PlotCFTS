@@ -52,7 +52,7 @@ MainWindow::MainWindow(QDir exec_dir_in, QDir startup_dir_in)
     int scr_width = ssize.width();  // returns screen width
     int scr_height = ssize.height(); // returns screen height
     int width = (int)(0.4 * double(scr_width));
-    int height = (int)(0.7 * double(scr_height)); // Do not count the taskbar pixels, assumed to be 1 percent of the screen
+    int height = (int)(0.8 * double(scr_height)); // Do not count the taskbar pixels, assumed to be 1 percent of the screen
 
     resize(width, height);
     mainWidget->setGeometry(0, 0, width, height);
@@ -60,7 +60,7 @@ MainWindow::MainWindow(QDir exec_dir_in, QDir startup_dir_in)
     int w = ssize.width();  // returns screen width
     int h = ssize.height(); // returns screen height
     w = (int)(0.5 * double(w) - 0.5 * double(width));
-    h = (int)(0.5 * double(h) - 0.15 * double(height) - 0.5 * double(height));
+    h = (int)(0.5 * double(h) - 0.5 * double(height) - 0.05 * double(height));
     move(w, h);
 
     _exec_dir = exec_dir_in;
@@ -286,7 +286,7 @@ void MainWindow::ExportToCSV()
 
     // select first a filename, no actions need to be performed when cancel is pressed
 
-    QString s = QDateTime::currentDateTime().toString("yyyy-MM-dd_hhmmss");
+    QString s = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss");
     QString filename = s.append(".csv");
     QFileDialog * fd = new QFileDialog();
     fd->setWindowTitle("Export to CSV file");
