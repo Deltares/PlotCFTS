@@ -6,6 +6,15 @@
 \newcommand{\netcdf}{netCDF\xspace}
 \newcommand{\cfstandard}{Climate and Forecast 1.7 standard\xspace}
 
+\usepackage{xstring}
+\usepackage{catchfile}
+\CatchFileDef{\headfull}{../.git/HEAD.}{}
+\StrGobbleRight{\headfull}{1}[\head]
+\StrBehind[2]{\head}{/}[\branch]
+\IfFileExists{../.git/refs/heads/\branch.}{%
+    \CatchFileDef{\commit}{../.git/refs/heads/\branch.}{}}{%
+    \newcommand{\commit}{\dots~(in \emph{packed-refs})}}
+
 \newcommand\T{\rule{0pt}{2.6ex}}       % Top T
 \newcommand\B{\rule[-1.2ex]{0pt}{0pt}} % Bottom T
 \begin{document}
@@ -20,17 +29,6 @@
 \memoCopy{}
 
 \deltarestitle
-
-%{{\footnotesize
-%	{\textbf{Version control information}}
-%
-%	\begin{tabular}{@{}p{12,5mm}@{}p{0mm}p{\textwidth-27mm-24pt}}
-%		\textbf{Location} & \textbf{:} & \url{\svnkw{HeadURL}} \\
-%		\textbf{Revision} & \textbf{:} & \svnrev
-%	\end{tabular}
-%}}
-
-
 \tableofcontents
 
 %--------------------------------------------------------------------------------
@@ -417,12 +415,15 @@ The program can be started with the desired file as commandline option:
 $ plotcfts --ncfile <filename>
 \end{Verbatim}
 
+%--------------------------------------------------------------------------------
+\section{Version control information}
+The source code is available on GitHub:
+\setgitdirectory{../.git}
+\begin{tabular}{@{}p{20mm}@{}p{0mm}p{\textwidth-20mm-24pt}}
+    \textbf{Repository} & \textbf{:} & \gitrepository \\
+    \textbf{Branch} & \textbf{:} & \gitbranch \\
+    \textbf{Hash} & \textbf{:} & \githash
+\end{tabular}
+
 %------------------------------------------------------------------------------
-\section{Source}
-The source code is available on GitHUB:
-
-\url{https://github.com/Deltares/PlotCFTS}
-
-%------------------------------------------------------------------------------
-
 \end{document}

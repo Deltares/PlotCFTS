@@ -52,7 +52,7 @@ MainWindow::MainWindow(QDir exec_dir_in, QDir startup_dir_in)
     int scr_width = ssize.width();  // returns screen width
     int scr_height = ssize.height(); // returns screen height
     int width = (int)(0.4 * double(scr_width));
-    int height = (int)(0.7 * double(scr_height)); // Do not count the taskbar pixels, assumed to be 1 percent of the screen
+    int height = (int)(0.8 * double(scr_height)); // Do not count the taskbar pixels, assumed to be 1 percent of the screen
 
     resize(width, height);
     mainWidget->setGeometry(0, 0, width, height);
@@ -1328,7 +1328,7 @@ void MainWindow::createParameterList()
     lb_parameters->setSelectionMode(QAbstractItemView::ExtendedSelection);
     lb_parameters->setSortingEnabled(true);
     lb_parameters->sortItems(Qt::AscendingOrder);
-    lb_parameters->setSizeAdjustPolicy(QListWidget::AdjustToContents);
+    lb_parameters->setSizeAdjustPolicy(QListWidget::AdjustIgnored);
 
     QVBoxLayout * vb_parameters = new QVBoxLayout;
     vb_parameters->addWidget(lb_parameters);
@@ -1397,7 +1397,7 @@ void MainWindow::createLocationList()
     lb_locations->setSelectionMode(QAbstractItemView::ExtendedSelection);
     lb_locations->setSortingEnabled(true);
     lb_locations->sortItems(Qt::AscendingOrder);
-    lb_locations->setSizeAdjustPolicy(QListWidget::AdjustToContents);
+    lb_locations->setSizeAdjustPolicy(QListWidget::AdjustIgnored);
     lb_locations->setUniformItemSizes(true);
 
     QVBoxLayout * vb_locations = new QVBoxLayout;
@@ -1426,7 +1426,7 @@ void MainWindow::createTimeList()
     lb_times->setSelectionMode(QAbstractItemView::ContiguousSelection);
     lb_times->setSortingEnabled(false);
     lb_times->sortItems(Qt::AscendingOrder);
-    lb_times->setSizeAdjustPolicy(QListWidget::AdjustToContents);
+    lb_times->setSizeAdjustPolicy(QListWidget::AdjustIgnored);
     lb_times->setUniformItemSizes(true);
 
     QVBoxLayout * vb_times = new QVBoxLayout;
