@@ -35,7 +35,6 @@ struct _program_arguments m_prg_arg;
 
 int main(int argc, char *argv[])
 {
-    qputenv("QT_ENABLE_HIGHDPI_SCALING", "0");
     QApplication app(argc, argv);
     QCoreApplication::setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
 

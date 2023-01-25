@@ -52,7 +52,7 @@ MainWindow::MainWindow(QDir exec_dir_in, QDir startup_dir_in)
     int scr_width = ssize.width();  // returns screen width
     int scr_height = ssize.height(); // returns screen height
     int width = (int)(0.4 * double(scr_width));
-    int height = (int)(0.8 * double(scr_height)); // Do not count the taskbar pixels, assumed to be 1 percent of the screen
+    int height = (int)(0.7 * double(scr_height)); // Do not count the taskbar pixels, assumed to be 1 percent of the screen
 
     resize(width, height);
     mainWidget->setGeometry(0, 0, width, height);
@@ -1186,6 +1186,9 @@ void MainWindow::dropEvent(QDropEvent * event)
 void MainWindow::createFilenameList()
 {
     gb_filenames = new QGroupBox(tr("Filenames"));
+    QFont font;
+    font.setBold(true);
+    gb_filenames->setFont(font);
 
     lb_filenames = new QListWidget;
     lb_filenames->setSortingEnabled(false);
@@ -1264,10 +1267,12 @@ void MainWindow::createDisplayMeta()
 
     showMetaLayout = new QGridLayout();
     QGroupBox * gb_meta = new QGroupBox("Global Attributes");
+    QFont font;
+    font.setBold(true);
+    gb_meta->setFont(font);
     gb_meta->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     table = new QTableView();
-
 
     long rows = 1;
     long cols = 2;
@@ -1323,6 +1328,9 @@ void MainWindow::createPLTList()
 void MainWindow::createParameterList()
 {
     gb_parameters = new QGroupBox(tr("Parameters"));
+    QFont font;
+    font.setBold(true);
+    gb_parameters->setFont(font);
 
     lb_parameters = new QListWidget;
     lb_parameters->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -1392,6 +1400,9 @@ void MainWindow::lb_parameter_selection_changed()
 void MainWindow::createLocationList()
 {
     gb_locations = new QGroupBox(tr("Locations"));
+    QFont font;
+    font.setBold(true);
+    gb_locations->setFont(font);
 
     lb_locations = new QListWidget;
     lb_locations->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -1421,6 +1432,9 @@ void MainWindow::lb_location_selection_changed()
 void MainWindow::createTimeList()
 {
     gb_times = new QGroupBox(tr("Time series"));
+    QFont font;
+    font.setBold(true);
+    gb_times->setFont(font);
 
     lb_times = new QListWidget;
     lb_times->setSelectionMode(QAbstractItemView::ContiguousSelection);
@@ -1453,6 +1467,9 @@ void MainWindow::createPlotButton()
     showPlotLayout = new QHBoxLayout();
 
     gb_plotting = new QGroupBox(tr("Plotting"));
+    QFont font;
+    font.setBold(true);
+    gb_plotting->setFont(font);
 
     QGridLayout * hl_plotting0 = new QGridLayout();
     QHBoxLayout * hl_plotting1 = new QHBoxLayout();
@@ -1492,6 +1509,10 @@ void MainWindow::createComboBox()
 {
     showComboBoxLayout = new QHBoxLayout();
     QGroupBox * gb_combobox = new QGroupBox(tr("Select time series"));
+    QFont font;
+    font.setBold(true);
+    gb_combobox->setFont(font);
+
     QHBoxLayout * cb_layout = new QHBoxLayout();
     QHBoxLayout * cb_group = new QHBoxLayout();
 
