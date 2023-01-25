@@ -26,6 +26,7 @@
     <IntermediateDirectory>release\</IntermediateDirectory>
     <PrimaryOutput>interaction-example</PrimaryOutput>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <PlatformToolSet>v142</PlatformToolSet>
@@ -65,8 +66,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;.\include;$(QT5DIR64)\include;$(BOOST_INCLUDE_DIR)%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>-Zc:strictStrings -w34100 -w34189 -w44996 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>.;.\include;$(QT6DIR)\include;$(QT6DIR)\include\QtGui;$(BOOST_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -permissive- -Zc:__cplusplus -Zc:externConstexpr -utf-8 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>release\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
       <DebugInformationFormat>None</DebugInformationFormat>
@@ -85,10 +86,11 @@
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <UseFullPaths>false</UseFullPaths>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;Qt5PrintSupport.lib;netcdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(QT5DIR64)\lib;..\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Qt6EntryPoint.lib;Qt6Core.lib;Qt6Gui.lib;Qt6Widgets.lib;Qt6PrintSupport.lib;netcdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(QT6DIR)\lib;..\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -114,8 +116,8 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;.\include;$(QT5DIR64)\include;$(BOOST_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>-w34100 -w34189 -w44996 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>.;.\include;$(qt6dir)\include;$(QT6DIR)\include\QtGui;$(BOOST_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -permissive- -Zc:__cplusplus -Zc:externConstexpr -utf-8 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>debug\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -132,10 +134,11 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <UseFullPaths>false</UseFullPaths>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;Qt5PrintSupportd.lib;netcdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(QT5DIR64)\lib;..\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Qt6EntryPointd.lib;Qt6Cored.lib;Qt6Guid.lib;Qt6Widgetsd.lib;Qt6PrintSupportd.lib;netcdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(qt6dir)\lib;..\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -160,26 +163,26 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="generated\moc_mainwindow.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(QT5DIR64)\include;release;.;$(QT5DIR64)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.;.\include;$(QT5DIR64)\include;debug;.;$(QT5DIR64)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(qt6dir)\include;release;.;$(qt6dir)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.;.\include;$(qt6dir)\include;debug;.;$(qt6dir)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="generated\moc_qcustomplot.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.;.\include;$(QT5DIR64)\include;debug;.;$(QT5DIR64)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(QT5DIR64)\include;release;.;$(QT5DIR64)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.;.\include;$(qt6dir)\include;debug;.;$(qt6dir)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(qt6dir)\include;release;.;$(qt6dir)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="generated\moc_time_series_plot.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(QT5DIR64)\include;release;.;$(QT5DIR64)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.;.\include;$(QT5DIR64)\include;debug;.;$(QT5DIR64)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(qt6dir)\include;release;.;$(qt6dir)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.;.\include;$(qt6dir)\include;debug;.;$(qt6dir)\mkspecs\winrt-x64-msvc2017;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="src\cf_timeseries.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mainwindow.cpp" />
     <ClCompile Include="src\plot_cf_time_series_version.cpp" />
     <ClCompile Include="src\qcustomplot.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(QT5DIR64)\include;$(QT5DIR64)\include\QtPrintSupport;$(QT5DIR64)\include\QtWidgets;$(QT5DIR64)\include\QtGui;$(QT5DIR64)\include\QtANGLE;$(QT5DIR64)\include\QtCore;release;.;$(QT5DIR64)\mkspecs\win32-msvc2013;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(qt6dir)\include;$(qt6dir)\include\QtPrintSupport;$(qt6dir)\include\QtWidgets;$(qt6dir)\include\QtGui;$(qt6dir)\include\QtANGLE;$(qt6dir)\include\QtCore;release;.;$(qt6dir)\mkspecs\win32-msvc2013;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="src\read_json.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(QT5DIR64)\include;$(BOOST_INCLUDEDIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(qt6dir)\include;$(BOOST_INCLUDEDIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="src\time_series_plot.cpp" />
   </ItemGroup>
@@ -187,22 +190,22 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
     <CustomBuild Include="include\qcustomplot.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QT5DIR64)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN64 -DQT_NO_DEBUG -DNDEBUG -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include" "-I$(QT5DIR64)\include\QtPrintSupport" "-I$(QT5DIR64)\include\QtWidgets" "-I$(QT5DIR64)\include\QtGui" "-I$(QT5DIR64)\include\QtANGLE" "-I$(QT5DIR64)\include\QtCore" "-I.\release" "-I$(QT5DIR64)\mkspecs\win32-msvc2013"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(qt6dir)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN64 -DQT_NO_DEBUG -DNDEBUG -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(qt6dir)\include" "-I$(qt6dir)\include\QtPrintSupport" "-I$(qt6dir)\include\QtWidgets" "-I$(qt6dir)\include\QtGui" "-I$(qt6dir)\include\QtANGLE" "-I$(qt6dir)\include\QtCore" "-I.\release" "-I$(qt6dir)\mkspecs\win32-msvc2013"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">generated\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QT5DIR64)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -DDEBUG -D_WINDOWS -DUNICODE -DWIN64 -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(qt6dir)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -DDEBUG -D_WINDOWS -DUNICODE -DWIN64 -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(qt6dir)\include"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">generated\moc_%(Filename).cpp;%(Outputs)</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="include\mainwindow.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QT5DIR64)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -DDEBUG -D_WINDOWS -DUNICODE -DWIN64 -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(qt6dir)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -DDEBUG -D_WINDOWS -DUNICODE -DWIN64 -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(qt6dir)\include"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QT5DIR64)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN64 -DQT_NO_DEBUG -DNDEBUG -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(qt6dir)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN64 -DQT_NO_DEBUG -DNDEBUG -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(qt6dir)\include"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">generated\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">generated\moc_%(Filename).cpp;%(Outputs)</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -219,8 +222,8 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
     <ClInclude Include="include\program_arguments.h" />
     <ClInclude Include="include\read_json.h" />
     <CustomBuild Include="include\time_series_plot.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QT5DIR64)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -DDEBUG -D_WINDOWS -DUNICODE -DWIN64 -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QT5DIR64)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN64 -DQT_NO_DEBUG -DNDEBUG -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(QT5DIR64)\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(qt6dir)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -DDEBUG -D_WINDOWS -DUNICODE -DWIN64 -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(qt6dir)\include"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(qt6dir)\bin\moc.exe"  "%(FullPath)" -o ".\generated\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN64 -DQT_NO_DEBUG -DNDEBUG -D%(PreprocessorDefinitions)  "-I." "-I.\include" "-I$(qt6dir)\include"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Performing Custom Build Step: MOC%27ing %(FullPath)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">generated\moc_%(Filename).cpp;%(Outputs)</Outputs>

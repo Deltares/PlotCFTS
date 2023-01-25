@@ -118,7 +118,7 @@ void set_theme(QApplication * app, QDir exec_dir)
     case 1:
         {
             app->setStyle(QStyleFactory::create("Fusion"));
-            QFile styleFile(exec_dir.absolutePath() + "/plotcfts_style.qss" );
+            QFile styleFile(exec_dir.absolutePath() + "/plotcfts.qss" );
             bool succes = styleFile.open(QFile::ReadOnly);
             if (succes)
             {
