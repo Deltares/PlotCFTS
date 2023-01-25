@@ -29,6 +29,14 @@
 \memoCopy{}
 
 \deltarestitle
+\setgitdirectory{../.git}\vspace{-\baselineskip}
+{\subsection*{Version control information}}\newline
+\begin{tabular}{@{}p{35.0mm}@{}p{0mm}p{\textwidth-27mm-24pt}}
+    \textbf{Git repository} & \textbf{:} & \url{\gitrepository} \\
+    \textbf{Git branch} & \textbf{:} & \gitbranch \\
+    \textbf{Git revision (short)} & \textbf{:} & \githash
+\end{tabular}
+
 \tableofcontents
 
 %--------------------------------------------------------------------------------
@@ -49,12 +57,14 @@
 & \textbf{Description} \hfill continued from previous page
 \\
 \topline
-\endhead
+%\endhead
 \midline
 \multicolumn{2}{r}{continued at next page}
 \endfoot
 \bottomline
 \endlastfoot
+4.00.00  &  - Upgrade to QT 6.4.1 \\
+         &  - Group box titles in bold. \\
 3.08.00  &  - 5 \% white space around graph in plot window. \\
 3.07.03  &  - Crash on reread file repaired. \\
 3.07.02  &  - Check on already read file on full path, instead of filename only. \\
