@@ -38,9 +38,8 @@ TSPlot::TSPlot(QWidget * qparent, QIcon qicon, int qnr_plot)
     vl_main->addWidget(customPlot);
 
     parent->setLayout(vl_main);
-
-    parent->resize(plot_width, plot_height);
     parent->show();
+    parent->resize(plot_width, plot_height);
 
     qparent->setWindowIcon(icon);
     _nr_y_axis_labels = 0;
