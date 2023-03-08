@@ -8,12 +8,6 @@
 
 \usepackage{xstring}
 \usepackage{catchfile}
-\CatchFileDef{\headfull}{../.git/HEAD.}{}
-\StrGobbleRight{\headfull}{1}[\head]
-\StrBehind[2]{\head}{/}[\branch]
-\IfFileExists{../.git/refs/heads/\branch.}{%
-    \CatchFileDef{\commit}{../.git/refs/heads/\branch.}{}}{%
-    \newcommand{\commit}{\dots~(in \emph{packed-refs})}}
 
 \newcommand\T{\rule{0pt}{2.6ex}}       % Top T
 \newcommand\B{\rule[-1.2ex]{0pt}{0pt}} % Bottom T
@@ -29,13 +23,6 @@
 \memoCopy{}
 
 \deltarestitle
-\setgitdirectory{../.git}\vspace{-\baselineskip}
-\subsection*{Version control information}
-\begin{tabular}{@{}p{35.0mm}@{}p{0mm}p{\textwidth-27mm-24pt}}
-    \textbf{Git repository} & \textbf{:} & \url{\gitrepository} \\
-    \textbf{Git branch} & \textbf{:} & \gitbranch \\
-    \textbf{Git revision (short)} & \textbf{:} & \githash
-\end{tabular}
 
 \tableofcontents
 
@@ -57,12 +44,13 @@
 & \textbf{Description} \hfill continued from previous page
 \\
 \topline
-%\endhead
+\endhead
 \midline
 \multicolumn{2}{r}{continued at next page}
 \endfoot
 \bottomline
 \endlastfoot
+4.01.00  &  - Highligthed line contains dots at time-points.\\
 4.00.00  &  - Upgrade to QT 6.4.1 \\
          &  - Group box titles in bold. \\
          &  - Compliant for 4k screen \\
@@ -114,7 +102,7 @@
 \begin{figure}[H]
     \centering
         \includegraphics[width=0.9\textwidth]{pictures/main.png}
-    \caption{Openings window of the program PlotCFTS (\textbf{Plot} \textbf{C}limate and \textbf{F}orecast \textbf{T}ime \textbf{S}eries)}
+    \caption{Opening window of the program PlotCFTS (\textbf{Plot} \textbf{C}limate and \textbf{F}orecast \textbf{T}ime \textbf{S}eries)}
 \end{figure}
 
 %--------------------------------------------------------------------------------
@@ -138,7 +126,7 @@ And if there exist (on the same directory) a file with the filename in the form 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{pictures/menu_file_open.png}
-    \caption{Open window, to open several files which fulfil to the \cfstandard compliant Time Series file format}
+    \caption{Open window, to open several files which fulfil to the \cfstandard compliant Time Series file format.}
 \end{figure}
 
 If the file does not meet the \cfstandard or cannot be read due to unsupported characters a message will presented (see \autoref{fig:notcffile})
@@ -249,10 +237,11 @@ The options are
 %--------------------------------------------------------------------------------
 \section{Select time series}
 \phantom{m}\vspace{-\baselineskip}
+% file: cf_compliant_time_series.nc
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{pictures/group_select_time_series.png}
-\caption{Combobox within group \menuarrow{Selected time series}}
+\caption{Combobox within group \menuarrow{Select time series}}
 \end{figure}
 
 %--------------------------------------------------------------------------------
@@ -297,7 +286,7 @@ Showing the main global attributes as defined in the Climate and Forecast compli
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{pictures/group_global_attributes.png}
-    \caption{Status bar\label{fig:globalattributes}}
+    \caption{Global attributes\label{fig:globalattributes}}
 \end{figure}
 
 %--------------------------------------------------------------------------------
@@ -339,7 +328,7 @@ When double clicking on the legend item, the name of the graph can be changed, s
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{pictures/plot_selected_graph.png}
-    \caption{Graph selected and edit window for graph name\label{fig:selected graph}}
+    \caption{Graph selected and edit window for graph name.\label{fig:selected graph}}
 \end{figure}
 %------------------------------------------------------------------------------
 \subsubsection{Using the context menu}
@@ -357,7 +346,7 @@ When pressing the right mouse button in the legend area, the legend area can be 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{pictures/plot_context_menu.png}
-    \caption{Selected graph with context menu indicating the location in legend\label{fig:selected graph_with_context_menu}}
+    \caption{Selected graph with context menu indicating the location in legend.\label{fig:selected graph_with_context_menu}}
 \end{figure}
 
 %------------------------------------------------------------------------------
@@ -382,7 +371,7 @@ When a double click is given on een selected graph a message window will shown t
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{pictures/plot_double_click_selected_graph.png}
-    \caption{Selected graph with information window containing the location, time and value of the cursor location\label{fig:double_click_selected_graph}}
+    \caption{Selected graph by double click displays an information window containing the location, time and value of the cursor location\label{fig:double_click_selected_graph}}
 \end{figure}
 
 %------------------------------------------------------------------------------
