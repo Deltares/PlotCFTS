@@ -81,6 +81,7 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QDir, QDir);
+    ~MainWindow();
 
 protected:
     void dragEnterEvent(QDragEnterEvent *);

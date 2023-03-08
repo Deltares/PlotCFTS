@@ -177,6 +177,7 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
     <ClCompile Include="src\cf_timeseries.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mainwindow.cpp" />
+    <ClCompile Include="src\perf_timer.cpp" />
     <ClCompile Include="src\plot_cf_time_series_version.cpp" />
     <ClCompile Include="src\qcustomplot.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.;.\include;$(qt6dir)\include;$(qt6dir)\include\QtPrintSupport;$(qt6dir)\include\QtWidgets;$(qt6dir)\include\QtGui;$(qt6dir)\include\QtANGLE;$(qt6dir)\include\QtCore;release;.;$(qt6dir)\mkspecs\win32-msvc2013;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -219,6 +220,7 @@ call ..\scripts\git_insert_hash.cmd .\include plot_cf_time_series_version.rc</Co
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\cf_time_series.h" />
+    <ClInclude Include="include\perf_timer.h" />
     <ClInclude Include="include\program_arguments.h" />
     <ClInclude Include="include\read_json.h" />
     <CustomBuild Include="include\time_series_plot.h">

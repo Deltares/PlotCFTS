@@ -12,6 +12,7 @@
 #include "program_arguments.h"
 #include "time_series_plot.h"
 #include "netcdf.h"
+#include "perf_timer.h"
 
 QString selectedFilter;
 QVBoxLayout * showFilenameLayout;
@@ -42,6 +43,8 @@ MainWindow::MainWindow(QDir exec_dir_in, QDir startup_dir_in)
     setWindowTitle(tr("%1 %2").arg(prg_name).arg(vers_nr));
     icon = new QIcon(QPixmap( vsi ));
     setWindowIcon(*icon);
+
+    START_TIMERN(Main_window);
 
     dim_model_wide = -1;
     dim_at_location = -1;
@@ -88,6 +91,9 @@ MainWindow::MainWindow(QDir exec_dir_in, QDir startup_dir_in)
 
     free(prg_name); prg_name = NULL;
     free(vers_nr); vers_nr = NULL;
+}
+MainWindow::~MainWindow()
+{
 }
 
 void MainWindow::createActions()
@@ -194,7 +200,7 @@ void MainWindow::createStatusBar()
 
 void MainWindow::openFile()
 {
-    FILE_TYPE ftype;
+    FILE_TYPE file_type;
 
     QString fname;
     QString * str = new QString();
@@ -221,10 +227,10 @@ void MainWindow::openFile()
         for (QStringList::Iterator it = QFilenames->begin(); it != QFilenames->end(); ++it) {
             fname = *it;
         }
-        ftype = HISTORY;
+        file_type = HISTORY;
         for (QStringList::Iterator it = QFilenames->begin(); it != QFilenames->end(); ++it) {
             fname = *it;
-            openFile(QFileInfo(fname), ftype);
+            openFile(QFileInfo(fname), file_type);
         }
     }
     delete fd;
@@ -233,6 +239,7 @@ void MainWindow::openFile()
 
 void MainWindow::openFile(QFileInfo ncfile, FILE_TYPE type)
 {
+    START_TIMERN(openFile)
     int ncid;
     char * fname = strdup(ncfile.absoluteFilePath().toUtf8());
     int status = nc_open(fname, NC_NOWRITE, &ncid);
@@ -277,6 +284,7 @@ void MainWindow::openFile(QFileInfo ncfile, FILE_TYPE type)
     {
         QMessageBox::information(this, QObject::tr("Information"), QObject::tr("File is not opened:\n%1").arg(ncfile.absoluteFilePath()));
     }
+    STOP_TIMER(openFile)
 }
 
 
@@ -1378,7 +1386,7 @@ void MainWindow::lb_parameter_selection_changed()
         this->layerLabelPrefix->setText(tr("Layer"));
         this->layerLabelSuffix->setText(tr("[1, %1]").arg(maxVal));
         this->sb_layer->setRange(1, maxVal);
-        this->sb_layer->setValue(1);
+        this->sb_layer->setValue(maxVal);
         this->layerLabelPrefix->setEnabled(true);
         this->layerLabelSuffix->setEnabled(true);
         this->sb_layer->setEnabled(true);
@@ -1789,6 +1797,9 @@ void MainWindow::close()
 void MainWindow::exit()
 {
     QApplication::closeAllWindows();
+    QString timings_file(_startup_dir.absolutePath() + "/timing_plotcfts.log");
+    PRINT_TIMERN(timings_file.toStdString());
+    CLEAR_TIMER();
 }
 void MainWindow::closeEvent(QCloseEvent *event)
 {

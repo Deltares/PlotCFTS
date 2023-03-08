@@ -5,6 +5,7 @@
 #include <QtWidgets/QWidget>
 #include "qcustomplot.h"
 #include "cf_time_series.h"
+#include "perf_timer.h"
 
 
 class TSPlot : public QMainWindow

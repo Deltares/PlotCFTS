@@ -34,6 +34,7 @@
 
 #include "cf_time_series.h"
 #include "netcdf.h"
+#include "perf_timer.h"
 
 TSFILE::TSFILE(QFileInfo filename, FILE_TYPE ftype)
 {
@@ -109,27 +110,42 @@ TSFILE::~TSFILE()
 
 long TSFILE::read(QProgressBar * pgBar)
 {
+    START_TIMERN(read);
+
     int status;
 
     pgBar->show();
     pgBar->setValue(0);
+    START_TIMER(nc_open);
     status = nc_open(this->tsfilefilename, NC_NOWRITE, &this->m_ncid);
+    STOP_TIMER(nc_open);
     if (status != NC_NOERR)
     {
         QMessageBox::warning(NULL, QObject::tr("Warning"), QObject::tr("Cannot open file: %1").arg(this->tsfilefilename));
         return 1;
     }
     pgBar->setValue(100);
+
+    START_TIMER(read_times);
     this->read_times(pgBar, 100, 600);
+    STOP_TIMER(read_times);
     pgBar->setValue(600);
+
+    START_TIMER(read_global_attributes);
     this->read_global_attributes();
+    STOP_TIMER(read_global_attributes);
 
     pgBar->setValue(700);
     if (this->type == HISTORY) {
         // read a history file
+        START_TIMER(read_locations);
         this->read_locations();
+        STOP_TIMER(read_locations);
+
         pgBar->setValue(800);
+        START_TIMER(read_parameters);
         this->read_parameters();
+        STOP_TIMER(read_parameters);
         pgBar->setValue(900);
     }
     else
@@ -139,6 +155,7 @@ long TSFILE::read(QProgressBar * pgBar)
     if (m_time_var_name == NULL)
     {
         QMessageBox::warning(NULL, QObject::tr("Error"), QString("No time variable found in file:\n%1.\nFile will not be read.").arg(this->tsfilefilename));
+        STOP_TIMER(read);
         return 1;
     }
     status = nc_close(this->m_ncid);
@@ -146,6 +163,7 @@ long TSFILE::read(QProgressBar * pgBar)
     if (status != NC_NOERR) {
         // handle_error(status);
     }
+    STOP_TIMER(read);
     return 0;
 }
 
@@ -223,6 +241,8 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
     QString janm1 = this->RefDate->toString("yyyy-MM-dd hh:mm:ss.zzz");
     QString janm2 = this->RefDate->toUTC().toString("yyyy-MM-dd hh:mm:ss.zzz");
 #endif
+#if 0
+    START_TIMERN(m_times.times C);
     double * times_c = (double *)malloc(sizeof(double)*datetime_ntimes);
     status = nc_get_var_double(this->m_ncid, time_var, times_c);
     m_times.times.clear();  // needed for reread
@@ -233,6 +253,15 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
     }
     free(times_c);
     times_c = nullptr;
+    STOP_TIMER(m_times.times C);
+#else
+    START_TIMERN(m_times.times C++);
+    m_times.times.resize(datetime_ntimes);
+    m_times.pre_selected.resize(datetime_ntimes);
+    status = nc_get_var_double(this->m_ncid, time_var, m_times.times.data());
+    STOP_TIMER(m_times.times C++);
+#endif
+
     if (datetime_ntimes >= 2)
     {
         dt = m_times.times[1] - m_times.times[0];
@@ -257,55 +286,78 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
     {
         this->xaxis_unit = QString("day");
     }
-
-    for (int j = 0; j < datetime_ntimes; j++)
+    START_TIMER(Convert times);
+    if (datetime_units.contains("sec") ||
+        datetime_units.trimmed() == "s")  // seconds, second, sec, s
     {
-        if (fmod(j, int(0.01 * double(datetime_ntimes))) == 0)
-        {
-            fraction = double(pgBar_start) + double(j) / double(datetime_ntimes) * (double(pgBar_end) - double(pgBar_start));
-            pgBar->setValue(int(fraction));
-        }
-        if (datetime_units.contains("sec") ||
-            datetime_units.trimmed() == "s")  // seconds, second, sec, s
-        {
-            if (dt < 1.0)
-            {
-                m_times.qdt_time.append(this->RefDate->addMSecs(1000. * m_times.times[j]));  // milli seconds as smallest time unit
-            }
-            else
-            {
-                m_times.qdt_time.append(this->RefDate->addSecs(m_times.times[j]));  // seconds as smallest time unit
-            }
-        }
-        else if (datetime_units.contains("min"))  // minutes, minute, min
-        {
-            m_times.times[j] = m_times.times[j] * 60.0;
-            m_times.qdt_time.append(this->RefDate->addSecs(m_times.times[j]));
-        }
-        else if (datetime_units.contains("h"))  // hours, hour, hrs, hr, h
-        {
-            m_times.times[j] = m_times.times[j] * 3600.0;
-            m_times.qdt_time.append(this->RefDate->addSecs(m_times.times[j]));
-        }
-        else if (datetime_units.contains("d"))  // days, day, d
-        {
-            m_times.times[j] = m_times.times[j] * 24.0 * 3600.0;
-            m_times.qdt_time.append(this->RefDate->addSecs(m_times.times[j]));
-        }
-        // times[j] is now defined in seconds
-#if defined (DEBUG)
         if (dt < 1.0)
         {
-            QString janm = m_times.qdt_time[j].toString("yyyy-MM-dd hh:mm:ss.zzz");
+            for (int j = 0; j < datetime_ntimes; j++)
+            {
+                m_times.qdt_time.append(this->RefDate->addMSecs(1000. * m_times.times[j]));  // milli seconds as smallest time unit
+                if (fmod(j, int(0.01 * double(datetime_ntimes))) == 0)
+                {
+                    fraction = double(pgBar_start) + double(j) / double(datetime_ntimes) * (double(pgBar_end) - double(pgBar_start));
+                    pgBar->setValue(int(fraction));
+                }
+            }
         }
         else
         {
-            QString janm = m_times.qdt_time[j].toString("yyyy-MM-dd hh:mm:ss");
+            for (int j = 0; j < datetime_ntimes; j++)
+            {
+                m_times.qdt_time.append(this->RefDate->addSecs(m_times.times[j]));  // seconds as smallest time unit
+                if (fmod(j, int(0.01 * double(datetime_ntimes))) == 0)
+                {
+                    fraction = double(pgBar_start) + double(j) / double(datetime_ntimes) * (double(pgBar_end) - double(pgBar_start));
+                    pgBar->setValue(int(fraction));
+                }
+            }
         }
-#endif
     }
+    else if (datetime_units.contains("min"))  // minutes, minute, min
+    {
+        for (int j = 0; j < datetime_ntimes; j++)
+        {
+            m_times.times[j] = m_times.times[j] * 60.0;
+            m_times.qdt_time.append(this->RefDate->addSecs(m_times.times[j]));
+            if (fmod(j, int(0.01 * double(datetime_ntimes))) == 0)
+            {
+                fraction = double(pgBar_start) + double(j) / double(datetime_ntimes) * (double(pgBar_end) - double(pgBar_start));
+                pgBar->setValue(int(fraction));
+            }
+        }
+    }
+    else if (datetime_units.contains("h"))  // hours, hour, hrs, hr, h
+    {
+        for (int j = 0; j < datetime_ntimes; j++)
+        {
+            m_times.times[j] = m_times.times[j] * 3600.0;
+            m_times.qdt_time.append(this->RefDate->addSecs(m_times.times[j]));
+            if (fmod(j, int(0.01 * double(datetime_ntimes))) == 0)
+            {
+                fraction = double(pgBar_start) + double(j) / double(datetime_ntimes) * (double(pgBar_end) - double(pgBar_start));
+                pgBar->setValue(int(fraction));
+            }
+        }
+    }
+    else if (datetime_units.contains("d"))  // days, day, d
+    {
+        for (int j = 0; j < datetime_ntimes; j++)
+        {
+            m_times.times[j] = m_times.times[j] * 24.0 * 3600.0;
+            m_times.qdt_time.append(this->RefDate->addSecs(m_times.times[j]));
+            if (fmod(j, int(0.01 * double(datetime_ntimes))) == 0)
+            {
+                fraction = double(pgBar_start) + double(j) / double(datetime_ntimes) * (double(pgBar_end) - double(pgBar_start));
+                pgBar->setValue(int(fraction));
+            }
+        }
+    }
+    // times[j] is now defined in seconds
     free(var_name); var_name = NULL;
     pgBar->setValue(pgBar_end);
+    STOP_TIMER(Convert times);
 }
 
 long TSFILE::get_count_times()
@@ -1024,7 +1076,7 @@ std::vector<double> TSFILE::get_time_series(long cb_index, char * param_name, lo
     long nr_loc;
     int nr_layers;
     size_t length;
-    double * y_array = nullptr;
+    std::vector<double> y_array;
     size_t mem_length;
     char * dim_name;
     char * var_name;
@@ -1082,14 +1134,14 @@ std::vector<double> TSFILE::get_time_series(long cb_index, char * param_name, lo
         if (i == 2) nr_layers = (int) length;  // third dimension is the layer
         mem_length = mem_length * length;
     }
-
+    START_TIMERN(get_time_series1);
     if (nc_type == NC_DOUBLE)
     {
         double att_value;
         status = nc_get_att_double(this->m_ncid, par_id, "_FillValue", &att_value);
 
-        y_array = (double*)malloc(sizeof(double) * mem_length);
-        status = nc_get_var_double(this->m_ncid, par_id, y_array);
+        y_array.resize(mem_length);
+        status = nc_get_var_double(this->m_ncid, par_id, y_array.data());
         for (int i = 0; i < mem_length; ++i)
         {
             if (y_array[i] == att_value) { y_array[i] = std::numeric_limits<double>::quiet_NaN(); }
@@ -1102,7 +1154,7 @@ std::vector<double> TSFILE::get_time_series(long cb_index, char * param_name, lo
 
         float * y_array_s = (float *)malloc(sizeof(float) * mem_length);
         status = nc_get_var_float(this->m_ncid, par_id, y_array_s);
-        y_array = (double*)malloc(sizeof(double) * mem_length);
+        y_array.resize(mem_length);
         for (int i = 0; i < mem_length; ++i)
         {
             if (y_array_s[i] == att_value) { y_array_s[i] = std::numeric_limits<float>::quiet_NaN(); }
@@ -1118,7 +1170,7 @@ std::vector<double> TSFILE::get_time_series(long cb_index, char * param_name, lo
 
         int* y_array_s = (int*)malloc(sizeof(int) * mem_length);
         status = nc_get_var_int(this->m_ncid, par_id, y_array_s);
-        y_array = (double*)malloc(sizeof(double) * mem_length);
+        y_array.resize(mem_length);
         for (int i = 0; i < mem_length; ++i)
         {
             if (y_array_s[i] == att_value) { y_array_s[i] = std::numeric_limits<int>::quiet_NaN(); }
@@ -1133,20 +1185,21 @@ std::vector<double> TSFILE::get_time_series(long cb_index, char * param_name, lo
         std::vector<double> tmp;
         return tmp;
     }
+    STOP_TIMER(get_time_series1);
     //select colum loc_id from variable "parameter"
+    START_TIMER(get_time_series2);
     j = -1;
     long ii_layer = fmax(0, layer_id);
     m_y_values.clear();
-    m_y_values.reserve(this->datetime_ntimes);
+    m_y_values.resize(this->datetime_ntimes);
     int ii;
     for (int i_times = 0; i_times < this->datetime_ntimes; i_times++)
     {
-        j = j + 1;
         ii = ii_layer + nr_layers * loc_id + nr_layers * nr_loc * i_times;
-        m_y_values.push_back(y_array[ii]);
+        m_y_values[i_times] = (y_array[ii]);
     }
+    STOP_TIMER(get_time_series2);
 
-    free(y_array); y_array = nullptr;
     free(var_dims); var_dims= nullptr;
     free(dim_name); dim_name = nullptr;
     free(var_name); var_name = nullptr;

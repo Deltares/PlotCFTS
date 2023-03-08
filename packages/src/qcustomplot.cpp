@@ -21154,9 +21154,15 @@ void QCPGraph::draw(QCPPainter *painter)
     
     // draw fill of graph:
     if (isSelectedSegment && mSelectionDecorator)
-      mSelectionDecorator->applyBrush(painter);
+    {
+        this->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 4));
+        mSelectionDecorator->applyBrush(painter);
+    }
     else
-      painter->setBrush(mBrush);
+    {
+        this->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 0));
+        painter->setBrush(mBrush);
+    }
     painter->setPen(Qt::NoPen);
     drawFill(painter, &lines);
     

@@ -169,12 +169,14 @@ int TSPlot::get_active_plot_nr()
 
 void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
 {
+    START_TIMERN(TimeSeriesGraph);
     _time_series struct_times = tsfile->get_times();
     std::vector<double> x_values = struct_times.times;
     int nr_x_values = tsfile->get_count_times();
     int i_tsfile_par = -1;
     int i_tsfile_loc = -1;
     QListWidgetItem * sel_item;
+    STOP_TIMER(TimeSeriesGraph);
 
     // i_par and i_loc taken from sorted listboxes
     QDateTime * RefDate = tsfile->get_reference_date();
@@ -214,8 +216,9 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
     QString y_label_counter;
     QString yaxis_label = set_yaxis_label(param[i_tsfile_par].name, param[i_tsfile_par].unit, y_label_counter);
     customPlot->yAxis->setLabel(yaxis_label);
-
+    START_TIMER(get_time_series);
     std::vector<double> y_values = tsfile->get_time_series(cb_index, param[i_tsfile_par].name, i_tsfile_loc, i_layer);
+    STOP_TIMER(get_time_series);
 
     // x-axis
     QString xaxis_label = tsfile->get_xaxis_label();
@@ -315,6 +318,7 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
         }
         customPlot->graph()->setName(y_label_counter + QString("%1").arg(*location[i_tsfile_loc].name).trimmed());
     }
+
     QPen graphPen;
     // set colors
     if (fmod(_nr_graphs, 6) == 1) graphPen.setColor(QColor(0, 0, 255));
