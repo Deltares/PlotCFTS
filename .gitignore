@@ -1,0 +1,9 @@
+.vs/
+packages/generated/moc_mainwindow.cpp
+packages/generated/moc_qcustomplot.cpp
+packages/generated/moc_time_series_plot.cpp
+*.obj
+packages/Release/
+packages/plot_cf_time_series.vcxproj.user
+packages/include/plot_cf_time_series_version.h
+packages/include/plot_cf_time_series_version.rc
