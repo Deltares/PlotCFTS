@@ -245,10 +245,14 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
         }
     }
     QSharedPointer<QCPAxisTickerDateTime> dateTimeTicker(new QCPAxisTickerDateTime);
-    dateTimeTicker->setDateTimeFormat("hh:mm:ss\ndd MMM yyyy");
     dateTimeTicker->setDateTimeSpec(Qt::UTC);
+    dateTimeTicker->setDateTimeFormat("hh:mm:ss\ndd MMM yyyy");
     dateTimeTicker->setTickOrigin(RefDate->addSecs(x_values[0]));
-    QString janm1 = RefDate->toString("yyyy-MM-dd hh:mm:ss.zzz");
+    if (x_values[1] - x_values[0] < 1.0)  // timestep is smaller then one second
+    {
+        dateTimeTicker->setDateTimeFormat("hh:mm:ss.zzz\ndd MMM yyyy");
+        dateTimeTicker->setTickOrigin(RefDate->addMSecs(1000. * x_values[0]));
+    }
     customPlot->xAxis->setTicker(dateTimeTicker);
 
     qint64 offset = RefDate->toSecsSinceEpoch();
@@ -742,9 +746,14 @@ void TSPlot::onMouseMove(QMouseEvent *event)
                 double alpha = (x - times[i - 1] - offset) / (times[i] - times[i - 1]);
                 double times_aver = (1.0 - alpha) * times[i - 1] +  alpha * times[i];
                 QDateTime qdt_aver = RefDate->addSecs(times_aver);
-                QString qdt = qdt_aver.toString("hh:mm:ss.zzz dd MMM yyyy");
+                QString qdt = qdt_aver.toString("hh:mm:ss, dd MMM yyyy");
+                if (times[i] - times[i - 1] < 1.0)  // timestep is smaller then one second
+                {
+                    qdt_aver = RefDate->addMSecs(1000.*times_aver);
+                    qdt = qdt_aver.toString("hh:mm:ss.zzz, dd MMM yyyy");
+                }
                 customPlot->setToolTipDuration(5000);
-                customPlot->setToolTip(QString("%1, %2").arg(qdt).arg(y));
+                customPlot->setToolTip(QString("%1; %2").arg(qdt).arg(y));
                 break;
             }
             else

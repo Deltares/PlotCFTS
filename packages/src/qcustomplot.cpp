@@ -6723,7 +6723,17 @@ QString QCPAxisTickerDateTime::getTickLabel(double tick, const QLocale &locale, 
   if (mDateTimeSpec == Qt::TimeZone)
     return locale.toString(keyToDateTime(tick).toTimeZone(mTimeZone), mDateTimeFormat);
   else
-    return locale.toString(keyToDateTime(tick).toTimeSpec(mDateTimeSpec), mDateTimeFormat);
+  {
+      if (floor(tick) - tick == 0.0)
+      {
+          QString mDateTimeFormat_tmp = "hh:mm:ss\ndd MMM yyyy";
+          return locale.toString(keyToDateTime(tick).toTimeSpec(mDateTimeSpec), mDateTimeFormat_tmp);  // janm
+      }
+      else
+      {
+          return locale.toString(keyToDateTime(tick).toTimeSpec(mDateTimeSpec), mDateTimeFormat);  // janm
+      }
+  }
 # else
   return locale.toString(keyToDateTime(tick).toTimeSpec(mDateTimeSpec), mDateTimeFormat);
 # endif
