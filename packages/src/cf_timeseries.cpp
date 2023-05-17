@@ -290,7 +290,7 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
     if (datetime_units.contains("sec") ||
         datetime_units.trimmed() == "s")  // seconds, second, sec, s
     {
-        if (dt < 1.0)
+        if (floor(dt) - dt != 0.0)
         {
             for (int j = 0; j < datetime_ntimes; j++)
             {

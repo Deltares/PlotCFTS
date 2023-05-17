@@ -992,7 +992,8 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     }
     for (int i = 0; i < nr_times; i++)
     {
-        if (dt < 1000.)
+        double dt_sec = dt / 1000.;
+        if (floor(dt_sec)- dt_sec != 0. )
         {
             lb_times->addItem(qdt_times[i].toString("yyyy-MM-dd hh:mm:ss.zzz"));
         }

@@ -248,7 +248,7 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
     dateTimeTicker->setDateTimeSpec(Qt::UTC);
     dateTimeTicker->setDateTimeFormat("hh:mm:ss\ndd MMM yyyy");
     dateTimeTicker->setTickOrigin(RefDate->addSecs(x_values[0]));
-    if (x_values[1] - x_values[0] < 1.0)  // timestep is smaller then one second
+    if (floor(x_values[1] - x_values[0]) - (x_values[1] - x_values[0]) != 0.0)  // timestep is smaller then one second
     {
         dateTimeTicker->setDateTimeFormat("hh:mm:ss.zzz\ndd MMM yyyy");
         dateTimeTicker->setTickOrigin(RefDate->addMSecs(1000. * x_values[0]));
@@ -747,7 +747,7 @@ void TSPlot::onMouseMove(QMouseEvent *event)
                 double times_aver = (1.0 - alpha) * times[i - 1] +  alpha * times[i];
                 QDateTime qdt_aver = RefDate->addSecs(times_aver);
                 QString qdt = qdt_aver.toString("hh:mm:ss, dd MMM yyyy");
-                if (times[i] - times[i - 1] < 1.0)  // timestep is smaller then one second
+                if (floor(times[i] - times[i - 1]) -(times[i] - times[i - 1]) != 0.0)  // timestep is smaller then one second
                 {
                     qdt_aver = RefDate->addMSecs(1000.*times_aver);
                     qdt = qdt_aver.toString("hh:mm:ss.zzz, dd MMM yyyy");
