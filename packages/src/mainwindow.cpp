@@ -1358,11 +1358,11 @@ void MainWindow::createParameterList()
 }
 void MainWindow::lb_parameter_clicked(QListWidgetItem * item)
 {
+    pb_plot->setDefault(false);
     Q_UNUSED(item);
 }
 void MainWindow::lb_parameter_selection_changed()
 {
-    pb_plot->setDefault(false);
 
     int fil_index = lb_filenames->currentRow();
     TSFILE * tsfile = this->openedUgridFile[fil_index];
@@ -1370,7 +1370,12 @@ void MainWindow::lb_parameter_selection_changed()
     struct _parameter * param = tsfile->get_parameters(cb_index);
     int nr_parameters = tsfile->get_count_parameters(cb_index);
 
+    if (lb_parameters->selectedItems().size() == 0)
+    {
+        lb_parameters->setCurrentRow(lb_parameters->count() - 1);
+    }
     QModelIndex index = lb_parameters->currentIndex();
+
     char * name = strdup(index.data(Qt::DisplayRole).toString().toUtf8());
     int par_index = lb_parameters->currentRow();
     for (int i = 0; i < nr_parameters; i++)
@@ -1436,6 +1441,10 @@ void MainWindow::lb_location_clicked(QListWidgetItem * item)
 }
 void MainWindow::lb_location_selection_changed()
 {
+    if (lb_locations->selectedItems().size() == 0)
+    {
+        lb_locations->setCurrentRow(lb_locations->count()-1);
+    }
 }
 
 void MainWindow::createTimeList()
@@ -1469,6 +1478,10 @@ void MainWindow::lb_times_clicked(QListWidgetItem * item)
 }
 void MainWindow::lb_times_selection_changed()
 {
+    if (lb_times->selectedItems().size() == 0)
+    {
+        lb_times->setCurrentRow(lb_times->count() - 1);
+    }
 }
 
 void MainWindow::createPlotButton()
