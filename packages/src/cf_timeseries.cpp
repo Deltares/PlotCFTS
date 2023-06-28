@@ -257,6 +257,7 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
 #else
     START_TIMERN(m_times.times C++);
     m_times.times.resize(datetime_ntimes);
+    m_times.qdt_time.resize(datetime_ntimes);
     m_times.pre_selected.resize(datetime_ntimes);
     status = nc_get_var_double(this->m_ncid, time_var, m_times.times.data());
     STOP_TIMER(m_times.times C++);
@@ -294,7 +295,7 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
         {
             for (int j = 0; j < datetime_ntimes; j++)
             {
-                m_times.qdt_time.append(this->RefDate->addMSecs(1000. * m_times.times[j]));  // milli seconds as smallest time unit
+                m_times.qdt_time[j] = this->RefDate->addMSecs(1000. * m_times.times[j]);  // milli seconds as smallest time unit
                 if (fmod(j, int(0.01 * double(datetime_ntimes))) == 0)
                 {
                     fraction = double(pgBar_start) + double(j) / double(datetime_ntimes) * (double(pgBar_end) - double(pgBar_start));
@@ -306,7 +307,7 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
         {
             for (int j = 0; j < datetime_ntimes; j++)
             {
-                m_times.qdt_time.append(this->RefDate->addSecs(m_times.times[j]));  // seconds as smallest time unit
+                m_times.qdt_time[j] = this->RefDate->addSecs(m_times.times[j]);  // seconds as smallest time unit
                 if (fmod(j, int(0.01 * double(datetime_ntimes))) == 0)
                 {
                     fraction = double(pgBar_start) + double(j) / double(datetime_ntimes) * (double(pgBar_end) - double(pgBar_start));
@@ -320,7 +321,7 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
         for (int j = 0; j < datetime_ntimes; j++)
         {
             m_times.times[j] = m_times.times[j] * 60.0;
-            m_times.qdt_time.append(this->RefDate->addSecs(m_times.times[j]));
+            m_times.qdt_time[j] = this->RefDate->addSecs(m_times.times[j]);
             if (fmod(j, int(0.01 * double(datetime_ntimes))) == 0)
             {
                 fraction = double(pgBar_start) + double(j) / double(datetime_ntimes) * (double(pgBar_end) - double(pgBar_start));
@@ -333,7 +334,7 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
         for (int j = 0; j < datetime_ntimes; j++)
         {
             m_times.times[j] = m_times.times[j] * 3600.0;
-            m_times.qdt_time.append(this->RefDate->addSecs(m_times.times[j]));
+            m_times.qdt_time[j] = this->RefDate->addSecs(m_times.times[j]);
             if (fmod(j, int(0.01 * double(datetime_ntimes))) == 0)
             {
                 fraction = double(pgBar_start) + double(j) / double(datetime_ntimes) * (double(pgBar_end) - double(pgBar_start));
@@ -346,7 +347,7 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
         for (int j = 0; j < datetime_ntimes; j++)
         {
             m_times.times[j] = m_times.times[j] * 24.0 * 3600.0;
-            m_times.qdt_time.append(this->RefDate->addSecs(m_times.times[j]));
+            m_times.qdt_time[j] = this->RefDate->addSecs(m_times.times[j]);
             if (fmod(j, int(0.01 * double(datetime_ntimes))) == 0)
             {
                 fraction = double(pgBar_start) + double(j) / double(datetime_ntimes) * (double(pgBar_end) - double(pgBar_start));

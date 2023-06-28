@@ -113,7 +113,7 @@ void TSPlot::draw_plot(int nr_plot, QString txt, QString fname)
         }
     }
     customPlot->rescaleAxes();
-    customPlot->xAxis->scaleRange(1.05, customPlot->xAxis->range().center());
+    customPlot->xAxis->scaleRange(1.06, customPlot->xAxis->range().center());
     customPlot->yAxis->scaleRange(1.05, customPlot->yAxis->range().center());
 
     customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
