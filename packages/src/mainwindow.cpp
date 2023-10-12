@@ -283,6 +283,7 @@ void MainWindow::openFile(QFileInfo ncfile, FILE_TYPE type)
     else
     {
         QMessageBox::information(this, QObject::tr("Information"), QObject::tr("File is not opened:\n%1").arg(ncfile.absoluteFilePath()));
+        this->close();
     }
     STOP_TIMER(openFile)
 }

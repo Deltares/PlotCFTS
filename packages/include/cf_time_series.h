@@ -73,7 +73,7 @@ public:
     void read_times(QProgressBar *, long, long);
     void read_global_attributes();
     void read_parameters();
-    void read_locations();
+    long read_locations();
     struct _global_attributes * get_global_attributes(void);
     std::vector<double> get_time_series(long, char *, long, long);
     QString get_xaxis_label(void);

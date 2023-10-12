@@ -139,7 +139,12 @@ long TSFILE::read(QProgressBar * pgBar)
     if (this->type == HISTORY) {
         // read a history file
         START_TIMER(read_locations);
-        this->read_locations();
+        status = this->read_locations();
+        if (status != 0)
+        {
+            pgBar->hide();
+            return status;
+        }
         STOP_TIMER(read_locations);
 
         pgBar->setValue(800);
@@ -742,11 +747,11 @@ long TSFILE::put_parameter(long i_par_loc, long i, struct _parameter * param)
     return status;
 }
 
-void TSFILE::read_locations()
+long TSFILE::read_locations()
 {
     // look for variable with cf_role == timeseries_id, that are the locations
     int ndims, nvars, natts, nunlimited;
-    long status;
+    long status = 0;
     long location_name_varid;
     char * cf_role;
     char * dim_name;
@@ -760,7 +765,8 @@ void TSFILE::read_locations()
 
     if (this->m_time_var_name == NULL)
     {
-        return;
+        status = 1;
+        return status;
     }
 
     m_nr_par_loc = 0;
@@ -782,9 +788,9 @@ void TSFILE::read_locations()
 
             if (!strcmp(cf_role, "timeseries_id"))
             {
-                nc_type nc_type;
+                nc_type nctype;
                 location_name_varid = i_var;
-                status = nc_inq_var(this->m_ncid, location_name_varid, var_name, &nc_type, &ndims, NULL, &natts);
+                status = nc_inq_var(this->m_ncid, location_name_varid, var_name, &nctype, &ndims, NULL, &natts);
                 for (int i = 0; i < m_nr_par_loc; i++)
                 {
                     if (!strcmp(this->par_loc[i]->location_var_name, var_name))
@@ -855,7 +861,28 @@ void TSFILE::read_locations()
                 }
                 ensure_capacity_locations(i_par_loc, m_nr_locations);
                 // reading 64 strings for each location, length of string??
-                if (nc_type == NC_STRING)
+                if (nctype == NC_STRING && ndims == 1)
+                {
+                    int est_mem_length = m_nr_locations * 101;  // estimated average station name length = 101 (incl. sluit-nul)
+                    char** tmp_char = (char**)malloc(sizeof(char*) * est_mem_length);
+                    status = nc_get_var_string(this->m_ncid, location_name_varid, tmp_char);
+                    for (int k = 0; k < m_nr_locations; ++k)
+                    {
+                        length += std::strlen(tmp_char[k]);
+                        QString qname = QString::fromStdString(tmp_char[k]).toUtf8();
+                        this->par_loc[i_par_loc]->location[k]->name = new QString(qname);
+                    }
+                    free(tmp_char);
+                    if (length >= est_mem_length)
+                    {
+                        QString msg1("\nTotal number of ASCII charcaters exceeds");
+                        QString msg2 = QString::number(est_mem_length);
+                        QMessageBox::critical(0, "Reading location names", QString("%1: %2").arg(msg1).arg(msg2));
+                        status = 1;
+                        return status;
+                    }
+                }
+                else if (nctype == NC_STRING && ndims == 2)
                 {
                     char ** location_strings = (char **)malloc(sizeof(char *) * (mem_length)+1);
                     status = nc_get_var_string(this->m_ncid, location_name_varid, location_strings);
@@ -874,7 +901,7 @@ void TSFILE::read_locations()
                     }
                     free(location_strings);
                 }
-                else if (nc_type == NC_CHAR)
+                else if (nctype == NC_CHAR)
                 {
                     char * location_chars = (char *)malloc(sizeof(char *) * (mem_length)+1);
                     status = nc_get_var_text(this->m_ncid, location_name_varid, location_chars);
@@ -979,6 +1006,7 @@ void TSFILE::read_locations()
     }
     free(dim_name);
     free(var_name);
+    return status;
 }
 
 long TSFILE::get_count_par_loc()
