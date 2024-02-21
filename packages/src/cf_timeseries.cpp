@@ -239,12 +239,32 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
     // ex. date_time = "seconds since 2017-02-25 15:26:00"   year, yr, day, d, hour, hr, h, minute, min, second, sec, s and all plural forms
     datetime_units = date_time.at(0);
 
-    QDate date = QDate::fromString(date_time.at(2), "yyyy-MM-dd");
-    QTime time = QTime::fromString(date_time.at(3), "hh:mm:ss");
+    QStringList tmp_date = date_time.at(2).split("-");
+    QDate date(tmp_date.at(0).toInt(), tmp_date.at(1).toInt(), tmp_date.at(2).toInt());
+    QStringList tmp_time = date_time.at(3).split(":");
+    QTime time(tmp_time.at(0).toInt(), tmp_time.at(1).toInt(), 0);  // omit  the seconds
+    time = time.addMSecs(int(1000. * tmp_time.at(2).toDouble()));  // add the seconds in milliseconds
+    QStringList time_zone{ 2 };  // hours and minutes
+    if (date_time.size() <= 4)
+    {
+        time_zone << "0";  // hours
+        time_zone << "0";  // minutes
+    }
+    else
+    {
+        time_zone = date_time.at(4).split(":"); 
+    }
+    int msec = 1000. * 3600. * time_zone.at(0).toDouble();
+    if (time_zone.size() >= 2)
+    {
+        if (msec > 0) { msec += 1000. * 60.0 * time_zone.at(1).toDouble(); }
+        if (msec < 0) { msec -= 1000. * 60.0 * time_zone.at(1).toDouble(); }
+    }
+    time = time.addMSecs(msec);
     this->RefDate = new QDateTime(date, time, Qt::UTC);
 #if defined(DEBUG)
-    QString janm1 = this->RefDate->toString("yyyy-MM-dd hh:mm:ss.zzz");
-    QString janm2 = this->RefDate->toUTC().toString("yyyy-MM-dd hh:mm:ss.zzz");
+    QString janm1 = this->RefDate->toString("yyyy-MM-dd hh:mm:ss.z");
+    QString janm2 = this->RefDate->toUTC().toString("yyyy-MM-dd hh:mm:ss.z");
 #endif
 #if 0
     START_TIMERN(m_times.times C);
@@ -271,6 +291,7 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
     if (datetime_ntimes >= 2)
     {
         dt = m_times.times[1] - m_times.times[0];
+        if (floor(m_times.times[0]) - m_times.times[0] != 0.0) { dt += 0.1; }  // if true then there is a mantisse
     }
     fraction = double(pgBar_start);
     pgBar->setValue(int(fraction));

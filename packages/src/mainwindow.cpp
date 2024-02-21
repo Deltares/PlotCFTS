@@ -989,12 +989,12 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     double dt = 0;
     if (nr_times >= 2)
     {
-        dt = qdt_times.at(0).msecsTo(qdt_times.at(1));
+        dt = times.times[1] - times.times[0];
+        if (floor(times.times[0]) - times.times[0] != 0) { dt += 0.1; } // if true then there is a mantisse
     }
     for (int i = 0; i < nr_times; i++)
     {
-        double dt_sec = dt / 1000.;
-        if (floor(dt_sec)- dt_sec != 0. )
+        if (floor(dt)- dt != 0. )
         {
             lb_times->addItem(qdt_times[i].toString("yyyy-MM-dd hh:mm:ss.zzz"));
         }

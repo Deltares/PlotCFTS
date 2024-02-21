@@ -246,20 +246,29 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
     }
     QSharedPointer<QCPAxisTickerDateTime> dateTimeTicker(new QCPAxisTickerDateTime);
     dateTimeTicker->setDateTimeSpec(Qt::UTC);
-    dateTimeTicker->setDateTimeFormat("hh:mm:ss\ndd MMM yyyy");
-    dateTimeTicker->setTickOrigin(RefDate->addSecs(x_values[0]));
-    if (floor(x_values[1] - x_values[0]) - (x_values[1] - x_values[0]) != 0.0)  // timestep is smaller then one second
+    dateTimeTicker->setTickOrigin(*RefDate);
+    if (floor(x_values[1] - x_values[0]) - (x_values[1] - x_values[0]) != 0.0 ||
+        floor(x_values[0]) - x_values[0] != 0.0)  // timestep is smaller then one second
     {
+        // milli seconds
         dateTimeTicker->setDateTimeFormat("hh:mm:ss.zzz\ndd MMM yyyy");
-        dateTimeTicker->setTickOrigin(RefDate->addMSecs(1000. * x_values[0]));
+        qint64 offset = RefDate->toMSecsSinceEpoch();
+        for (int i = 0; i < nr_x_values; i++)
+        {
+            x_values[i] = x_values[i] + 0.001 * double(offset);
+        }
+    }
+    else
+    {
+        // whole seconds
+        dateTimeTicker->setDateTimeFormat("hh:mm:ss\ndd MMM yyyy");
+        qint64 offset = RefDate->toSecsSinceEpoch();
+        for (int i = 0; i < nr_x_values; i++)
+        {
+            x_values[i] = x_values[i] + (double)offset;
+        }
     }
     customPlot->xAxis->setTicker(dateTimeTicker);
-
-    qint64 offset = RefDate->toSecsSinceEpoch();
-    for (int i = 0; i < nr_x_values; i++)
-    {
-        x_values[i] = x_values[i] + (double) offset;
-    }
 
     std::vector<double> xv(nr_x_values);
     for (int i = 0; i < nr_x_values; i++)
@@ -745,9 +754,11 @@ void TSPlot::onMouseMove(QMouseEvent *event)
             {
                 double alpha = (x - times[i - 1] - offset) / (times[i] - times[i - 1]);
                 double times_aver = (1.0 - alpha) * times[i - 1] +  alpha * times[i];
-                QDateTime qdt_aver = RefDate->addSecs(times_aver);
-                QString qdt = qdt_aver.toString("hh:mm:ss, dd MMM yyyy");
-                if (floor(times[i] - times[i - 1]) -(times[i] - times[i - 1]) != 0.0)  // timestep is smaller then one second
+                QDateTime qdt_aver = RefDate->addMSecs(1000. * times_aver);
+                QString qdt = qdt_aver.toString("hh:mm:ss.zzz, dd MMM yyyy");
+                if (floor(times[i] - times[i - 1]) - (times[i] - times[i - 1]) != 0.0 ||
+                    floor(times[i]) - times[i] != 0.0 ||
+                    floor(times[i-1]) - times[i-1] != 0.0 )  // timestep is smaller then one second
                 {
                     qdt_aver = RefDate->addMSecs(1000.*times_aver);
                     qdt = qdt_aver.toString("hh:mm:ss.zzz, dd MMM yyyy");
