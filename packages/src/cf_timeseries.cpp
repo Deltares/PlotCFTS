@@ -1187,7 +1187,7 @@ std::vector<double> TSFILE::get_time_series(long cb_index, char * param_name, lo
     START_TIMERN(get_time_series1);
     if (nc_type == NC_DOUBLE)
     {
-        double att_value;
+        double att_value = std::numeric_limits<double>::quiet_NaN();
         status = nc_get_att_double(this->m_ncid, par_id, "_FillValue", &att_value);
 
         y_array.resize(mem_length);
@@ -1199,7 +1199,7 @@ std::vector<double> TSFILE::get_time_series(long cb_index, char * param_name, lo
     }
     else if (nc_type == NC_FLOAT)
     {
-        float att_value;
+        float att_value = std::numeric_limits<float>::quiet_NaN();
         status = nc_get_att_float(this->m_ncid, par_id, "_FillValue", &att_value);
 
         float * y_array_s = (float *)malloc(sizeof(float) * mem_length);
@@ -1215,7 +1215,7 @@ std::vector<double> TSFILE::get_time_series(long cb_index, char * param_name, lo
     }
     else if (nc_type == NC_INT)
     {
-        int att_value;
+        int att_value = std::numeric_limits<int>::quiet_NaN();
         status = nc_get_att_int(this->m_ncid, par_id, "_FillValue", &att_value);
 
         int* y_array_s = (int*)malloc(sizeof(int) * mem_length);
@@ -1229,9 +1229,25 @@ std::vector<double> TSFILE::get_time_series(long cb_index, char * param_name, lo
         free(y_array_s);
         y_array_s = nullptr;
     }
+    else if (nc_type == NC_INT64)
+    {
+        int att_value = std::numeric_limits<int64_t>::quiet_NaN();
+        status = nc_get_att_int(this->m_ncid, par_id, "_FillValue", &att_value);
+
+        int64_t* y_array_s = (int64_t*)malloc(sizeof(int64_t) * mem_length);
+        status = nc_get_var_longlong(this->m_ncid, par_id, y_array_s);
+        y_array.resize(mem_length);
+        for (int i = 0; i < mem_length; ++i)
+        {
+            if (y_array_s[i] == att_value) { y_array_s[i] = std::numeric_limits<int64_t>::quiet_NaN(); }
+            y_array[i] = (double)y_array_s[i];
+        }
+        free(y_array_s);
+        y_array_s = nullptr;
+    }
     else
     {
-        QMessageBox::warning(NULL, QObject::tr("Warning"), QString("Data type \"%1\" not supported").arg(nc_type));
+        QMessageBox::warning(NULL, QObject::tr("Warning"), QString("NetCDF data type not supported (nc_type = \"%1\").").arg(nc_type));
         std::vector<double> tmp;
         return tmp;
     }
