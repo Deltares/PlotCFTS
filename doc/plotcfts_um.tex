@@ -12,106 +12,36 @@
 \newcommand\T{\rule{0pt}{2.6ex}}       % Top T
 \newcommand\B{\rule[-1.2ex]{0pt}{0pt}} % Bottom T
 \begin{document}
-\memoTo{To whom it may concern}
+\memoName{}
+\memoTo{\plotcfts users}
 \memoConfidentialUntil{}
 \memoDate{\today}
 \memoVersion{001}
 \memoFrom{Jan Mooiman}
 \memoTelephone{---}
 \memoEmail{jan.mooiman@deltares nl}
-\memoSubject{Manual to plot \cfstandard compliant Time Series files}
+\memoSubject{Manual of \plotcfts to plot \cfstandard compliant Time Series files}
 \memoCopy{}
 
 \deltarestitle
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{pictures/main.png}
+    \caption{Main window of PlotCFTS (\textbf{Plot} \textbf{C}limate and \textbf{F}orecast \textbf{T}ime \textbf{S}eries)}
+\end{figure}
+
 \tableofcontents
 
-%--------------------------------------------------------------------------------
-\section{Release Notes}
-\phantom{m}\vspace{-\baselineskip}
-%
-%--- begin light blue table ---
-\begin{longtable}{p{17mm-12pt}|p{\textwidth-17mm-12pt}}
-%\caption{Light blue theme of table} \\%
-\rowcolor{dblue1}
-\textbf{Release}
-& \textbf{Description}
-\\
-\topline
-\endfirsthead
-\rowcolor{dblue1}
-\textbf{Release}
-& \textbf{Description} \hfill continued from previous page
-\\
-\topline
-\endhead
-\midline
-\multicolumn{2}{r}{continued at next page}
-\endfoot
-\bottomline
-\endlastfoot
-4.04.00  &  - Support of netCDF type \texttt{int64} (NC\_INT64). \\
-4.03.01  &  - Support of the time units string with partial seconds and a time zone, ex.: \newline
-\small{\texttt{time:units = "seconds since 1992-10-8 15:15:42.250 -6:30" ;}} \\
-4.03.00  &  - Support of station names as they are defined as \texttt{string}. \\
-4.02.03  &  - When rereading the file, the time listbox is updated. \\
-4.02.02  &  - List box selection is set to last item if selection is empty. \\
-4.02.01  &  - Better detection of time step size (example 1.5 sec).\\
-4.02.00  &  - Tick mark labels adjusted if timespan is less then 1 second.\\
-         &  - Upgrade to QT 6.5.0 \\
-4.01.00  &  - Highlighted line contains dots at time-points.\\
-4.00.00  &  - Upgrade to QT 6.4.1 \\
-         &  - Group box titles in bold. \\
-         &  - Compliant for 4k screen \\
-3.08.00  &  - 5 \% white space around graph in plot window. \\
-3.07.03  &  - Crash on reread file repaired. \\
-3.07.02  &  - Check on already read file on full path, instead of filename only. \\
-3.07.01  &  - Export to CSV file repaired. \\
-         &  - Hiding progress bar after rereading a file. \\
-3.07.00  &  - Integer variable values are now plotted, ex.\ pump\_actual\_stage. \\
-         &  - Context menu option added. In the file listbox to reread a file. \\
-3.06.01  &  - Some reorganization how to dected the time variable, now checking on standard\_name = 'time'. \\
-3.06.00  &  - Upgrade to QT 5.15.2. \\
-3.05.00  &  - Use of QCustomPlot 2.1.0. \\
-         &  - Reading of netCDF variable 'float' enabled. \\
-3.04.00  &  - Pre-selection of time-series implemented. \\
-3.03.00  &  - Partial selection of time series repaired. \\
-         &  - Main window increased in vertical direction. \\
-3.02.00  &  - Location names are now trimmed, leading and trailing spaces are removed. \\
-3.01.00  &  - All presented times are given in UTC (Temps universel coordonn\'e, Coordinated Universal Time).\\
-3.00.00  &  - Pre-selection of parameters and locations implemented.  \\
-         &  - Multi select of input files allowed.\\
-2.12.00  &  - Support netCDF (CF-1.5, Deltares 0.1) file of the NHI (Nederlands Hydrologisch Instrumentarium).  \\
-         &  - Strip leading and trailing spaces from parameter name. \\
-2.11.00  &  - Memory bug repaired with respect to a reading global attribute which has a value longer then 256 characters.  \\
-2.10.00  &  - If a part of the time series is selected, the CSV export is now correct. The time and value did not correspond.  \\
-2.09.00  &  - Some parameters where listed without having the time-dimension. Now a parameter need the time-dimension,  to be present in Parameter listbox.  \\
-2.08.00  &  - Export to CSV file, commas (,) in names replaced by semi-coumn (;).  \\
-         &  - Fusion style theme used, advised by QT application. \\
-2.07.00  &  - Show main window before loading the file given via the command line arguments.  \\
-         &  - Time unit, now assigned once, so independent on the length of the time-series (a performance issue).  \\
-2.06.00  &  - Disable reading a file with no time variable.  \\
-2.05.00  &  - Export of \file{$\ast$.csv} file is now to start-up directory.  \\
-2.04.00  &  - Location of selected graph added to the top of the context menu. \\
-         &  - Double click on a selected graph shows the location, time and value of the point where the cursor is when the double click is performed.  \\
-2.03.00  &  - Plot window is approximately a quarter of the main screen. \\
-         &  - Main window size computed as percentage of the main screen. \\
-         &  - Update spinners and tooltips if no files are in the file listbox.  \\
-2.02.02  &  - Close option added to file menu, close will close the files and exit will exiting the program.  \\
-2.02.01  &  - Set the tooltip to the filename which is selected in the file listbox.  \\
-2.02.00  &  - Upgrade to QT 5.12.1.  \\
-2.01.??  &  - No information available.  \\
-\end{longtable}
-%--- end light blue table ---
-%
-%--------------------------------------------------------------------------------
+
 \newpage
+%--------------------------------------------------------------------------------
 \section{Main window}
 \phantom{m}\vspace{-\baselineskip}
 \begin{figure}[H]
     \centering
         \includegraphics[width=0.9\textwidth]{pictures/main.png}
-    \caption{Opening window of the program PlotCFTS (\textbf{Plot} \textbf{C}limate and \textbf{F}orecast \textbf{T}ime \textbf{S}eries)}
+    \caption{Main window of PlotCFTS (\textbf{Plot} \textbf{C}limate and \textbf{F}orecast \textbf{T}ime \textbf{S}eries)}
 \end{figure}
 
 %--------------------------------------------------------------------------------
@@ -423,6 +353,86 @@ The program can be started with the desired file as commandline option:
 \begin{Verbatim}
 $ plotcfts --ncfile <filename>
 \end{Verbatim}
+
+%--------------------------------------------------------------------------------
+\section{Release Notes}
+\phantom{m}\vspace{-\baselineskip}
+%
+%--- begin light blue table ---
+\begin{longtable}{p{17mm-12pt}|p{\textwidth-17mm-12pt}}
+    %\caption{Light blue theme of table} \\%
+    \rowcolor{dblue1}
+    \textbf{Release}
+    & \textbf{Description}
+    \\
+    \topline
+    \endfirsthead
+    \rowcolor{dblue1}
+    \textbf{Release}
+    & \textbf{Description} \hfill continued from previous page
+    \\
+    \topline
+    \endhead
+    \midline
+    \multicolumn{2}{r}{continued at next page}
+    \endfoot
+    \bottomline
+    \endlastfoot
+    4.04.01  &  -  Nicer export to pdf-file with option \texttt{QCP::epAllowCosmetic} in the savePDF function.\\
+    4.04.00  &  - Support of netCDF type \texttt{int64} (NC\_INT64). \\
+    4.03.01  &  - Support of the time units string with partial seconds and a time zone, ex.: \newline
+    \small{\texttt{time:units = "seconds since 1992-10-8 15:15:42.250 -6:30" ;}} \\
+    4.03.00  &  - Support of station names as they are defined as \texttt{string}. \\
+    4.02.03  &  - When rereading the file, the time listbox is updated. \\
+    4.02.02  &  - List box selection is set to last item if selection is empty. \\
+    4.02.01  &  - Better detection of time step size (example 1.5 sec).\\
+    4.02.00  &  - Tick mark labels adjusted if timespan is less then 1 second.\\
+    &  - Upgrade to QT 6.5.0 \\
+    4.01.00  &  - Highlighted line contains dots at time-points.\\
+    4.00.00  &  - Upgrade to QT 6.4.1 \\
+    &  - Group box titles in bold. \\
+    &  - Compliant for 4k screen \\
+    3.08.00  &  - 5 \% white space around graph in plot window. \\
+    3.07.03  &  - Crash on reread file repaired. \\
+    3.07.02  &  - Check on already read file on full path, instead of filename only. \\
+    3.07.01  &  - Export to CSV file repaired. \\
+    &  - Hiding progress bar after rereading a file. \\
+    3.07.00  &  - Integer variable values are now plotted, ex.\ pump\_actual\_stage. \\
+    &  - Context menu option added. In the file listbox to reread a file. \\
+    3.06.01  &  - Some reorganization how to dected the time variable, now checking on standard\_name = 'time'. \\
+    3.06.00  &  - Upgrade to QT 5.15.2. \\
+    3.05.00  &  - Use of QCustomPlot 2.1.0. \\
+    &  - Reading of netCDF variable 'float' enabled. \\
+    3.04.00  &  - Pre-selection of time-series implemented. \\
+    3.03.00  &  - Partial selection of time series repaired. \\
+    &  - Main window increased in vertical direction. \\
+    3.02.00  &  - Location names are now trimmed, leading and trailing spaces are removed. \\
+    3.01.00  &  - All presented times are given in UTC (Temps universel coordonn\'e, Coordinated Universal Time).\\
+    3.00.00  &  - Pre-selection of parameters and locations implemented.  \\
+    &  - Multi select of input files allowed.\\
+    2.12.00  &  - Support netCDF (CF-1.5, Deltares 0.1) file of the NHI (Nederlands Hydrologisch Instrumentarium).  \\
+    &  - Strip leading and trailing spaces from parameter name. \\
+    2.11.00  &  - Memory bug repaired with respect to a reading global attribute which has a value longer then 256 characters.  \\
+    2.10.00  &  - If a part of the time series is selected, the CSV export is now correct. The time and value did not correspond.  \\
+    2.09.00  &  - Some parameters where listed without having the time-dimension. Now a parameter need the time-dimension,  to be present in Parameter listbox.  \\
+    2.08.00  &  - Export to CSV file, commas (,) in names replaced by semi-coumn (;).  \\
+    &  - Fusion style theme used, advised by QT application. \\
+    2.07.00  &  - Show main window before loading the file given via the command line arguments.  \\
+    &  - Time unit, now assigned once, so independent on the length of the time-series (a performance issue).  \\
+    2.06.00  &  - Disable reading a file with no time variable.  \\
+    2.05.00  &  - Export of \file{$\ast$.csv} file is now to start-up directory.  \\
+    2.04.00  &  - Location of selected graph added to the top of the context menu. \\
+    &  - Double click on a selected graph shows the location, time and value of the point where the cursor is when the double click is performed.  \\
+    2.03.00  &  - Plot window is approximately a quarter of the main screen. \\
+    &  - Main window size computed as percentage of the main screen. \\
+    &  - Update spinners and tooltips if no files are in the file listbox.  \\
+    2.02.02  &  - Close option added to file menu, close will close the files and exit will exiting the program.  \\
+    2.02.01  &  - Set the tooltip to the filename which is selected in the file listbox.  \\
+    2.02.00  &  - Upgrade to QT 5.12.1.  \\
+    2.01.??  &  - No information available.  \\
+\end{longtable}
+%--- end light blue table ---
+%
 
 %--------------------------------------------------------------------------------
 \section{Version control information}
