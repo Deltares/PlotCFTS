@@ -1087,11 +1087,7 @@ void MainWindow::ShowUserManual()
      if (err == 0)
      {
           fclose(fp);
-          long res = (long) FindExecutableA((LPCSTR)pdf_document, NULL, (LPSTR)pdf_reader);
-          if (res >= 32)
-          {
-               spawn_err = QT_SpawnProcess(NO_WAIT_MODE, pdf_reader, &pdf_document);
-          }
+          QDesktopServices::openUrl(QUrl::fromUserInput(pdf_document));
      }
 	 else
 	 {

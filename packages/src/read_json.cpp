@@ -33,7 +33,7 @@ struct Getter
                 //cout << p.first.data() << ": " << p.second.data() << endl;
                 if (p.first.data() == key)
                 {
-                    T val = p.second.get_value<T>();
+                    T val = p.second.template get_value<T>();
                     results.push_back(val);
                 }
             }
@@ -45,7 +45,7 @@ struct Getter
                     //cout << p.first.data() << ": " << p.second.data() << endl;
                     if (p.first.data() == key)
                     {
-                        T val = p.second.get_value<T>();
+                        T val = p.second.template get_value<T>();
                         results.push_back(val);
                     }
                 }
@@ -80,7 +80,7 @@ READ_JSON::READ_JSON(std::string file_json)
 }
 READ_JSON::~READ_JSON()
 {
-    delete & m_ptrtree;
+    ;
 }
 long READ_JSON::get(std::string data, std::vector<std::string> & strJsonResults)
 {

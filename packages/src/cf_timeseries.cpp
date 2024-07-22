@@ -194,7 +194,7 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
     status = nc_inq(this->m_ncid, &ndims, &nvars, &natts, &nunlimited);
     for (long i_var = 0; i_var < nvars; ++i_var)
     {
-        int error_code = get_attribute(m_ncid, i_var, "units", &time_unit_string);
+        int error_code = get_attribute(m_ncid, i_var, std::string("units"), &time_unit_string);
         if (error_code == 0 && time_unit_string.find("since") != -1)
         {
             QString units = QString::fromStdString(time_unit_string).replace("T", " ");  // "seconds since 1970-01-01T00:00:00" changed into "seconds since 1970-01-01 00:00:00"
@@ -203,7 +203,7 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
             {
                 time_var = i_var;
             }
-            error_code = get_attribute(m_ncid, i_var, "standard_name", &time_std_name);
+            error_code = get_attribute(m_ncid, i_var, std::string("standard_name"), &time_std_name);
             if (error_code == 0 && time_std_name == "time")
             {
                 time_var = i_var;
@@ -218,7 +218,7 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
     // retrieve the long_name, standard_name -> var_name for the xaxis label
     std::string label;
     status = nc_inq_var(this->m_ncid, time_var, var_name, NULL, &ndims, &dimids, &natts);
-    status = get_attribute(this->m_ncid, time_var, "long_name", &label);
+    status = get_attribute(this->m_ncid, time_var, std::string("long_name"), &label);
     if (status == NC_NOERR)
     {
         this->xaxis_label = QString::fromStdString(label);
@@ -472,7 +472,7 @@ void TSFILE::read_parameters()
         }
 
         std::string coord;
-        status = get_attribute(this->m_ncid, i_var, "coordinates", &coord);
+        status = get_attribute(this->m_ncid, i_var, std::string("coordinates"), &coord);
 
         if (status != NC_NOERR)
         {
@@ -539,7 +539,7 @@ void TSFILE::read_parameters()
             if (status == NC_NOERR)
             {
                 std::string tmp;
-                status = get_attribute(this->m_ncid, i_var, "long_name", &tmp);
+                status = get_attribute(this->m_ncid, i_var, std::string("long_name"), &tmp);
                 parameter_name = strdup(tmp.c_str());
             }
             else
@@ -553,7 +553,7 @@ void TSFILE::read_parameters()
             if (status == NC_NOERR)
             {
                 std::string tmp;
-                status = get_attribute(this->m_ncid, i_var, "units", &tmp);
+                status = get_attribute(this->m_ncid, i_var, std::string("units"), &tmp);
                 this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup(tmp.c_str());
             }
             else
@@ -1346,44 +1346,6 @@ void TSFILE::ensure_capacity_locations(long i_par_loc, long nr_locations)
         //this->par_loc[i_par_loc]->location[i]->pre_selected = 0;
     }
 }
-
-int TSFILE::get_attribute(int ncid, int i_var, char* att_name, char** att_value)
-{
-    size_t length = 0;
-    int status = -1;
-
-    status = nc_inq_attlen(ncid, i_var, att_name, &length);
-    *att_value = (char*)malloc(sizeof(char) * (length + 1));
-    *att_value[0] = '\0';
-    if (status == NC_NOERR)
-    {
-        status = nc_get_att(ncid, i_var, att_name, *att_value);
-        att_value[0][length] = '\0';
-    }
-    return status;
-}
-//------------------------------------------------------------------------------
-int TSFILE::get_attribute(int ncid, int i_var, char* att_name, std::string* att_value)
-{
-    size_t length = 0;
-    int status = -1;
-
-    status = nc_inq_attlen(ncid, i_var, att_name, &length);
-    if (status != NC_NOERR)
-    {
-        *att_value = "";
-    }
-    else
-    {
-        char* tmp_value = (char*)malloc(sizeof(char) * (length + 1));
-        tmp_value[0] = '\0';
-        status = nc_get_att(ncid, i_var, att_name, tmp_value);
-        tmp_value[length] = '\0';
-        *att_value = std::string(tmp_value, length);
-        free(tmp_value);
-    }
-    return status;
-}
 //------------------------------------------------------------------------------
 int TSFILE::get_attribute(int ncid, int i_var, std::string att_name, std::string* att_value)
 {
@@ -1407,29 +1369,29 @@ int TSFILE::get_attribute(int ncid, int i_var, std::string att_name, std::string
     return status;
 }
 //------------------------------------------------------------------------------
-int TSFILE::get_attribute(int ncid, int i_var, char* att_name, double* att_value)
+int TSFILE::get_attribute(int ncid, int i_var, std::string att_name, double* att_value)
 {
     int status = -1;
 
-    status = nc_get_att_double(ncid, i_var, att_name, att_value);
+    status = nc_get_att_double(ncid, i_var, att_name.c_str(), att_value);
 
     return status;
 }
 //------------------------------------------------------------------------------
-int TSFILE::get_attribute(int ncid, int i_var, char* att_name, int* att_value)
+int TSFILE::get_attribute(int ncid, int i_var, std::string att_name, int* att_value)
 {
     int status = -1;
 
-    status = nc_get_att_int(ncid, i_var, att_name, att_value);
+    status = nc_get_att_int(ncid, i_var, att_name.c_str(), att_value);
 
     return status;
 }
 //------------------------------------------------------------------------------
-int TSFILE::get_attribute(int ncid, int i_var, char* att_name, long* att_value)
+int TSFILE::get_attribute(int ncid, int i_var, std::string att_name, long* att_value)
 {
     int status = -1;
 
-    status = nc_get_att_long(ncid, i_var, att_name, att_value);
+    status = nc_get_att_long(ncid, i_var, att_name.c_str(), att_value);
 
     return status;
 }

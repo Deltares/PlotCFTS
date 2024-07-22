@@ -28,7 +28,7 @@ LANGUAGE LANG_DUTCH, SUBLANG_DUTCH
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION VN_MAJOR,VN_MINOR,VN_REVISION,VN_BUILD_HASH
+ FILEVERSION VN_MAJOR,VN_MINOR,VN_REVISION
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x29L
@@ -46,13 +46,13 @@ BEGIN
             VALUE "Comments", "-\0"
             VALUE "CompanyName", "Deltares\0"
             VALUE "FileDescription", "Plot CF Time-Series\0"
-            VALUE "FileVersion", "VN_MAJOR.VN_MINOR.VN_REVISION.VN_BUILD_HASH\0"
-            VALUE "InternalName", "PloCFTS\0"
+            VALUE "FileVersion", "VN_MAJOR.VN_MINOR.VN_REVISION\0"
+            VALUE "InternalName", "PlotCFTS\0"
             VALUE "LegalCopyright", "Copyright © 2018\0"
             VALUE "LegalTrademarks", "Copyright Deltares\0"
             VALUE "OriginalFilename", "plot_cf_time_series.exe\0"
             VALUE "PrivateBuild", "-\0"
-            VALUE "ProductName", "PloCFTS\0"
+            VALUE "ProductName", "PlotCFTS\0"
             VALUE "SpecialBuild", "-\0"
         END
     END
