@@ -37,6 +37,7 @@
 #include <QtGui/QAction>
 #include <QtGui/QtGui>
 #include <QtGui/QBrush>
+#include <QtGui/QDesktopServices>
 #include <QtGui/QIcon>
 #include <QtGui/QDrag>
 #include <QtGui/QDragEnterEvent>

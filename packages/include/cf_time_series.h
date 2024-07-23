@@ -121,12 +121,10 @@ public:
     char ** parameter;
 
 private:
-    int get_attribute(int, int, char*, char**);
-    int get_attribute(int, int, char*, std::string*);
     int get_attribute(int, int, std::string, std::string*);
-    int get_attribute(int, int, char*, double*);
-    int get_attribute(int, int, char*, int*);   
-    int get_attribute(int, int, char*, long*);
+    int get_attribute(int, int, std::string, double*);
+    int get_attribute(int, int, std::string, int*);   
+    int get_attribute(int, int, std::string, long*);
     std::string trim(std::string);
     char* trim(char*);
 
