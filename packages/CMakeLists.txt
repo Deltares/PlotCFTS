@@ -48,21 +48,34 @@ add_custom_command(
     COMMAND cmd /c ${CMAKE_CURRENT_SOURCE_DIR}\\..\\scripts\\git_insert_hash.cmd ..\\..\\packages\\include plot_cf_time_series_version.rc 
     )
 
-target_include_directories(${exe_name} PUBLIC
-    "${CMAKE_CURRENT_SOURCE_DIR}/."
-    "${CMAKE_CURRENT_SOURCE_DIR}/include"
-    "c:/msys64/ucrt64/include/Qt6/"
-    "c:/msys64/ucrt64/include/boost/"
-)
+if (MSVC)
+    message("*** MSVC ")
+    target_include_directories(${exe_name} PUBLIC
+        "${CMAKE_CURRENT_SOURCE_DIR}/."
+        "${CMAKE_CURRENT_SOURCE_DIR}/include"
+        "c:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.40.33807/include/"
+        "c:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/ucrt/"
+        "c:/Qt/Qt6.7.2/6.7.2/msvc2019_64"
+        "c:/boost/boost_1_85_0/"
+    )
+else()
+    message("*** UCRT64 ")
+    target_include_directories(${exe_name} PUBLIC
+        "${CMAKE_CURRENT_SOURCE_DIR}/."
+        "${CMAKE_CURRENT_SOURCE_DIR}/include"
+        "c:/msys64/ucrt64/include/Qt6/"
+        "c:/msys64/ucrt64/include/boost/"
+    )
+endif()
 
 target_link_libraries(${exe_name} PRIVATE Qt6::Core)
 target_link_libraries(${exe_name} PRIVATE Qt6::Gui)
 target_link_libraries(${exe_name} PRIVATE Qt6::Widgets)
 target_link_libraries(${exe_name} PRIVATE Qt6::PrintSupport)
-target_link_libraries(${exe_name} PRIVATE netcdf)
+target_link_libraries(${exe_name} PRIVATE "c:/Program Files/netCDF 4.9.2/lib/netcdf.lib")
 
 set(install_dir ${CMAKE_BINARY_DIR})
 set(build_dir ${CMAKE_BINARY_DIR})
-install(TARGETS ${exe_name} RUNTIME DESTINATION bin)
+install(TARGETS ${exe_name} RUNTIME DESTINATION bin/Release)
 
 message("   Exiting packages directory") 
