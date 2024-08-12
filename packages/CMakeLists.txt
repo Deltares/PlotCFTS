@@ -1,4 +1,4 @@
-message("   Enter packages directory") 
+message("*** Enter packages directory") 
 
 set(CMAKE_AUTOMOC ON)
 # set(CMAKE_AUTORCC ON)
@@ -72,10 +72,16 @@ target_link_libraries(${exe_name} PRIVATE Qt6::Core)
 target_link_libraries(${exe_name} PRIVATE Qt6::Gui)
 target_link_libraries(${exe_name} PRIVATE Qt6::Widgets)
 target_link_libraries(${exe_name} PRIVATE Qt6::PrintSupport)
-target_link_libraries(${exe_name} PRIVATE "c:/Program Files/netCDF 4.9.2/lib/netcdf.lib")
+if (MSVC)
+    target_link_libraries(${exe_name} PRIVATE "c:/Program Files/netCDF 4.9.2/lib/netcdf.lib")
+else()
+    target_link_libraries(${exe_name} PRIVATE netcdf)
+endif()
+
+set_property(TARGET ${exe_name} PROPERTY WIN32_EXECUTABLE true)
 
 set(install_dir ${CMAKE_BINARY_DIR})
 set(build_dir ${CMAKE_BINARY_DIR})
-install(TARGETS ${exe_name} RUNTIME DESTINATION bin/Release)
+install(TARGETS ${exe_name} RUNTIME DESTINATION bin)
 
-message("   Exiting packages directory") 
+message("*** Exiting packages directory") 
