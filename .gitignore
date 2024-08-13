@@ -7,3 +7,4 @@ packages/Release/
 packages/plot_cf_time_series.vcxproj.user
 packages/include/plot_cf_time_series_version.h
 packages/include/plot_cf_time_series_version.rc
+/_build
