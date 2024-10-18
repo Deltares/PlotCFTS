@@ -536,7 +536,7 @@ void TSFILE::read_parameters()
             }
             length = (size_t) -1;
             status = nc_inq_attlen(this->m_ncid, i_var, "long_name", &length);
-            if (status == NC_NOERR)
+            if (status == NC_NOERR && length > 0)
             {
                 std::string tmp;
                 status = get_attribute(this->m_ncid, i_var, std::string("long_name"), &tmp);
@@ -544,7 +544,17 @@ void TSFILE::read_parameters()
             }
             else
             {
-                parameter_name = strdup(var_name);
+                status = nc_inq_attlen(this->m_ncid, i_var, "standard_name", &length);
+                if (status == NC_NOERR && length > 0)
+                {
+                    std::string tmp;
+                    status = get_attribute(this->m_ncid, i_var, std::string("standard_name"), &tmp);
+                    parameter_name = strdup(tmp.c_str());
+                }
+                else
+                {
+                    parameter_name = strdup(var_name);
+                }
             }
             m_yaxis_label = QString(var_name);
 
