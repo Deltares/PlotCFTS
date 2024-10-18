@@ -34,7 +34,7 @@ else()
 endif()
 
 find_package(netCDF 4.9.2 REQUIRED)
-if(Boost_FOUND)
+if(netCDF_FOUND)
     message("*** netCDF found")
 else()
     message("*** netCDF not found")
