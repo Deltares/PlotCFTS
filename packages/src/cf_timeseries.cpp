@@ -194,8 +194,8 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
     status = nc_inq(this->m_ncid, &ndims, &nvars, &natts, &nunlimited);
     for (long i_var = 0; i_var < nvars; ++i_var)
     {
-        int error_code = get_attribute(m_ncid, i_var, std::string("units"), &time_unit_string);
-        if (error_code == 0 && time_unit_string.find("since") != -1)
+        status = get_unit_for_variable(m_ncid, i_var, &time_unit_string);
+        if (status == 0 && time_unit_string.find("since") != -1)
         {
             QString units = QString::fromStdString(time_unit_string).replace("T", " ");  // "seconds since 1970-01-01T00:00:00" changed into "seconds since 1970-01-01 00:00:00"
             date_time = units.split(" ");
@@ -203,8 +203,8 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
             {
                 time_var = i_var;
             }
-            error_code = get_attribute(m_ncid, i_var, std::string("standard_name"), &time_std_name);
-            if (error_code == 0 && time_std_name == "time")
+            status = get_attribute(m_ncid, i_var, std::string("standard_name"), &time_std_name);
+            if (status == 0 && time_std_name == "time")
             {
                 time_var = i_var;
                 break;
@@ -424,8 +424,6 @@ void TSFILE::read_parameters()
     size_t length;
     char * dim_name;
     char * var_name;
-    char * parameter_name;
-    char * unit;
 
     size_t * par_dim;
     long i_par_loc = -1;
@@ -534,43 +532,15 @@ void TSFILE::read_parameters()
                 this->par_loc[i_par_loc]->parameter[i_param]->dim_val[j] = (long)par_dim[j];
                 this->par_loc[i_par_loc]->parameter[i_param]->dim_name[j] = strdup(dim_name);
             }
-            length = (size_t) -1;
-            status = nc_inq_attlen(this->m_ncid, i_var, "long_name", &length);
-            if (status == NC_NOERR && length > 0)
-            {
-                std::string tmp;
-                status = get_attribute(this->m_ncid, i_var, std::string("long_name"), &tmp);
-                parameter_name = strdup(tmp.c_str());
-            }
-            else
-            {
-                status = nc_inq_attlen(this->m_ncid, i_var, "standard_name", &length);
-                if (status == NC_NOERR && length > 0)
-                {
-                    std::string tmp;
-                    status = get_attribute(this->m_ncid, i_var, std::string("standard_name"), &tmp);
-                    parameter_name = strdup(tmp.c_str());
-                }
-                else
-                {
-                    parameter_name = strdup(var_name);
-                }
-            }
-            m_yaxis_label = QString(var_name);
 
-            this->par_loc[i_par_loc]->parameter[i_param]->name = strdup(parameter_name);
-            status = nc_inq_attlen(this->m_ncid, i_var, "units", &length);
-            if (status == NC_NOERR)
-            {
-                std::string tmp;
-                status = get_attribute(this->m_ncid, i_var, std::string("units"), &tmp);
-                this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup(tmp.c_str());
-            }
-            else
-            {
-                this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup("?");
-            }
-            free(parameter_name); parameter_name = NULL;
+            std::string parameter_name;
+            status = get_name_for_variable(this->m_ncid, i_var, &parameter_name);
+            m_yaxis_label = QString(var_name);
+            this->par_loc[i_par_loc]->parameter[i_param]->name = strdup(parameter_name.c_str());
+
+            std::string unit_name;
+            status = get_unit_for_variable(this->m_ncid, i_var, &unit_name);
+            this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup(unit_name.c_str());
         }
         else
         {
@@ -607,37 +577,14 @@ void TSFILE::read_parameters()
                 this->par_loc[i_par_loc]->parameter[i_param]->dim_name[0] = strdup(dim_name);
 
                 // because the coordinates attribute was not found; try long_name else use var_name
-                length = (size_t) -1;
-                status = nc_inq_attlen(this->m_ncid, i_var, "long_name", &length);
-                if (status == NC_NOERR)
-                {
-                    char * parameter_name_c = (char *)malloc(sizeof(char) * (length + 1));
-                    status = nc_get_att(this->m_ncid, i_var, "long_name", parameter_name_c);
-                    parameter_name_c[length] = '\0';
-                    parameter_name = strdup(trim(parameter_name_c));
-                    free(parameter_name_c);
-                    parameter_name_c = nullptr;
-                }
-                else
-                {
-                    parameter_name = strdup(var_name);
-                }
+                std::string parameter_name;
+                status = get_name_for_variable(this->m_ncid, i_var, &parameter_name);
                 m_yaxis_label = QString(var_name);
+                this->par_loc[i_par_loc]->parameter[i_param]->name = strdup(parameter_name.c_str());
 
-                this->par_loc[i_par_loc]->parameter[i_param]->name = strdup(parameter_name);
-                status = nc_inq_attlen(this->m_ncid, i_var, "units", &length);
-                if (status == NC_NOERR)
-                {
-                    unit = (char *)malloc(sizeof(char) * (length + 1));
-                    status = nc_get_att(this->m_ncid, i_var, "units", unit);
-                    unit[length] = '\0';
-                    this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup(unit);
-                    free(unit); unit = nullptr;
-                }
-                else
-                {
-                    this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup("?");
-                }
+                std::string unit_name;
+                status = get_unit_for_variable(this->m_ncid, i_var, &unit_name);
+                this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup(unit_name.c_str());
             }
             else if (ndims == 2)
             {
@@ -689,36 +636,14 @@ void TSFILE::read_parameters()
                     this->par_loc[i_par_loc]->parameter[i_param]->dim_name[0] = strdup(dim_name);
 
                     // because the coordinates attribute was not found; try long_name else use var_name
-                    length = (size_t) -1;
-                    status = nc_inq_attlen(this->m_ncid, i_var, "long_name", &length);
-                    if (status == NC_NOERR)
-                    {
-                        char * parameter_name_c = (char *)malloc(sizeof(char) * (length + 1));
-                        status = nc_get_att(this->m_ncid, i_var, "long_name", parameter_name_c);
-                        parameter_name_c[length] = '\0';
-                        parameter_name = trim(parameter_name_c);
-                        free(parameter_name_c);
-                        parameter_name_c = nullptr;
-                    }
-                    else
-                    {
-                        parameter_name = strdup(var_name);
-                    }
+                    std::string parameter_name;
+                    status = get_name_for_variable(this->m_ncid, i_var, &parameter_name);
+                    m_yaxis_label = QString(var_name);
+                    this->par_loc[i_par_loc]->parameter[i_param]->name = strdup(parameter_name.c_str());
 
-                    this->par_loc[i_par_loc]->parameter[i_param]->name = strdup(parameter_name);
-                    status = nc_inq_attlen(this->m_ncid, i_var, "units", &length);
-                    if (status == NC_NOERR)
-                    {
-                        unit = (char *)malloc(sizeof(char) * (length + 1));
-                        status = nc_get_att(this->m_ncid, i_var, "units", unit);
-                        unit[length] = '\0';
-                        this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup(unit);
-                        free(unit); unit = nullptr;
-                    }
-                    else
-                    {
-                        this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup("?");
-                    }
+                    std::string unit_name;
+                    status = get_unit_for_variable(this->m_ncid, i_var, &unit_name);
+                    this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup(unit_name.c_str());
                 }
             }
         }
@@ -1126,7 +1051,7 @@ struct _global_attributes * TSFILE::get_global_attributes()
     return this->global_attributes;
 }
 
-std::vector<double> TSFILE::get_time_series(long cb_index, char * param_name, long loc_id, long layer_id)
+std::vector<double> TSFILE::get_time_series(long cb_index, std::string param_name, long loc_id, long layer_id)
 {
     int ndims, nvars, natts, nunlimited;
     nc_type nc_type;
@@ -1140,7 +1065,6 @@ std::vector<double> TSFILE::get_time_series(long cb_index, char * param_name, lo
     size_t mem_length;
     char * dim_name;
     char * var_name;
-    char * tmp_name;
 
     long * var_dims; // dimensions of variable
     dim_name = (char *)malloc(sizeof(char) * (NC_MAX_NAME + 1));
@@ -1155,22 +1079,20 @@ std::vector<double> TSFILE::get_time_series(long cb_index, char * param_name, lo
         status = nc_inq_attlen(this->m_ncid, i, "long_name", &length);
         if (status == NC_NOERR)
         {
-            tmp_name = (char *)malloc(sizeof(char) * (length + 1));
-            tmp_name[length] = '\0';
-            status = nc_get_att(this->m_ncid, i, "long_name", tmp_name);
-            tmp_name = trim(tmp_name);
-            if (!strcmp(param_name, tmp_name))
+            std::string tmp_name;
+            get_name_for_variable(this->m_ncid, i, &tmp_name);
+            if (param_name == tmp_name)
             {
                 par_id = i;
                 break;
             }
-            free(tmp_name); tmp_name = NULL;
         }
         else
         {
             // try var_name
             status = nc_inq_var(this->m_ncid, i, var_name, NULL, NULL, NULL, NULL);
-            if (!strcmp(param_name, var_name))
+            std::string tmp_name(var_name);
+            if (param_name == tmp_name)
             {
                 par_id = i;
                 break;
@@ -1405,6 +1327,56 @@ int TSFILE::get_attribute(int ncid, int i_var, std::string att_name, long* att_v
 
     return status;
 }
+//------------------------------------------------------------------------------
+int TSFILE::get_name_for_variable(int ncid, int i_var, std::string* name)
+{
+    int status = 1;
+    size_t length = (size_t)-1;
+    status = nc_inq_attlen(ncid, i_var, "long_name", &length);
+    if (status == NC_NOERR && length > 0)
+    {
+        name->reserve(length);
+        status = get_attribute(ncid, i_var, std::string("long_name"), name);
+    }
+    else
+    {
+        status = nc_inq_attlen(ncid, i_var, "standard_name", &length);
+        if (status == NC_NOERR && length > 0)
+        {
+            name->reserve(length);
+            status = get_attribute(ncid, i_var, std::string("standard_name"), name);
+        }
+        else
+        {
+            name->reserve(NC_MAX_CHAR);
+            status = nc_inq_varname(ncid, i_var, name->data());
+            *name = this->trim(*name);
+        }
+    }
+    return status;
+}
+//------------------------------------------------------------------------------
+int TSFILE::get_unit_for_variable(int ncid, int i_var, std::string* name)
+{
+    int status = 1;
+    size_t length = (size_t)-1;
+    status = nc_inq_attlen(ncid, i_var, "units", &length);
+    if (status == NC_NOERR && length > 0)
+    {
+        name->reserve(length);
+        status = get_attribute(this->m_ncid, i_var, std::string("units"), name);
+    }
+    else
+    {
+        name->reserve(2);  // extra '\0'
+        *name = strdup("?");
+        status = 0;
+    }
+    return status;
+}
+//------------------------------------------------------------------------------
+
+
 std::string TSFILE::trim(std::string str)
 {
     boost::algorithm::trim(str);

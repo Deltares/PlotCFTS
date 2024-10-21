@@ -462,7 +462,7 @@ void MainWindow::ExportToCSV()
             for (int i = 0; i < locs.size(); i++)
             {
                 int i_par_loc = this->cb_par_loc->currentIndex();
-                std::vector<double> tmp_vec = tsfile->get_time_series(i_par_loc, parameter[pars[j]].name, locs[i], i_layer);
+                std::vector<double> tmp_vec = tsfile->get_time_series(i_par_loc, std::string(parameter[pars[j]].name), locs[i], i_layer);
                 for (int k = 0; k < tmp_vec.size(); k++)  // janm.size() == lb_times->count()
                 {
                     y_values[j][i][k] = tmp_vec[k];
@@ -544,7 +544,7 @@ void MainWindow::OpenPreSelection()
             struct _location *  location = tsfile->get_locations(cb_index);
             long nr_locations = tsfile->get_count_locations(cb_index);
             _time_series time_series = tsfile->get_times();
-            long nr_times = time_series.times.size();
+            size_t nr_times = time_series.times.size();
 
             for (long i = 0; i < nr_parameters; i++)
             {
@@ -572,7 +572,7 @@ void MainWindow::OpenPreSelection()
                     location[i].pre_selected = 1;
                     tsfile->put_location(cb_index, i, location);
                 }
-                for (long i = 0; i < nr_times; i++)
+                for (size_t i = 0; i < nr_times; i++)
                 {
                     time_series.pre_selected[i] = 1;
                 }
@@ -1074,9 +1074,6 @@ void MainWindow::about()
 
 void MainWindow::ShowUserManual()
 {
-     char pdf_reader[1024];
-     int spawn_err = 0;
-
      QString manual_path = _exec_dir.absolutePath();
      QString user_manual = manual_path + "/doc/" + QString("plotcfts_um.pdf");
      QByteArray manual = user_manual.toUtf8();

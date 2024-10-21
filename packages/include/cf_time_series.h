@@ -75,7 +75,7 @@ public:
     void read_parameters();
     long read_locations();
     struct _global_attributes * get_global_attributes(void);
-    std::vector<double> get_time_series(long, char *, long, long);
+    std::vector<double> get_time_series(long, std::string, long, long);
     QString get_xaxis_label(void);
     long get_count_par_loc();
     long get_count_parameters(long);
@@ -125,6 +125,9 @@ private:
     int get_attribute(int, int, std::string, double*);
     int get_attribute(int, int, std::string, int*);   
     int get_attribute(int, int, std::string, long*);
+    int get_name_for_variable(int, int, std::string*);
+    int get_unit_for_variable(int, int, std::string*);
+    
     std::string trim(std::string);
     char* trim(char*);
 

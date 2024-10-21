@@ -217,7 +217,7 @@ void TSPlot::TimeSeriesGraph(int cb_index, int i_par, int i_loc, int i_layer)
     QString yaxis_label = set_yaxis_label(param[i_tsfile_par].name, param[i_tsfile_par].unit, y_label_counter);
     customPlot->yAxis->setLabel(yaxis_label);
     START_TIMER(get_time_series);
-    std::vector<double> y_values = tsfile->get_time_series(cb_index, param[i_tsfile_par].name, i_tsfile_loc, i_layer);
+    std::vector<double> y_values = tsfile->get_time_series(cb_index, std::string(param[i_tsfile_par].name), i_tsfile_loc, i_layer);
     STOP_TIMER(get_time_series);
 
     // x-axis
