@@ -1,10 +1,10 @@
-#ifndef __PERF_TIMER_H__
-#define __PERF_TIMER_H__
 //
 // Programmer: Jan Mooiman
 // Date: 14 April 2021
 // Email: jan.mooiman@deltares.nl
 //
+#ifndef __PERF_TIMER_H__
+#define __PERF_TIMER_H__
 #include <cstdlib>
 #include <vector>
 #include <iostream>
@@ -27,10 +27,11 @@
 #else
 #   define START_TIMERN(x)
 #   define START_TIMER(x)
-#   define CLEAR_TIMER(x)
-#   define DELETE_TIMER(x)
-#   define DELETE_TIMERN(x)
+#   define CLEAR_TIMER()
+#   define DELETE_TIMER()
+#   define DELETE_TIMERN()
 #   define STOP_TIMER(x)
+#   define PRINT_TIMER(x)
 #   define PRINT_TIMERN(x)
 #   define PRINT_TIMERS(x)
 #endif
@@ -104,4 +105,4 @@ public:
         std::string m_functionname;
         int m_line_number;
 };
-#endif
+#endif  // __PERF_TIMER_H__
