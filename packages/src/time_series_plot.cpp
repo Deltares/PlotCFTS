@@ -658,7 +658,7 @@ void TSPlot::contextMenuSaveAsPDF()
         filename = *it;
     }
     delete fd;
-    customPlot->savePdf(filename, this->plot_width, this->plot_height, QCP::epAllowCosmetic, QString("PlotCFTS"), QString("PlotCFTS"));
+    customPlot->savePdf(filename, customPlot->width(), customPlot->height(), QCP::epAllowCosmetic, QString("PlotCFTS"), QString("PlotCFTS"));
 }
 
 void TSPlot::contextMenuRemoveSelectedGraph()
