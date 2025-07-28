@@ -1,18 +1,18 @@
 # PlotCFTS
 Plot program to plot time series which are Climate and Forecast compliant.
 
-To build the program PlotCTS you have to install QT 5.12 LTS, BOOST 1.72.0 and netCDF4.
-The executable plot_cf_time_series.exe will placed in folder bin/x64/debug or bin/x64/release.
+To build the program PlotCTS you have to install QT 6.8.2 LTS, BOOST 1.87.0 and netCDF4.
+The executable plot_cf_time_series.exe will be placed in folder bin/x64/debug or bin/x64/release.
 The batch file dispatch_plotcfts.bat is used to dispatch and rename the executable to plotcfts.exe
 
 ![alt tag](doc/pictures/plotcfts_with_chinese_karakters2.png)
 
 ## Development environment
-At this moment the environment is based on Visual Studio 2019
+At this moment the environment is based on Visual Studio 2022
 
 ## Environment variables
 Environment variables (example)
-QT5DIR64=c:\Qt\Qt5.12.6\5.12.6\msvc2017_64\
+QT6DIR=c:\Qt\qt6.8.2\6.8.2\msvc2022_64\
 
 ## Link Libraries
 netCDF library:
@@ -21,7 +21,7 @@ debug and release folder contain the same libraries
 ./lib/x64/debug/netcdf.lib
                 
 ## Runtime libraries
-On the debug and release folder you need the runtime libraries of QT 5.12.1 and netCDF4.
+On the debug and release folder you need the runtime libraries of QT 6.8.2 and netCDF4.
 Only release folder is given.
 ./release/platforms/qdirect2d.dll
                     qminimal.dll
