@@ -5,6 +5,7 @@ set(CMAKE_AUTOMOC ON)
 # set(CMAKE_AUTOUIC ON)
 
 set(exe_name PlotCFTS)
+set(user_manual plotcfts_um.pdf)
 
 # include_directories(include)
 set(headers_files
@@ -47,6 +48,11 @@ add_custom_command(
     PRE_BUILD
     COMMAND cmd /c ${CMAKE_CURRENT_SOURCE_DIR}\\..\\scripts\\git_insert_hash.cmd ..\\..\\packages\\include plot_cf_time_series_version.rc 
     )
+add_custom_command(
+    TARGET ${exe_name}
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_SOURCE_DIR}/doc/${user_manual} $<TARGET_FILE_DIR:${exe_name}>/doc/${user_manual})
 
 if (MSVC)
     message("*** MSVC ")

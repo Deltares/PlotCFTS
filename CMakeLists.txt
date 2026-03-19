@@ -25,7 +25,7 @@ else()
     message("*** Qt6 not found")
 endif()
 
-find_package(Boost 1.85.0 REQUIRED COMPONENTS
+find_package(Boost 1.87.0 REQUIRED COMPONENTS
              date_time filesystem iostreams)
 if(Boost_FOUND)
     message("*** Boost found")
