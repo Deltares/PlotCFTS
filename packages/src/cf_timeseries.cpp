@@ -261,7 +261,8 @@ void TSFILE::read_times(QProgressBar * pgBar, long pgBar_start, long pgBar_end)
         if (msec < 0) { msec -= 1000. * 60.0 * time_zone.at(1).toDouble(); }
     }
     time = time.addMSecs(msec);
-    this->RefDate = new QDateTime(date, time, Qt::UTC);
+    QTimeZone utcZone = QTimeZone::utc();  // Creates a QTimeZone for UTC
+    this->RefDate = new QDateTime(date, time, utcZone);
 #if defined(DEBUG)
     QString janm1 = this->RefDate->toString("yyyy-MM-dd hh:mm:ss.z");
     QString janm2 = this->RefDate->toUTC().toString("yyyy-MM-dd hh:mm:ss.z");

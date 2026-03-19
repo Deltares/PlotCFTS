@@ -12,7 +12,7 @@ At this moment the environment is based on Visual Studio 2022
 
 ## Environment variables
 Environment variables (example)
-QT6DIR=c:\Qt\qt6.8.2\6.8.2\msvc2022_64\
+QT5DIR64=c:\Qt\qt6.10.2\6.10.2\msvc2022_64\
 
 ## Link Libraries
 netCDF library:

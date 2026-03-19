@@ -2,8 +2,8 @@ echo off
 
 set exec=".\bin\x64\plotcfts.exe"
 set netCDF_DIR=c:\Program Files\netCDF 4.9.2\
-set PATH=c:\Qt\Qt6.7.2\6.7.2\msvc2019_64\;%PATH%
-set PATH=c:\boost\Boost-1.85.0\;%PATH%
+set PATH=c:\Qt\Qt6.10.2\6.10.2\msvc2022_64\;%PATH%
+set PATH=c:\boost\Boost-1.90.0\;%PATH%
 
 del %exec%
 del _build

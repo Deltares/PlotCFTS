@@ -3,12 +3,10 @@ echo off
 set exec=".\bin\ucrt64\plotcfts.exe"
 set netCDF_DIR=c:\msys64\ucrt64\lib\cmake\netCDF\
 set PATH=c:\msys64\ucrt64\lib\cmake\Qt6\;%PATH%
-set PATH=c:\msys64\ucrt64\lib\cmake\Boost-1.87.0\;%PATH%
+set PATH=c:\msys64\ucrt64\lib\cmake\Boost-1.90.0\;%PATH%
 
-echo delete %exec%
 del %exec%
-echo delete directory '_build'
-del /Q _build
+del _build
 
 copy packages\include\plot_cf_time_series_version.h.vcs packages\include\plot_cf_time_series_version.h 
 copy packages\include\plot_cf_time_series_version.rc.vcs packages\include\plot_cf_time_series_version.rc 

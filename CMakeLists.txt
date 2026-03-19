@@ -18,6 +18,7 @@ endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+set(Qt6_DIR c:/Qt/qt6.10.2/6.10.2/msvc2022_64/lib/cmake/Qt6/)
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets PrintSupport)
 if (Qt6_FOUND)
     message("*** Qt6 found")
@@ -25,7 +26,8 @@ else()
     message("*** Qt6 not found")
 endif()
 
-find_package(Boost 1.87.0 REQUIRED COMPONENTS
+set (CMAKE_PREFIX_PATH c:/boost/boost_1_90_0/lib64-msvc-14.3/cmake/Boost-1.90.0/)
+find_package(Boost 1.90.0 REQUIRED COMPONENTS
              date_time filesystem iostreams)
 if(Boost_FOUND)
     message("*** Boost found")

@@ -50,15 +50,15 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="include\mainwindow.h">
+    <QtMoc Include="include\mainwindow.h">
       <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="include\qcustomplot.h">
+    </QtMoc>
+    <QtMoc Include="include\qcustomplot.h">
       <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="include\time_series_plot.h">
+    </QtMoc>
+    <QtMoc Include="include\time_series_plot.h">
       <Filter>Header Files</Filter>
-    </CustomBuild>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\version_number.ini" />
