@@ -41,19 +41,11 @@ qt_add_executable(${exe_name} ${source_files} ${headers_files})
 # Combine the two custom target definitions into one
 add_custom_target(
     myHeaderTarget
-<<<<<<< .mine
-    COMMAND COMMAND powershell -ExecutionPolicy -File "${CMAKE_CURRENT_SOURCE_DIR}/../scripts/git_insert_hash.ps1" ../../packages/include plot_cf_time_series_version.h
-    )
-
-
-
-=======
     COMMAND powershell -ExecutionPolicy Bypass -File "${CMAKE_CURRENT_SOURCE_DIR}\\..\\scripts\\git_insert_hash.ps1" ..\\..\\packages\\include plot_cf_time_series_version.h
     COMMAND powershell -ExecutionPolicy Bypass -File "${CMAKE_CURRENT_SOURCE_DIR}\\..\\scripts\\git_insert_hash.ps1" ..\\..\\packages\\include plot_cf_time_series_version.rc
 )
 
 # Ensure myHeaderTarget runs before the executable is built
->>>>>>> .theirs
 add_dependencies(${exe_name} myHeaderTarget)
 
 if (MSVC)
