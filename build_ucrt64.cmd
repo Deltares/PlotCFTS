@@ -5,6 +5,7 @@ set netCDF_DIR=c:\msys64\ucrt64\lib\cmake\netCDF\
 set PATH=c:\msys64\ucrt64\lib\cmake\Qt6\;%PATH%
 set PATH=c:\msys64\ucrt64\lib\cmake\Boost-1.90.0\;%PATH%
 set PATH=c:\msys64\ucrt64\bin\;%PATH%
+set PATH=c:\Program Files\Git\bin\;%PATH%
 
 del /Q %exec%
 del /Q _build
