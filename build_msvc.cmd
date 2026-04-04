@@ -2,11 +2,11 @@ echo off
 
 set exec=".\bin\x64\plotcfts.exe"
 set netCDF_DIR=c:\Program Files\netCDF 4.9.2\
-set PATH=c:\Qt\Qt6.10.2\6.10.2\msvc2022_64\;%PATH%
-set PATH=c:\boost\Boost-1.90.0\;%PATH%
+set PATH=c:\msys64\ucrt64\bin\;c:\Qt\Qt6.10.2\6.10.2\msvc2022_64\;%PATH%
+set PATH=c:\boost\Boost-1.87.0\;%PATH%
 
-del %exec%
-del _build
+del /Q %exec%
+del /Q _build
 
 copy packages\include\plot_cf_time_series_version.h.vcs packages\include\plot_cf_time_series_version.h 
 copy packages\include\plot_cf_time_series_version.rc.vcs packages\include\plot_cf_time_series_version.rc 
