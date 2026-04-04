@@ -37,10 +37,23 @@ set(source_files
 )
 
 qt_add_executable(${exe_name} ${source_files} ${headers_files})
+
+# Combine the two custom target definitions into one
 add_custom_target(
     myHeaderTarget
+<<<<<<< .mine
     COMMAND COMMAND powershell -ExecutionPolicy -File "${CMAKE_CURRENT_SOURCE_DIR}/../scripts/git_insert_hash.ps1" ../../packages/include plot_cf_time_series_version.h
     )
+
+
+
+=======
+    COMMAND powershell -ExecutionPolicy Bypass -File "${CMAKE_CURRENT_SOURCE_DIR}\\..\\scripts\\git_insert_hash.ps1" ..\\..\\packages\\include plot_cf_time_series_version.h
+    COMMAND powershell -ExecutionPolicy Bypass -File "${CMAKE_CURRENT_SOURCE_DIR}\\..\\scripts\\git_insert_hash.ps1" ..\\..\\packages\\include plot_cf_time_series_version.rc
+)
+
+# Ensure myHeaderTarget runs before the executable is built
+>>>>>>> .theirs
 add_dependencies(${exe_name} myHeaderTarget)
 
 if (MSVC)
@@ -50,8 +63,8 @@ if (MSVC)
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
         "c:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.40.33807/include/"
         "c:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/ucrt/"
-        "c:/Qt/Qt6.7.2/6.7.2/msvc2019_64"
-        "c:/boost/boost_1_85_0/"
+        "c:/Qt/Qt6.10.2/6.10.2/msvc2022_64"
+        "c:/boost/boost_1_90_0/"
     )
 else()
     message("*** UCRT64 ")
@@ -79,4 +92,4 @@ set(install_dir ${CMAKE_BINARY_DIR})
 set(build_dir ${CMAKE_BINARY_DIR})
 install(TARGETS ${exe_name} RUNTIME DESTINATION bin)
 
-message("*** Exiting packages directory") 
+message("*** Exiting packages directory")
