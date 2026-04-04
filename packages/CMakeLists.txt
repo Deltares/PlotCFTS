@@ -39,14 +39,9 @@ set(source_files
 qt_add_executable(${exe_name} ${source_files} ${headers_files})
 add_custom_target(
     myHeaderTarget
-    COMMAND cmd /c ${CMAKE_CURRENT_SOURCE_DIR}\\..\\scripts\\git_insert_hash.cmd ..\\..\\packages\\include plot_cf_time_series_version.h 
+    COMMAND COMMAND powershell -ExecutionPolicy -File "${CMAKE_CURRENT_SOURCE_DIR}/../scripts/git_insert_hash.ps1" ../../packages/include plot_cf_time_series_version.h
     )
 add_dependencies(${exe_name} myHeaderTarget)
-add_custom_command(
-    TARGET ${exe_name}
-    PRE_BUILD
-    COMMAND cmd /c ${CMAKE_CURRENT_SOURCE_DIR}\\..\\scripts\\git_insert_hash.cmd ..\\..\\packages\\include plot_cf_time_series_version.rc 
-    )
 
 if (MSVC)
     message("*** MSVC ")
