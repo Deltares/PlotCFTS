@@ -21,7 +21,7 @@ endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(Qt6_DIR c:/Qt/qt6.10.2/6.10.2/msvc2022_64/lib/cmake/Qt6/)
+set(Qt6_DIR c:/Qt/qt6.10.3/6.10.3/msvc2022_64/lib/cmake/Qt6/)
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets PrintSupport)
 if (Qt6_FOUND)
     message("*** Qt6 found")
