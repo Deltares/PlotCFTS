@@ -15,5 +15,6 @@ copy packages\include\plot_cf_time_series_version.rc.vcs packages\include\plot_c
 echo on
 cmake -B _build 1>cmake_configure.log 2>&1
 cmake --build _build --verbose 1>cmake_build.log 2>&1
+cmake --install _build 1>cmake_install.log 2>&1
 
 %exec%

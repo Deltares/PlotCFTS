@@ -55,8 +55,6 @@ if (MSVC)
     target_include_directories(${exe_name} PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/."
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
-        #"c:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.40.33807/include/"
-        #"c:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/ucrt/"
         "c:/Qt/Qt6.10.3/6.10.3/msvc2022_64/"
         "c:/boost/boost_1_90_0/"
     )
@@ -87,6 +85,18 @@ set_property(TARGET ${exe_name} PROPERTY WIN32_EXECUTABLE true)
 
 set(install_dir ${CMAKE_BINARY_DIR})
 set(build_dir ${CMAKE_BINARY_DIR})
-install(TARGETS ${exe_name} RUNTIME DESTINATION bin)
+install(TARGETS ${exe_name} DESTINATION .)
+if (MSVC)
+    install(FILES 
+        ${Qt6_DIR}/../../../bin/Qt6Core.dll
+        ${Qt6_DIR}/../../../bin/Qt6Gui.dll
+        ${Qt6_DIR}/../../../bin/Qt6Widgets.dll
+        ${Qt6_DIR}/../../../bin/Qt6PrintSupport.dll 
+    DESTINATION ${CMAKE_INSTALL_PREFIX})
+    install(DIRECTORY ${Qt6_DIR}/../../../plugins/platforms/ DESTINATION ${CMAKE_INSTALL_PREFIX}/platforms)
+    install(DIRECTORY "c:/Program Files/netCDF 4.9.2/bin/"
+            DESTINATION ${CMAKE_INSTALL_PREFIX}
+            FILES_MATCHING PATTERN "*.dll")
+endif()
 
 message("*** Exiting packages directory")
