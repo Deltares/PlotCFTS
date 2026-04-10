@@ -50,17 +50,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="include\mainwindow.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="include\qcustomplot.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="include\time_series_plot.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="include\version_number.ini" />
   </ItemGroup>
   <ItemGroup>
@@ -73,5 +62,10 @@
     <Filter Include="Generated Files">
       <UniqueIdentifier>{1ddc7630-21fe-4ec8-b425-5d9fabc9dac9}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="include\qcustomplot.h" />
+    <CustomBuild Include="include\mainwindow.h" />
+    <CustomBuild Include="include\time_series_plot.h" />
   </ItemGroup>
 </Project>

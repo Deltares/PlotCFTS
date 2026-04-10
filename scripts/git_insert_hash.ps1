@@ -49,7 +49,19 @@ if (-not $SourceUrl) {
 
 # --- Version numbers ---
 function Read-IniValue($Key) {
-    cmd /c "..\..\scripts\read_ini.cmd /i $Key version_number.ini"
+    $iniFile = "version_number.ini"
+    
+    # Read the INI file and split it into sections and key-value pairs
+    $content = Get-Content $iniFile
+
+    # Find the key-value pair
+    foreach ($line in $content) {
+        if ($line -match "^\s*$Key\s*=\s*(.*)$") {
+            return $matches[1].Trim()
+        }
+    }
+
+    return $null  # Return null if the key isn't found
 }
 
 $VN_MAJOR    = Read-IniValue "major"

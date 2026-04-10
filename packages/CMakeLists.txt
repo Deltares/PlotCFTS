@@ -55,21 +55,24 @@ if (MSVC)
     target_include_directories(${exe_name} PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/."
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
-        "c:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.40.33807/include/"
-        "c:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/ucrt/"
+        #"c:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.40.33807/include/"
+        #"c:/Program Files (x86)/Windows Kits/10/Include/10.0.22621.0/ucrt/"
         "c:/Qt/Qt6.10.3/6.10.3/msvc2022_64/"
         "c:/boost/boost_1_90_0/"
     )
+    message("--- MSVC ")
 else()
     message("*** UCRT64 ")
     target_include_directories(${exe_name} PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/."
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
-        "c:/Qt/qt6.11.0/6.11.0/mingw_64/include/"
+        "c:/msys64/ucrt64/lib"
         "c:/msys64/ucrt64/include/boost/"
     )
+    message("--- UCRT64 ")
 endif()
 
+#target_link_libraries(${exe_name} PRIVATE Qt6::EntryPoint)
 target_link_libraries(${exe_name} PRIVATE Qt6::Core)
 target_link_libraries(${exe_name} PRIVATE Qt6::Gui)
 target_link_libraries(${exe_name} PRIVATE Qt6::Widgets)
