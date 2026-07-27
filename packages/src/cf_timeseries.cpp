@@ -542,6 +542,10 @@ void TSFILE::read_parameters()
             std::string unit_name;
             status = get_unit_for_variable(this->m_ncid, i_var, &unit_name);
             this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup(unit_name.c_str());
+
+            std::string comment;
+            status = get_comment_for_variable(this->m_ncid, i_var, &comment);
+            this->par_loc[i_par_loc]->parameter[i_param]->comment = strdup(comment.c_str());
         }
         else
         {
@@ -645,6 +649,10 @@ void TSFILE::read_parameters()
                     std::string unit_name;
                     status = get_unit_for_variable(this->m_ncid, i_var, &unit_name);
                     this->par_loc[i_par_loc]->parameter[i_param]->unit = strdup(unit_name.c_str());
+
+                    std::string comment;
+                    status = get_comment_for_variable(this->m_ncid, i_var, &comment);
+                    this->par_loc[i_par_loc]->parameter[i_param]->comment = strdup(comment.c_str());
                 }
             }
         }
@@ -671,6 +679,7 @@ struct _parameter * TSFILE::get_parameters(long i_par_loc)
     {
         param[i].name = strdup(this->par_loc[i_par_loc]->parameter[i]->name);
         param[i].unit = strdup(this->par_loc[i_par_loc]->parameter[i]->unit);
+        param[i].comment = strdup(this->par_loc[i_par_loc]->parameter[i]->comment);
         param[i].ndim = this->par_loc[i_par_loc]->parameter[i]->ndim;
         param[i].dim_id = (long *)malloc(sizeof(long) * param[i].ndim);
         param[i].dim_val = (long *)malloc(sizeof(long) * param[i].ndim);
@@ -1292,12 +1301,8 @@ int TSFILE::get_attribute(int ncid, int i_var, std::string att_name, std::string
     }
     else
     {
-        char* tmp_value = (char*)malloc(sizeof(char) * (length + 1));
-        tmp_value[0] = '\0';
-        status = nc_get_att(ncid, i_var, att_name.c_str(), tmp_value);
-        tmp_value[length] = '\0';
-        *att_value = std::string(tmp_value, length);
-        free(tmp_value);
+        att_value->resize(length);
+        status = nc_get_att(ncid, i_var, att_name.c_str(), att_value->data());
     }
     return status;
 }
@@ -1372,6 +1377,42 @@ int TSFILE::get_unit_for_variable(int ncid, int i_var, std::string* name)
         name->reserve(2);  // extra '\0'
         *name = strdup("?");
         status = 0;
+    }
+    return status;
+}
+//------------------------------------------------------------------------------
+int TSFILE::get_comment_for_variable(int ncid, int i_var, std::string* name)
+{
+    int status = 1;
+    size_t length = (size_t)-1;
+    status = nc_inq_attlen(ncid, i_var, "comment", &length);
+    if (status == NC_NOERR && length > 0)
+    {
+        name->resize(length);
+        status = get_attribute(this->m_ncid, i_var, std::string("comment"), name);
+    }
+    else
+    {
+        *name = "";
+        status = 0;
+    }
+    return status;
+}
+//------------------------------------------------------------------------------
+int TSFILE::get_comment(int ncid, int i_var, std::string att_name, std::string * att_value)
+{
+    size_t length = 0;
+    int status = -1;
+
+    status = nc_inq_attlen(ncid, i_var, att_name.c_str(), &length);
+    if (status != NC_NOERR)
+    {
+        *att_value = "";
+    }
+    else
+    {
+        att_value->resize(length);
+        status = nc_get_att(ncid, i_var, att_name.c_str(), att_value->data());
     }
     return status;
 }

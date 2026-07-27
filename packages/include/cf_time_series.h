@@ -30,6 +30,7 @@ struct _parameter {
     char ** dim_name;
     char * name;
     char * unit;
+    char * comment;
     int pre_selected;  // tri-state: 0: not pre-selected (show all); only when saved to json file (also in memory will this action be performed to generate a new set of preselected parameters)
                        //            1: pre-selected (show all); increase by 1 show then show only (2) (Should know what was previously selected)
 };
@@ -127,6 +128,9 @@ private:
     int get_attribute(int, int, std::string, long*);
     int get_name_for_variable(int, int, std::string*);
     int get_unit_for_variable(int, int, std::string*);
+    int get_comment_for_variable(int, int, std::string*);
+    int get_comment(int ncid, int i_var, std::string att_name, std::string * att_value);
+
     
     std::string trim(std::string);
     char* trim(char*);

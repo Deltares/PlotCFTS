@@ -64,7 +64,7 @@ MainWindow::MainWindow(QDir exec_dir_in, QDir startup_dir_in)
     int h = ssize.height(); // returns screen height
     w = (int)(0.5 * double(w) - 0.5 * double(width));
     h = (int)(0.5 * double(h) - 0.5 * double(height) - 0.05 * double(height));
-    move(w, h);
+    move(w, 0);
 
     _exec_dir = exec_dir_in;
     _startup_dir = startup_dir_in;
@@ -938,7 +938,12 @@ void MainWindow::updateListBoxes(TSFILE * tsfile)
     {
         if (!tsfile->get_pre_selection() || param[i].pre_selected == 1)
         {
-            lb_parameters->addItem(QString(param[i].name));
+            QListWidgetItem *item = new QListWidgetItem(QString(param[i].name));
+            if (QString(param[i].comment).size() > 0)
+            {
+                item->setToolTip(QString(param[i].comment));
+            }
+            lb_parameters->addItem(item);
         }
     }
     lb_parameters->blockSignals(false);
