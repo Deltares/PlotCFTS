@@ -193,6 +193,7 @@ The groups \menu{Parameter, Location}  and \menu{Time series} are shown in \auto
 \end{figure}
 With these groups you are able to select a parameter(s) and a location(s) and the desired part of the time series.
 If no part of the time-series is selected the whole time series will be used for plotting the graph.
+A tooltip with text from the comment-attribute will appear in the parameter listbox, if the comment-attribute was added to the variable.
 
 %--------------------------------------------------------------------------------
 \section{Plotting}
@@ -212,12 +213,14 @@ The group \menu{Plotting} is shown in \autoref{fig:groupplotting}:
     \caption{Initial plot after pressing button \emph{New Plot}}
 \end{figure}
 See \autoref{sec:howtohandleplot} for an explanation of available options to scale and rename some items of the plot area.
-\subsection{Combobox next to button \button{Add}}
+
+%--------------------------------------------------------------------------------
+\subsection{Combobox next to text \button{Add to Plot:}}
 With this combobox you are able to select a plot by its number in which an additional graph can be plotted.
 
 %--------------------------------------------------------------------------------
-\subsection{Button \button{Add}}
-When pressing this button the graph of the selected Parameter--Location will be added to the selected plot,idicated by the plot number.
+\subsection{Button \button{Add to Plot}}
+When pressing this button the graph of the selected Parameter--Location will be added to the selected plot, indicated by the plot number.
 
 %--------------------------------------------------------------------------------
 \section{Global Attributes}
@@ -379,7 +382,7 @@ $ plotcfts --ncfile <filename>
     \endfoot
     \bottomline
     \endlastfoot
-    4.06.00  &  -  Tooltip added on the items of the parameter listbox.\\
+    4.06.00  &  -  Tooltip added on the items of the parameter listbox, supplied by the comment-attribute of a variable.\\
     4.05.02  &  -  Upgrade to QT 6.10.3.\\
     4.05.01  &  -  Upgrade to QT 6.10.2.\\
     4.05.00  &  -  PDF print is now scaled according the the active plot window.\\
